@@ -9,7 +9,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-from siteconfig import DATABASES, SECRET_KEY
+from siteconfig import DATABASES
+from secretkey import SECRET_KEY
 
 # DATABASES = {
 #     'default': {
@@ -84,7 +85,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-# SECRET_KEY = 'put this in siteconfig.py'
+# SECRET_KEY = 'put this in secretkey.py'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
