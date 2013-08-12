@@ -1,0 +1,32 @@
+{% extends "threecolumn.html" %}
+
+{% block left-column %}
+    <div class="section-header">
+	table of contents
+    </div>
+    <div id="toc-container" class="toc-container section-container">
+	{% block table_of_contents %}
+	TOC here
+	{% endblock %}
+    </div>
+{% endblock %}
+
+{% block center-column %}
+    <div class="section-header clearfix">
+	Evidence Review
+    </div>
+    <div id="erdoc-container" class="section-container">
+	{% block middlecontent %}
+	    middle content
+	{% endblock %}
+    </div>
+{% endblock %}
+
+{% block right-column %}
+    <div class="section-header clearfix">
+	<span class="pull-left">annotations</span>
+    </div>
+    <div id="annotations-container" class="section-container">
+	annotations here
+    </div>
+{% endblock %}

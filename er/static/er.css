@@ -1,0 +1,22 @@
+#toc-container {
+	padding: 9px 12px;
+	/* max-height: 300px; */
+}
+
+#toc-container ul {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+#toc-container li {
+	padding: 1px 0px;
+	cursor: pointer;
+}
+
+.paper-content-container h1 {
+    font-style: italic;
+    font-size: 20px;
+    margin-bottom: 0px;
+    /* text-transform: uppercase; */
+}

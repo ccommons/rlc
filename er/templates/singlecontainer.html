@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block maincontent %}
+<div class="main-container">
+    <div class="container clearfix">
+	<div class="span12" id="middle-container">
+	    <div class="section-header clearfix">
+		{% block content_title %}document{% endblock %}
+	    </div>
+
+	    <div id="ffff-container" class="section-container">
+		{% block content %}
+		    content of page
+		{% endblock %}
+	    </div>
+
+	</div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "er-containers.html" %}
+{% block table_of_contents %}
+    {% include "modal.html" %}
+    <ul>
+    {% for section in sections %}
+    	<li><a href="#{{ section.id }}">{{ section.header_text }}</a></li>
+    {% endfor %}
+	<li class="horizontal-separator"></li>
+    	<li><a href="javascript:testmodal()">Open Questions</a></li>
+    	<li><a href="#">News</a></li>
+    	<li><a href="#">Figures and Tables</a></li>
+    </ul>
+{% endblock %}
+{% block middlecontent %}
+    <h1>{{ doc.title }}</h1>
+    <div>Authors Here</div>
+    <div>Last Revision: {{ doc.revision_date|date:"F j, Y" }} | <a href="#">Download</a></div>
+    <div>Last Published: {{ doc.publication_date|date:"F j, Y" }} | <a href="{{ doc.publication_link }}">Download</a></div>
+
+    {% if "Editor" in group_names %}
+	<a href="/er/{{ doc.id }}/edit">edit</a>
+    {% endif %}
+    <div class="paper-content-container">
+    {{ main_document | safe }}
+    </div>
+{% endblock %}

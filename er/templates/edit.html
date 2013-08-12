@@ -1,0 +1,11 @@
+{% extends "singlecontainer.html" %}
+{% block content_title %}Edit Review{% endblock %}
+{% block content %}
+<form method="POST" action="/er/{{ id }}/change">
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Save">
+<input type="button" value="Cancel" onclick="window.location='/er/{{ id }}'" />
+</form>
+{% endblock %}
+

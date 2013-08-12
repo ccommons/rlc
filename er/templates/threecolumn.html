@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block maincontent %}
+	<div class="main-container">
+		<div class="container clearfix">
+			<div class="span3 no-margin">
+			{% block left-column %}
+				<div class="section-header">
+					contents
+				</div>
+				<div id="alerts-container" class="alerts-container section-container">
+				{% block table_of_contents %}
+					TOC here
+				{% endblock %}
+				</div>
+			{% endblock %}
+			</div>
+			<div class="span6" id="middle-container">
+			{% block center-column %}
+				<div class="section-header clearfix">
+				document
+				</div>
+				<div id="ffff-container" class="section-container">
+				{% block middlecontent %}
+				    middle content
+				{% endblock %}
+				</div>
+			{% endblock %}
+			</div>
+			<div class="span3">
+			{% block right-column %}
+				<div class="section-header clearfix">
+					<span class="pull-left">annotations</span>
+					<!--<span class="pull-right"><i class="icon-cog"></i></span>-->
+				</div>
+				<div id="timeline-container" class="timeline-container section-container js-popover-container">
+					annotations here
+					<!--Timeline goes here -->
+				</div>
+			{% endblock %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
