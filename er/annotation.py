@@ -40,8 +40,7 @@ class annotation(object):
 	if value in valid_types:
 	    self._atype = value
 	else:
-	    # TODO: fill in "something"
-	    raise something
+	    raise ValueError("annotation type must be one of " + str(valid_types))
 
     @classmethod
     def new(self, index, atype, user, comment):
