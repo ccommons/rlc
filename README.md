@@ -18,3 +18,6 @@ a superuser for yourself.
 
 6. Run python runserver. This should start a development server.
 
+You won't have any data. You can use the /admin/ interface to create one.
+However, initial fixtures (datasets) are coming soon.
+
