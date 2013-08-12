@@ -5,9 +5,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # test views
-    url(r'^testview/$', 'er.views.test.viewreqlogin', name='test'),
-
     # index page
     url(r'^$', 'er.views.document.index', name='index'),
 
