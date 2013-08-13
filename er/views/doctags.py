@@ -10,7 +10,7 @@ def section_info(doc):
        you must process doc with add_header_id_attrs() first"""
     position = 0
     tag_info = [] # needs : id, header text, position
-    for tag in doc.find_all("h1"):
+    for tag in doc.find_all(["h1", "h2"]):
 	tag_info.append({
 	    "id" : tag["id"],
 	    "text" : unicode(tag.string),
@@ -68,6 +68,7 @@ def add_header_id_attrs(doc):
 def add_ids(doc):
     doc = add_id_attrs(doc, "div", "erb-")
     doc = add_id_attrs(doc, "h1", "erh-")
+    doc = add_id_attrs(doc, "h2", "erh-")
     return(doc)
 
 # now, need to extract positions of headers in document
