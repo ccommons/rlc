@@ -10,7 +10,7 @@ class Author(models.Model):
 
 
 class EvidenceReview(models.Model):
-    # XXX need to explicitly specify primary key (as string)
+    # TODO(?): explicitly specify primary key (as string)?
 
     content = models.TextField()
     title = models.CharField(max_length=100)
@@ -30,7 +30,7 @@ class PaperAuthorship(models.Model):
     position = models.IntegerField()
 
 
-class PaperSections(models.Model):
+class PaperSection(models.Model):
     # this will be the uuid in the tag
     id = models.CharField(primary_key=True, max_length=100)
     paper = models.ForeignKey(EvidenceReview)
@@ -39,8 +39,14 @@ class PaperSections(models.Model):
 
 
 # Annotation models
-class Annotation(models.Model):
-    # XXX "context" is a placeholder
+class DiscussionPoint(models.Model):
+    # abstract base class for annotations and news comments
+    timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
+
+    class Meta:
+	abstract = True
+
+class Annotation(DiscussionPoint):
     context = models.CharField(max_length=100)
     ANNOTATION_TYPES = {
     	('note', 'Note'),
@@ -49,17 +55,15 @@ class Annotation(models.Model):
     	('rev', 'Revision'),
     }
     atype = models.CharField(max_length=10, choices=ANNOTATION_TYPES, default='note')
-    timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
 
     def __unicode__(self):
     	return("Annotation id: {0} / ct: {1}".format(self.id, self.context))
 
-class Comment(models.Model):
-    parent = models.ForeignKey('self', blank=True, null=True, related_name="replies")
-    # this is null if this is the root comment
+class DiscussionMessage(models.Model):
+    # base class for comment thread
 
-    annotation = models.OneToOneField(Annotation, null=True)
-    # this is not null if this is the root comment; for replies, it's null
+    # parent is null if this is the root comment
+    parent = models.ForeignKey('self', blank=True, null=True, related_name="replies")
 
     user = models.ForeignKey(User)
     text = models.TextField()
@@ -68,8 +72,26 @@ class Comment(models.Model):
     def __unicode__(self):
     	return('id: {0} / user: {1} / "{2}"'.format(self.id, self.user.username, self.text))
 
+    class Meta:
+	abstract = True
+
+class Comment(DiscussionMessage):
+    # annotation is non-null if this is the root comment
+    # for replies, it's null
+    annotation = models.OneToOneField(Annotation, null=True)
+
+
 # comment rating -- this is relational. possibly split between negative and
 # positive (might speed counts)
+
+# TODO: investigate if subclassing works with this
+class AnnotationInER(models.Model):
+    annotation = models.OneToOneField(Annotation)
+    # need both ER doc and er section because er section can be null
+    er_doc = models.ForeignKey(EvidenceReview, related_name="annotation_locations")
+    er_section = models.ForeignKey(PaperSection, blank=True, null=True, on_delete=models.SET_NULL, related_name="annotation_locations")
+
+# News Item Annotation Index (place this below)
 
 # Notification models
 
