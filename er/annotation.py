@@ -4,9 +4,9 @@ from er.models import Comment as mComment
 from django.contrib.auth.models import User
 
 class comment(object):
-    """ """
+    """Represents an annotation comment"""
     def __init__(self, *args, **kwargs):
-	self.text = None
+	self.text = None	# can be made into property
 	self.annotation = None
 	self.user = None
 	self.timestamp = None
@@ -41,15 +41,14 @@ class comment(object):
 
     @property
     def replies(self):
-    	"""replies to a comment"""
-	# TODO: fill this out
-	# get IDs of replies
-
-	# instantiate objects
-	return []
+    	"""get all replies to a comment"""
+	reply_ids = [r.id for r in self.model_object.replies.all()]
+	replies = [self.__class__.fetch(id) for id in reply_ids]
+	return replies
 
     @property
     def parent(self):
+	"""get parent comment, if any"""
 	parent_obj = self.model_object.parent
 	if parent_obj != None:
 	    return self.__class__.fetch(parent_obj.id)
@@ -129,14 +128,9 @@ class annotation(object):
 
     @classmethod
     def fetch(annotation, id):
-	"""get annotation by index"""
+	"""get annotation by ID"""
 	a = annotation()
 	a.model_object = mAnnotation.objects.get(id=id)
 	a.init_from_model()
 	return(a)
-
-    # XXX necessary?
-    def save(self):
-	"""save annotation"""
-	pass
 
