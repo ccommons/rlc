@@ -2,7 +2,7 @@ Rapid Learning Community
 ========================
 
 Required packages other than db client (install with pip):
-==========================================================
+----------------------------------------------------------
 Django (1.5.1+)
 beautifulsoup4
 django-ckeditor
