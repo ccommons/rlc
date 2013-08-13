@@ -1,6 +1,18 @@
 Rapid Learning Community
 ========================
 
+Required packages other than db client (install with pip):
+==========================================================
+Django (1.5.1+)
+beautifulsoup4
+django-ckeditor
+
+django-ckeditor requires the Python development libraries (such as the
+python-dev apt package) in order to build its prerequisites.
+
+These requirements will be put into a requirements.txt file soon.
+
+
 Quick (incomplete) instructions for a dev server, subject to change:
 
 1. Go to rlc/.
@@ -18,6 +30,6 @@ a superuser for yourself.
 
 6. Run python manage.py runserver. This should start a development server.
 
-You won't have any data. You can use the /admin/ interface to create one.
+You won't have any data. You can use the /admin/ interface to create some.
 However, initial fixtures (datasets) are coming soon.
 
