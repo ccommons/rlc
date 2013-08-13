@@ -50,14 +50,23 @@ class Annotation(models.Model):
     }
     atype = models.CharField(max_length=10, choices=ANNOTATION_TYPES, default='note')
     timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
-    # XXX forward into Comment?
+
+    def __unicode__(self):
+    	return("Annotation id: {0} / ct: {1}".format(self.id, self.context))
 
 class Comment(models.Model):
-    # XXX foreign key back to Annotation?
     parent = models.ForeignKey('self', blank=True, null=True, related_name="replies")
+    # this is null if this is the root comment
+
+    annotation = models.OneToOneField(Annotation, null=True)
+    # this is not null if this is the root comment; for replies, it's null
+
     user = models.ForeignKey(User)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
+
+    def __unicode__(self):
+    	return('id: {0} / user: {1} / "{2}"'.format(self.id, self.user.username, self.text))
 
 # comment rating -- this is relational. possibly split between negative and
 # positive (might speed counts)
