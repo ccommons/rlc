@@ -2,10 +2,8 @@ Rapid Learning Community
 ========================
 
 Required packages other than db client (install with pip):
-----------------------------------------------------------
-Django (1.5.1+)
-beautifulsoup4
-django-ckeditor
+
+Django (1.5.1+), beautifulsoup4, django-ckeditor
 
 django-ckeditor requires the Python development libraries (such as the
 python-dev apt package) in order to build its prerequisites.
