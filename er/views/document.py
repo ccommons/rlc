@@ -47,7 +47,7 @@ def fullpage(request, *args, **kwargs):
     group_names = [g["name"] for g in request.user.groups.values()]
     # print [g.name for group in request.user.groups]
 
-    sections = doc.papersections_set.order_by('position')
+    sections = doc.papersection_set.order_by('position')
 
     context = Context({
 	"doc" : doc,

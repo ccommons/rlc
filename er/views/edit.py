@@ -70,13 +70,13 @@ def change(request, *args, **kwargs):
     doctags.add_ids(parsed_doc)
 
     # delete previous section info
-    for section in doc.papersections_set.all():
+    for section in doc.papersection_set.all():
     	section.delete()
 
     # create new section info
     section_info = doctags.section_info(parsed_doc)
     for section in section_info:
-    	doc.papersections_set.create(
+    	doc.papersection_set.create(
 	    id=section["id"],
 	    header_text=section["text"],
 	    position=section["position"],
