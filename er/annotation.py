@@ -5,6 +5,10 @@ from django.contrib.auth.models import User
 
 class comment(object):
     """Represents an annotation comment"""
+   
+    def __config__(self):
+	self.CommentModel = mComment
+
     def __init__(self, *args, **kwargs):
 	self.text = None	# can be made into property
 	self.annotation = None
@@ -14,10 +18,12 @@ class comment(object):
 	# self.parent: property
 	# self.replies: property
 
+	self.__config__()
+
 	# create new comment if there are args
 	# TODO: clean up argument validation
 	if kwargs.has_key("text"):
-	    self.model_object = mComment(
+	    self.model_object = self.CommentModel(
 		text=kwargs["text"],
 		user=User.objects.get(username=kwargs["user"]),
 		# annotation=annotation.model_object,
@@ -64,7 +70,7 @@ class comment(object):
     def fetch(comment, id):
 	"""get comment by index"""
 	c = comment()
-	c.model_object = mComment.objects.get(id=id)
+	c.model_object = c.CommentModel.objects.get(id=id)
 	c.init_from_model()
 	return(c)
 
@@ -75,6 +81,9 @@ class comment(object):
 
 class annotation(object):
     """ """
+    def __config__(self):
+	self.AnnotationModel = mAnnotation
+
     def __init__(self, *args, **kwargs):
 	self.id = None
 	self._index = None
@@ -83,12 +92,14 @@ class annotation(object):
 	self.timestamp = None
 	self.model_object = None
 
+	self.__config__()
+
 	# new annotation
 	if kwargs.has_key("comment"):
 	    # TODO: validate all arguments
 
 	    # create a new annotation
-	    self.model_object = mAnnotation(
+	    self.model_object = self.AnnotationModel(
 		context=kwargs["index"],
 		atype=kwargs["atype"],
 		# user=user,
@@ -112,7 +123,7 @@ class annotation(object):
     @atype.setter
     def atype(self, value):
 	# TODO: abstract the following
-	valid_types = [at[0] for at in mAnnotation.ANNOTATION_TYPES]
+	valid_types = [at[0] for at in self.AnnotationModel.ANNOTATION_TYPES]
 	if value in valid_types:
 	    self._atype = value
 	else:
@@ -130,7 +141,7 @@ class annotation(object):
     def fetch(annotation, id):
 	"""get annotation by ID"""
 	a = annotation()
-	a.model_object = mAnnotation.objects.get(id=id)
+	a.model_object = a.AnnotationModel.objects.get(id=id)
 	a.init_from_model()
 	return(a)
 
