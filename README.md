@@ -17,7 +17,8 @@ Quick (incomplete) instructions for a dev server, subject to change:
 
 2. Copy siteconfig.py.dist to siteconfig.py, edit to reflect your DB
 configuration. You need to create the (empty) database for the name you
-choose.
+choose. Note that you must configure the db for the UTF-8 encoding (MySQL
+does not do this by default).
 
 3. Run genkey.py.
 
