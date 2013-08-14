@@ -20,3 +20,9 @@
     margin-bottom: 0px;
     /* text-transform: uppercase; */
 }
+
+.footer {
+    /* TODO: determine what this was originally supposed to look like */
+    position: relative;
+    bottom:70px;
+}
