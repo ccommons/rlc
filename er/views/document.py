@@ -11,6 +11,7 @@ def index(request):
     docs = EvidenceReview.objects.all()
 
     context = Context({
+	"doctitle" : "Melanoma RLC: home",
     	"docs" : docs,
     })
 
@@ -51,6 +52,7 @@ def fullpage(request, *args, **kwargs):
 
     context = Context({
 	"doc" : doc,
+	"doctitle" : "Melanoma RLC: " + doc.title,
     	"main_document" : content,
 	"group_names" : group_names,
 	"sections" : sections,

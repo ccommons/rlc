@@ -39,6 +39,7 @@ def formview(request, *args, **kwargs):
     form = EREditForm(data)
     context = Context({
     	# "main_document" : content,
+	"doctitle" : "Melanoma RLC: Edit " + doc.title,
 	"widget_media" : form.media,
 	"form" :	form,
 	"id" :		doc.id,
