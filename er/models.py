@@ -39,9 +39,25 @@ class PaperSection(models.Model):
 
 
 # Annotation models
+class Comment(models.Model):
+    # parent is null if this is the root comment
+    parent = models.ForeignKey('self', blank=True, null=True, related_name="replies")
+
+    user = models.ForeignKey(User)
+    text = models.TextField()
+    timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
+
+    def __unicode__(self):
+    	return('id: {0} / user: {1} / "{2}"'.format(self.id, self.user.username, self.text))
+
+# comment rating -- this is relational. possibly split between negative and
+# positive (might speed counts)
+# (comment rating model(s) go here)
+
 class DiscussionPoint(models.Model):
     # abstract base class for annotations and news comments
     timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
+    initial_comment = models.OneToOneField(Comment)
 
     class Meta:
 	abstract = True
@@ -59,49 +75,25 @@ class Annotation(DiscussionPoint):
     def __unicode__(self):
     	return("Annotation id: {0} / ct: {1}".format(self.id, self.context))
 
-class DiscussionMessage(models.Model):
-    # base class for comment thread
-
-    # parent is null if this is the root comment
-    parent = models.ForeignKey('self', blank=True, null=True, related_name="replies")
-
-    user = models.ForeignKey(User)
-    text = models.TextField()
-    timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
-
-    def __unicode__(self):
-    	return('id: {0} / user: {1} / "{2}"'.format(self.id, self.user.username, self.text))
-
-    class Meta:
-	abstract = True
-
-class Comment(DiscussionMessage):
-    # annotation is non-null if this is the root comment
-    # for replies, it's null
-    annotation = models.OneToOneField(Annotation, null=True)
-
-
-# comment rating -- this is relational. possibly split between negative and
-# positive (might speed counts)
 
 # TODO: investigate if subclassing works with this
-class AnnotationInER(models.Model):
-    annotation = models.OneToOneField(Annotation)
-    # need both ER doc and er section because er section can be null
-    er_doc = models.ForeignKey(EvidenceReview, related_name="annotation_locations")
-    er_section = models.ForeignKey(PaperSection, blank=True, null=True, on_delete=models.SET_NULL, related_name="annotation_locations")
+# class AnnotationInER(models.Model):
+#     annotation = models.OneToOneField(Annotation)
+#     # need both ER doc and er section because er section can be null
+#     er_doc = models.ForeignKey(EvidenceReview, related_name="annotation_locations")
+#     er_section = models.ForeignKey(PaperSection, blank=True, null=True, on_delete=models.SET_NULL, related_name="annotation_locations")
 
 # News Item Annotation Index (place this below)
 
 # Notification models
 
-# notification preferences here
+# Notification preferences here
 
 # News models
 
 # Profile models
 
-# expands basic User class
+# Expands basic User class
 class Profile(models.Model):
     user = models.OneToOneField(User)
 

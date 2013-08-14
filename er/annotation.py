@@ -1,5 +1,5 @@
-from er.models import Annotation as mAnnotation
 from er.models import Comment as mComment
+from er.models import Annotation as mAnnotation
 
 from django.contrib.auth.models import User
 
@@ -11,7 +11,6 @@ class comment(object):
 
     def __init__(self, *args, **kwargs):
 	self.text = None	# can be made into property
-	self.annotation = None
 	self.user = None
 	self.timestamp = None
 	self.model_object = None
@@ -26,13 +25,7 @@ class comment(object):
 	    self.model_object = self.CommentModel(
 		text=kwargs["text"],
 		user=User.objects.get(username=kwargs["user"]),
-		# annotation=annotation.model_object,
-		# user=user,
 	    )
-	    if kwargs.has_key("annotation"):
-	    	# this is a root comment
-		annotation = kwargs["annotation"]
-		self.model_object.annotation = annotation.model_object
 
 	    self.model_object.save()
 	    self.init_from_model()
@@ -43,7 +36,6 @@ class comment(object):
 	self.text = mo.text
 	self.user = mo.user
 	self.timestamp = mo.timestamp
-	self.annotation = mo.annotation
 
     @property
     def replies(self):
@@ -98,22 +90,22 @@ class annotation(object):
 	if kwargs.has_key("comment"):
 	    # TODO: validate all arguments
 
+	    c = comment(text=kwargs["comment"],
+	                user=kwargs["user"])
+
+	    self.comment = c
+
 	    # create a new annotation
 	    self.model_object = self.AnnotationModel(
 		context=kwargs["index"],
 		atype=kwargs["atype"],
+		initial_comment=c.model_object,
 		# user=user,
 	    )
 
 	    self.model_object.save()
 	    self.init_from_model()
 
-	    # connect comment
-	    c = comment(text=kwargs["comment"],
-	                user=kwargs["user"],
-			annotation=self)
-
-	    self.comment = c
 
     @property
     def atype(self):
