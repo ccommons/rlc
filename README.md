@@ -3,20 +3,16 @@ Rapid Learning Community
 
 General required packages are:
 
-    MySQL server
-
-    MySQL client
-
-    Python development environment (for building Python modules)
+* MySQL server
+* MySQL client
+* Python development environment (for building Python modules)
 
 The required Python packages are listed in requirements.txt; install with pip.
 However, you probably need only to install these three, in this order:
 
-    Django
-
-    beautifulsoup4
-
-    django-ckeditor
+* Django
+* beautifulsoup4
+* django-ckeditor
 
 For MySQL-python, you may want to use your distribution's Python MySQLdb
 package. If you want to install that with pip, you'll need the MySQL
@@ -27,50 +23,62 @@ Starting a Development Server:
 ------------------------------
 Quick instructions for a development server, subject to change:
 
-1. Go to rlc/. (cd rlc)
+1.  Go to rlc/. This might be a little confusing because the repository is
+    also named rlc, so you'll have rlc/rlc in your path.
 
-2. Create the site's key with this command:  
+        cd rlc
 
-    python genkey.py
+2.  Create the site's key with this command:
 
-3. Start the mysql client and create a database. You can use any name that
-you like; the example below uses the name "rlc":  
+        python genkey.py
 
-   mysql> CREATE DATABASE rlc
-          DEFAULT CHARACTER SET utf8
-	  DEFAULT COLLATE utf8_general_ci;  
+3.  Start the mysql client and create a database. You can use any name that
+    you like; the example below uses the name "rlc":
 
-It's important that you specify the character encoding at the beginning
-like this.
+        mysql> CREATE DATABASE rlc
+               DEFAULT CHARACTER SET utf8
+               DEFAULT COLLATE utf8_general_ci;  
 
-4. Copy siteconfig.py.dist to siteconfig.py, edit to reflect the DB
-configuration that you just created. The user you choose must have
-read/write access to the database you created above.  
-You do not need to configure STATIC_ROOT if you'll be running the dev server
-only.
+    It's important that you specify the character encoding at the beginning
+    like this.
 
-5. Go back to main repository directory. (cd ..)
+4.  Copy siteconfig.py.dist to siteconfig.py, edit to reflect the DB
+    configuration that you just created. The user you choose must have
+    read/write access to the database you created above.
 
-6. Create the initial unpopulated database tables with this command:  
+    You do not need to configure STATIC_ROOT if you'll be running the dev
+    server only.
 
-    python manage.py syncdb  
+5.  Go back to main repository directory.
 
-During the process, you'll be asked if you'd like to create a superuser.
-Create one for yourself.
+        cd ..
 
-7. Create the initial groups and data:  
+6.  Create the initial unpopulated database tables with this command:
 
-    ./init_data
+        python manage.py syncdb  
 
-8. Start a development server with:  
+    During the process, you'll be asked if you'd like to create a superuser.
+    Create one for yourself.
 
-    python manage.py runserver
+7.  Create the initial groups and data:
 
-9. Log in to your development server with the superuser that you created, go
-to /admin/, and add yourself to the "Editor" group (at least).
+        ./init_data
 
-10. Verify that you can access the index at /. There should be a few
-documents there.
+8.  Start a development server with:  
+
+        python manage.py runserver
+
+    Django will provide you with a URL where you can access your development
+    site.
+
+9.  With your browser, go to that URL. Log in to your development server
+    with the superuser that you created.
+
+10. In that development site, go to the administrative interface at /admin/,
+    and add yourself to the "Editor" group (at least).
+
+11. Go back to the root URL; verify that you can access that index. There
+    should be a few documents there.
 
 Note that if the data models are changed during development, and you update
 your repository, you won't automatically pick up new tables. You must run
