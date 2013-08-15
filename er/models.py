@@ -86,8 +86,75 @@ class Annotation(DiscussionPoint):
 # News Item Annotation Index (place this below)
 
 # Notification models
+class EventType(models.Model):
+    EVENT_TYPES = {
+        ('activity_annotation', 'Annotation Activity'),
+        ('activity_comment', 'Comment Activity'),
+        ('activity_er', 'Evidence Review Activity'),
+        ('new_member', 'New Member'),
+    }
+    event_type = models.CharField(max_length=30, choices=EVENT_TYPES, null=False)
 
-# Notification preferences here
+class EventActivityAnnotation(models.Model):
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+    annotation = models.ForeignKey(Annotation)
+    ACTIVITY_TYPES = {
+        ('new', 'new'),
+    }
+    activity_type = models.CharField(max_length=15, choices=ACTIVITY_TYPES)
+
+class EventActivityComment(models.Model):
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+    comment = models.ForeignKey(Comment)
+    ACTIVITY_TYPES = {
+        ('new', 'new'),
+        ('reply', 'reply'),
+    }
+    activity_type = models.CharField(max_length=15, choices=ACTIVITY_TYPES)
+    # root_type and root_id in place to facilitate potential need to group comments by thread
+    # can just use one CharField storing something like "annotation:12", "news:7", etc.
+    ROOT_TYPES = {
+        ('annotation', 'Annotation'),
+        ('news', 'News'),
+    }
+    root_type = models.CharField(max_length=15, choices=ROOT_TYPES)
+    # root_id: primary key of the root discussion point
+    root_id = models.IntegerField()
+
+class EventActivityER(models.Model):
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+    er = models.ForeignKey(EvidenceReview)
+    ACTIVITY_TYPES = {
+        ('revised', 'revised'),
+        ('updated', 'updated'),
+        ('published', 'published'),
+    }
+    activity_type = models.CharField(max_length=15, choices=ACTIVITY_TYPES)
+
+class EventNewMember(models.Model):
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+    new_member = models.ForeignKey(User)
+
+class Notification(models.Model):
+    user = models.ForeignKey(User)
+    event_type = models.ForeignKey(EventType)
+    # event_id stores the primary key of one of the event_* table
+    event_id = models.IntegerField()
+    shown = models.BooleanField(default=False)
+    read = models.BooleanField(default=False)
+
+# notification preferences here
+class EmailPreferences(models.Model):
+    user = models.OneToOneField(User)
+
+    activity_note = models.BooleanField()
+    activity_rev = models.BooleanField()
+    activity_openq = models.BooleanField()
+    activity_comment = models.BooleanField()
+    er_revised = models.BooleanField()
+    er_updated = models.BooleanField()
+    er_published = models.BooleanField()
+    new_member = models.BooleanField()
 
 # News models
 
