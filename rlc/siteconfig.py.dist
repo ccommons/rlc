@@ -1,5 +1,4 @@
 # sample for MySQL configuration
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -10,4 +9,7 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     }
 }
+
+# where you'll collect static files (not needed for dev server)
+STATIC_ROOT = '/home/www/rlc-static'
 
