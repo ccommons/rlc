@@ -29,41 +29,40 @@ Quick instructions for a development server, subject to change:
 
 1. Go to rlc/. (cd rlc)
 
-2. Create the site's key with this command:
+2. Create the site's key with this command:  
 
     python genkey.py
 
 3. Start the mysql client and create a database. You can use any name that
-you like; the example below uses the name "rlc":
+you like; the example below uses the name "rlc":  
 
    mysql> CREATE DATABASE rlc
           DEFAULT CHARACTER SET utf8
-	  DEFAULT COLLATE utf8_general_ci;
+	  DEFAULT COLLATE utf8_general_ci;  
 
 It's important that you specify the character encoding at the beginning
 like this.
 
 4. Copy siteconfig.py.dist to siteconfig.py, edit to reflect the DB
 configuration that you just created. The user you choose must have
-read/write access to the database you created above.
-
-You do not need to configure STATIC_ROOT if you'll be running the dev
-server only.
+read/write access to the database you created above.  
+You do not need to configure STATIC_ROOT if you'll be running the dev server
+only.
 
 5. Go back to main repository directory. (cd ..)
 
-6. Create the initial unpopulated database tables with this command:
+6. Create the initial unpopulated database tables with this command:  
 
-    python manage.py syncdb
+    python manage.py syncdb  
 
 During the process, you'll be asked if you'd like to create a superuser.
 Create one for yourself.
 
-7. Create the initial groups and data:
+7. Create the initial groups and data:  
 
     ./init_data
 
-8. Start a development server with:
+8. Start a development server with:  
 
     python manage.py runserver
 
