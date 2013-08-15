@@ -3,20 +3,20 @@ Rapid Learning Community
 
 General required packages are:
 
-MySQL server
+    MySQL server
 
-MySQL client
+    MySQL client
 
-Python development environment (for building Python modules)
+    Python development environment (for building Python modules)
 
 The required Python packages are listed in requirements.txt; install with pip.
-However, you probably need only need to install these three, in this order:
+However, you probably need only to install these three, in this order:
 
- Django
+    Django
 
- beautifulsoup4
+    beautifulsoup4
 
- django-ckeditor
+    django-ckeditor
 
 For MySQL-python, you may want to use your distribution's Python MySQLdb
 package. If you want to install that with pip, you'll need the MySQL
@@ -63,7 +63,9 @@ Create one for yourself.
 
     ./init_data
 
-8. Run python manage.py runserver. This should start a development server.
+8. Start a development server with:
+
+    python manage.py runserver
 
 9. Log in to your development server with the superuser that you created, go
 to /admin/, and add yourself to the "Editor" group (at least).
