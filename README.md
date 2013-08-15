@@ -25,7 +25,7 @@ your "distribute" Python package first as well.
 
 Starting a Development Server:
 ------------------------------
-Quick (incomplete) instructions for a development server, subject to change:
+Quick instructions for a development server, subject to change:
 
 1. Go to rlc/. (cd rlc)
 
