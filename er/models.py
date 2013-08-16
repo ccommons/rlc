@@ -89,60 +89,33 @@ class Annotation(DiscussionPoint):
 # News Item Annotation Index (place this below)
 
 # Notification models
-class EventType(models.Model):
+class Event(models.Model):
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     EVENT_TYPES = {
-        ('activity_annotation', 'Annotation Activity'),
-        ('activity_comment', 'Comment Activity'),
-        ('activity_er', 'Evidence Review Activity'),
-        ('new_member', 'New Member'),
+        'annotation' : 'Annotation',
+        'comment' : 'Comment',
+        'er' : 'EvidenceReview',
+        'user' : 'User',
     }
-    event_type = models.CharField(max_length=30, choices=EVENT_TYPES, null=False)
-
-class EventActivityAnnotation(models.Model):
-    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
-    annotation = models.ForeignKey(Annotation)
-    ACTIVITY_TYPES = {
-        ('new', 'new'),
+    etype = models.CharField(max_length=15, choices=EVENT_TYPES)
+    ACTIONS = {
+        'new',
+        'revised',
+        'updated',
+        'published',
     }
-    activity_type = models.CharField(max_length=15, choices=ACTIVITY_TYPES)
-
-class EventActivityComment(models.Model):
-    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
-    comment = models.ForeignKey(Comment)
-    ACTIVITY_TYPES = {
-        ('new', 'new'),
-        ('reply', 'reply'),
-    }
-    activity_type = models.CharField(max_length=15, choices=ACTIVITY_TYPES)
-    # root_type and root_id in place to facilitate potential need to group comments by thread
-    # can just use one CharField storing something like "annotation:12", "news:7", etc.
-    ROOT_TYPES = {
-        ('annotation', 'Annotation'),
-        ('news', 'News'),
-    }
-    root_type = models.CharField(max_length=15, choices=ROOT_TYPES)
-    # root_id: primary key of the root discussion point
-    root_id = models.IntegerField()
-
-class EventActivityER(models.Model):
-    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
-    er = models.ForeignKey(EvidenceReview)
-    ACTIVITY_TYPES = {
-        ('revised', 'revised'),
-        ('updated', 'updated'),
-        ('published', 'published'),
-    }
-    activity_type = models.CharField(max_length=15, choices=ACTIVITY_TYPES)
-
-class EventNewMember(models.Model):
-    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
-    new_member = models.ForeignKey(User)
+    action = models.CharField(max_length=10, choices=ACTIONS, null=True)
+    # pk of resource table depending on etype, not always integer?
+    resource_id = models.CharField(max_length=100)
+    # remarks stores additional information of the event
+    # e.g. the root of the comment for a comment type event
+    # root of comment stored in format type:pk. E.g. 'annotation:12', 'news:7'.
+    # reason not to use json is that this simple string is easier for grouping
+    remarks = models.CharField(max_length=255, default="")
 
 class Notification(models.Model):
     user = models.ForeignKey(User)
-    event_type = models.ForeignKey(EventType)
-    # event_id stores the primary key of one of the event_* table
-    event_id = models.IntegerField()
+    event = models.ForeignKey(Event)
     shown = models.BooleanField(default=False)
     read = models.BooleanField(default=False)
 
