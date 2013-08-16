@@ -49,7 +49,7 @@ Quick instructions for a development server, subject to change:
     You do not need to configure STATIC_ROOT if you'll be running the dev
     server only.
 
-5.  Go back to main repository directory.
+5.  Go back to the main repository directory.
 
         cd ..
 
@@ -71,8 +71,8 @@ Quick instructions for a development server, subject to change:
     Django will provide you with a URL where you can access your development
     site.
 
-9.  With your browser, go to that URL. Log in to your development server
-    with the superuser that you created.
+9.  With your browser, go to that URL. Log in with the superuser that you
+    created.
 
 10. In that development site, go to the administrative interface at /admin/,
     and add yourself to the "Editor" group (at least).
