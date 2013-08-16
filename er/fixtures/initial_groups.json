@@ -1,0 +1,103 @@
+[
+{
+    "pk": 2, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "Editor", 
+        "permissions": [
+            [
+                "add_author", 
+                "er", 
+                "author"
+            ], 
+            [
+                "change_author", 
+                "er", 
+                "author"
+            ], 
+            [
+                "delete_author", 
+                "er", 
+                "author"
+            ], 
+            [
+                "add_evidencereview", 
+                "er", 
+                "evidencereview"
+            ], 
+            [
+                "change_evidencereview", 
+                "er", 
+                "evidencereview"
+            ], 
+            [
+                "delete_evidencereview", 
+                "er", 
+                "evidencereview"
+            ], 
+            [
+                "add_paperauthorship", 
+                "er", 
+                "paperauthorship"
+            ], 
+            [
+                "change_paperauthorship", 
+                "er", 
+                "paperauthorship"
+            ], 
+            [
+                "delete_paperauthorship", 
+                "er", 
+                "paperauthorship"
+            ]
+        ]
+    }
+},
+{
+    "pk": 3, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "Administrator", 
+        "permissions": [
+            [
+                "add_user", 
+                "auth", 
+                "user"
+            ], 
+            [
+                "change_user", 
+                "auth", 
+                "user"
+            ], 
+            [
+                "delete_user", 
+                "auth", 
+                "user"
+            ], 
+            [
+                "add_profile", 
+                "er", 
+                "profile"
+            ], 
+            [
+                "change_profile", 
+                "er", 
+                "profile"
+            ], 
+            [
+                "delete_profile", 
+                "er", 
+                "profile"
+            ]
+        ]
+    }
+},
+{
+    "pk": 4, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "Member", 
+        "permissions": []
+    }
+}
+]

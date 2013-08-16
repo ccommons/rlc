@@ -1,0 +1,5 @@
+#!/bin/sh
+
+python manage.py loaddata ./er/fixtures/initial_groups.json
+python manage.py loaddata ./er/fixtures/initial_documents.json
+

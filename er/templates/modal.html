@@ -1,6 +1,9 @@
 <script language="javascript">
 function testmodal() {
-    $("#test-modal").modal();
+    var element = $("#test-modal");
+    element.modal();
+    var top = window.pageYOffset + 30;
+    element.css('top', top);
 }
 </script>
 <div id="test-modal" class="modal fade">

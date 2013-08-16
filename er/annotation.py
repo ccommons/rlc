@@ -71,15 +71,18 @@ class comment(object):
 	reply_comment.parent = self
 	return(reply_comment)
 
-class annotation(object):
-    """ """
+class discussionpoint(object):
+    """Discussion point abstract base class"""
     def __config__(self):
-	self.AnnotationModel = mAnnotation
+	"""initializer for subclasses"""
+	self.Model = None
+
+    def model_config(self, model_kwargs, orig_kwargs):
+	"""model configuration (fill in for subclasses)"""
+	pass
 
     def __init__(self, *args, **kwargs):
 	self.id = None
-	self._index = None
-	self._atype = None
 	self.comment = None
 	self.timestamp = None
 	self.model_object = None
@@ -95,17 +98,54 @@ class annotation(object):
 
 	    self.comment = c
 
-	    # create a new annotation
-	    self.model_object = self.AnnotationModel(
-		context=kwargs["index"],
-		atype=kwargs["atype"],
-		initial_comment=c.model_object,
-		# user=user,
-	    )
+	    mod_kwargs = {
+		"initial_comment" : c.model_object,
+	    }
 
+	    # subclass-specific model configuration
+	    self.model_config(mod_kwargs, kwargs)
+
+	    # create a new model
+	    self.model_object = self.Model(**mod_kwargs)
 	    self.model_object.save()
-	    self.init_from_model()
 
+	    self.init_from_model_super()
+
+    def init_from_model_super(self):
+	"""initialize instance data from model"""
+	mo = self.model_object
+	self.timestamp = mo.timestamp
+	self.id = mo.id
+	self.comment = comment.fetch(mo.initial_comment.id)
+	self.init_from_model()
+
+    def init_from_model(self):
+	"""fill in for subclasses"""
+	pass
+
+    @classmethod
+    def fetch(this_class, id):
+	"""get a discussion point by ID"""
+	a = this_class()
+	a.model_object = a.Model.objects.get(id=id)
+	a.init_from_model_super()
+	return(a)
+
+class annotation(discussionpoint):
+    """Annotation for RLC document"""
+    def __config__(self):
+	self._index = None
+	self._atype = None
+	self.Model = mAnnotation
+
+    def model_config(self, model_kwargs, orig_kwargs):
+	model_kwargs["context"] = orig_kwargs["index"]
+	model_kwargs["atype"] = orig_kwargs["atype"]
+
+    def init_from_model(self):
+	mo = self.model_object
+	self._atype = mo.atype
+	self.index = mo.context
 
     @property
     def atype(self):
@@ -115,25 +155,11 @@ class annotation(object):
     @atype.setter
     def atype(self, value):
 	# TODO: abstract the following
-	valid_types = [at[0] for at in self.AnnotationModel.ANNOTATION_TYPES]
+	valid_types = [at[0] for at in self.Model.ANNOTATION_TYPES]
 	if value in valid_types:
 	    self._atype = value
+	    self.model_object.atype = value
+	    self.model_object.save()
 	else:
 	    raise ValueError("annotation type must be one of " + str(valid_types))
-
-    def init_from_model(self):
-	"""initialize instance data from model"""
-	mo = self.model_object
-	self.atype = mo.atype
-	self.index = mo.context
-	self.timestamp = mo.timestamp
-	self.id = mo.id
-
-    @classmethod
-    def fetch(annotation, id):
-	"""get annotation by ID"""
-	a = annotation()
-	a.model_object = a.AnnotationModel.objects.get(id=id)
-	a.init_from_model()
-	return(a)
 
