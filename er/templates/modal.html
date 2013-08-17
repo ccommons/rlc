@@ -1,23 +1,21 @@
 <script language="javascript">
-function testmodal() {
-    var element = $("#test-modal");
-    element.modal();
-    var top = window.pageYOffset + 30;
-    element.css('top', top);
+function annotation_init(doc_id, annotation_id) {
+    var display = function(data, status, jqxhr) {
+	var modal_html = data["body_html"];
+	var modal_id = data["modal_id"];
+	var remove = function(element) {
+	    $("#" + modal_id).remove();
+	}
+	$('body').append(modal_html);
+	var element = $("#" + modal_id);
+	element.modal();
+	var top = window.pageYOffset + 30;
+	element.css('top', top);
+	element.on('hidden', remove);
+    }
+    // TODO: make this dynamic from URL
+    var url = '/er/{{ doc.id }}/annotation/openq/json';
+    $.get(url, '', display, 'json');
 }
 </script>
-<div id="test-modal" class="modal fade">
-    <div class="modal-dialog">
-	<div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	    <h4 class="modal-title">test</h4>
-	</div>
-	<div class="modal-body">
-	    This is a test modal window
-	</div>
-	<div class="modal-footer">
-	    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-	</div>
-    </div>
-</div>
+
