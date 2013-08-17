@@ -15,9 +15,13 @@ urlpatterns = patterns('',
     #
     url(r'^er/(?P<er_id>\d+)$', 'er.views.document.fullpage', name='mainview'),
 
-    # annotation
+    # annotations
+
+    # general view
     # TODO: add specific annotation
     url(r'^er/(?P<er_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.document.annotation_json', name='annotation'),
+    # annotation compose
+    url(r'^er/(?P<er_id>\d+)/annotation/compose/(?P<atype>openq)/json$', 'er.views.document.annotation_compose_json', name='annotation'),
 
     # editor
     url(r'^er/(?P<er_id>\d+)/edit$', 'er.views.edit.formview', name='ereditor'),

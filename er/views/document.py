@@ -63,10 +63,11 @@ from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.http import HttpResponse
 from er.annotation import annotation, comment
+from django import forms
 
 @login_required
 def annotation_json(request, *args, **kwargs):
-    """main page view"""
+    """annotation view"""
     req_cxt = RequestContext(request)
 
     doc = get_doc(**kwargs)
@@ -104,6 +105,42 @@ def annotation_json(request, *args, **kwargs):
 	"test" : 1,
     })
 
-    # return(HttpResponse(html))
+    return(HttpResponse(json, mimetype='application/json'))
+
+class AnnotationComposeForm(forms.Form):
+    id = forms.IntegerField(widget=forms.HiddenInput())
+    atype = forms.CharField(max_length=100)
+    text = forms.CharField(widget=forms.Textarea())
+    # content = forms.CharField(widget=CKEditorWidget())
+    # following is for default text widget
+    # content = forms.CharField(widget=forms.Textarea())
+
+@login_required
+def annotation_compose_json(request, *args, **kwargs):
+    """main compose view"""
+    req_cxt = RequestContext(request)
+
+    doc = get_doc(**kwargs)
+
+    if doc != None:
+    	content = doc.content
+    else:
+        content = "no document"
+
+    atype = kwargs["atype"]
+
+    modal_id = "modal-compose-{0}".format(doc.id)
+
+    context = Context({
+	"doc" : doc,
+	"modal_id" : modal_id,
+    })
+
+    body_html = render_to_string("annotation_compose.html", context, context_instance=req_cxt)
+    json = simplejson.dumps({
+    	"body_html" : body_html,
+	"modal_id" : modal_id,
+    })
+
     return(HttpResponse(json, mimetype='application/json'))
 
