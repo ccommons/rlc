@@ -21,7 +21,7 @@ class comment(object):
 
 	# create new comment if there are args
 	# TODO: clean up argument validation
-	if kwargs.has_key("text"):
+	if "text" in kwargs:
 	    self.model_object = self.CommentModel(
 		text=kwargs["text"],
 		user=User.objects.get(username=kwargs["user"]),
@@ -112,7 +112,7 @@ class discussionpoint(object):
 	self.__config__()
 
 	# new annotation
-	if kwargs.has_key("comment"):
+	if "comment" in kwargs:
 	    # TODO: validate all arguments
 
 	    c = comment(text=kwargs["comment"],

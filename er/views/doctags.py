@@ -31,7 +31,7 @@ def add_id_attrs(doc, tag, id_prefix):
 
 	# look for a pre-existing id attribute
 	if tag.has_attr("id"):
-	    if div_ids.has_key(tag.attrs["id"]):
+	    if tag.attrs["id"] in div_ids:
 		# duplicate id; generate a new one
 		# print ("duplicate: " + tag.attrs["id"])
 		gen_id = True 
