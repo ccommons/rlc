@@ -74,14 +74,15 @@ def annotation_json(request, *args, **kwargs):
     if doc != None:
     	content = doc.content
     else:
-    	content = "no document"
+        content = "no document"
 
     atype = kwargs["atype"]
 
     annotations = doc.annotations.all()
-    if annotations == []:
+    num_annotations = len(annotations)
+    if num_annotations == 0:
 	a = None
-	comment_info = {}
+	comments = []
     else:
 	a = annotation.fetch(annotations[0].id)
 	comments = a.comment.thread_as_list()
@@ -93,6 +94,7 @@ def annotation_json(request, *args, **kwargs):
 	"modal_id" : modal_id,
 	"comments" : comments,
 	"reply_count" : len(comments) - 1,
+	"num_annotations" : num_annotations,
     })
 
     body_html = render_to_string("annotation.html", context, context_instance=req_cxt)
