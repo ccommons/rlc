@@ -43,10 +43,7 @@ def fullpage(request, *args, **kwargs):
     else:
     	content = "no document"
 
-    # print dir(request.user.groups)
-    # print (request.user.groups.values())
     group_names = [g["name"] for g in request.user.groups.values()]
-    # print [g.name for group in request.user.groups]
 
     sections = doc.papersection_set.order_by('position')
 
@@ -58,4 +55,53 @@ def fullpage(request, *args, **kwargs):
 	"sections" : sections,
     })
     return(render_to_response("er.html", context, context_instance=req_cxt))
+
+
+# annotation view interface
+
+from django.template.loader import render_to_string
+from django.utils import simplejson
+from django.http import HttpResponse
+from er.annotation import annotation, comment
+
+@login_required
+def annotation_json(request, *args, **kwargs):
+    """main page view"""
+    req_cxt = RequestContext(request)
+
+    doc = get_doc(**kwargs)
+
+    if doc != None:
+    	content = doc.content
+    else:
+    	content = "no document"
+
+    atype = kwargs["atype"]
+
+    annotations = doc.annotations.all()
+    if annotations == []:
+	a = None
+	comment_info = {}
+    else:
+	a = annotation.fetch(annotations[0].id)
+	comments = a.comment.thread_as_list()
+	author = a.comment.user
+
+    modal_id = "modal-{0}".format(doc.id)
+    context = Context({
+	"doc" : doc,
+	"modal_id" : modal_id,
+	"comments" : comments,
+	"reply_count" : len(comments) - 1,
+    })
+
+    body_html = render_to_string("annotation.html", context, context_instance=req_cxt)
+    json = simplejson.dumps({
+    	"body_html" : body_html,
+	"modal_id" : modal_id,
+	"test" : 1,
+    })
+
+    # return(HttpResponse(html))
+    return(HttpResponse(json, mimetype='application/json'))
 
