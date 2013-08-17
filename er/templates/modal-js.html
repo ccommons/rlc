@@ -13,24 +13,51 @@ function Modal() {
                 this.content_element = null;
             }
         },
+        'close' : function() {
+            this.content_element.modal('hide');
+        },
         'render' : function() {
             this.content_element.modal();
-            // var top = window.pageYOffset + 30;
-            // this.content_element.css('top', top);
-            // this.content_element.on('hidden', this.content_delete.bind(this));
+            this.content_element.on('hidden', this.content_delete.bind(this));
         }
     });
 }
 
-function annotation_init(doc_id, annotation_id) {
+function AnnotationModal() {
+    var $super = new Modal();
+    $.extend(this, $super, {
+        'render' : function() {
+            $super.render.bind(this)();
+            $('#annotation-compose').click(function(event) {
+                this.close();
+                annotation_compose_init({{ doc.id }});
+            }.bind(this));
+        }
+    });
+}
+
+function modal_init(url, modaltype) {
+    if (typeof(modaltype) === 'undefined') {
+        var modaltype = Modal;
+    }
     var display = function(data, status, jqxhr) {
-        var modal = new Modal();
+        // TODO: add protocol error checking
+        var modal = new modaltype();
         modal.content_set(data["body_html"], data["modal_id"]);
         modal.render();
     }
-    // TODO: make this dynamic from URL
-    var url = '/er/{{ doc.id }}/annotation/openq/json';
     $.get(url, '', display, 'json');
+}
+
+function annotation_init(doc_id, annotation_id) {
+    // TODO: make this dynamic from URL
+    var url = '/er/' + doc_id + '/annotation/openq/json';
+    modal_init(url, AnnotationModal);
+}
+
+function annotation_compose_init(doc_id) {
+    var url = '/er/' + doc_id + '/annotation/compose/openq/json';
+    modal_init(url);
 }
 </script>
 
