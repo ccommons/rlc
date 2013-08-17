@@ -40,7 +40,7 @@ class comment(object):
     @property
     def replies(self):
     	"""get all replies to a comment"""
-	reply_ids = [r.id for r in self.model_object.replies.all()]
+	reply_ids = [r.id for r in self.model_object.replies.order_by('timestamp')]
 	replies = [self.__class__.fetch(id) for id in reply_ids]
 	return replies
 
@@ -70,6 +70,28 @@ class comment(object):
 	reply_comment = self.__class__(*args, **kwargs)
 	reply_comment.parent = self
 	return(reply_comment)
+
+    def thread_as_list(self):
+	"""return the comment thread as a list, in threaded order"""
+	comment_stack = [([self], 0)]
+	output = []
+	while comment_stack != []:
+	    (comments, level) = comment_stack[-1]
+	    if comments == []:
+		# nothing left in the current level to process
+	    	comment_stack.pop()
+	    else:
+		# process next comment in current level
+		next_comment = comments.pop(0)
+		next_comment.level = level
+		output.append(next_comment)
+		replies = next_comment.replies
+		if replies != []:
+		    # if there are replies to this comment, add them to the
+		    # list of comments to process at a new level
+		    comment_stack.append((replies, level + 1))
+
+	return(output)
 
 class discussionpoint(object):
     """Discussion point abstract base class"""
