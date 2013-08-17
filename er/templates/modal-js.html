@@ -1,0 +1,36 @@
+<script language="javascript">
+function Modal() {
+    $.extend(this, {
+        'content_element' : null,
+        'content_set' : function(content_html, id) {
+            $('body').append(content_html);
+            var content_id = "#" + id;
+            this.content_element = $(content_id);
+        },
+        'content_delete' : function() {
+            if (this.content_element !== null) {
+                this.content_element.remove();
+                this.content_element = null;
+            }
+        },
+        'render' : function() {
+            this.content_element.modal();
+            // var top = window.pageYOffset + 30;
+            // this.content_element.css('top', top);
+            // this.content_element.on('hidden', this.content_delete.bind(this));
+        }
+    });
+}
+
+function annotation_init(doc_id, annotation_id) {
+    var display = function(data, status, jqxhr) {
+        var modal = new Modal();
+        modal.content_set(data["body_html"], data["modal_id"]);
+        modal.render();
+    }
+    // TODO: make this dynamic from URL
+    var url = '/er/{{ doc.id }}/annotation/openq/json';
+    $.get(url, '', display, 'json');
+}
+</script>
+

@@ -1,6 +1,6 @@
 {% extends "er-containers.html" %}
 {% block table_of_contents %}
-    {% include "modal.html" %}
+    {% include "modal-js.html" %}
     <ul>
     {% for section in sections %}
     	<li><a href="#{{ section.id }}">{{ section.header_text }}</a></li>
