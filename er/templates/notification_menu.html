@@ -1,0 +1,11 @@
+{% extends "singlecontainer.html" %}
+{% block content_title %}Notifications{% endblock %}
+{% block content %}
+    <ul>
+    {% for item in unread %}
+	<li>{{item}}</li>
+    {% endfor %}
+    </ul>
+    <ul>
+{% endblock %}
+
