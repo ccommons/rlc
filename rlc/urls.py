@@ -7,12 +7,17 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # index page
     url(r'^$', 'er.views.document.index', name='index'),
+    url(r'^er/$', 'er.views.document.index', name='index'),
 
     # main view
     #
     # url(r'^er/$', 'er.views.document.fullpage', name='mainview'),
-    # 
+    #
     url(r'^er/(?P<er_id>\d+)$', 'er.views.document.fullpage', name='mainview'),
+
+    # annotation
+    # TODO: add specific annotation
+    url(r'^er/(?P<er_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.document.annotation_json', name='annotation'),
 
     # editor
     url(r'^er/(?P<er_id>\d+)/edit$', 'er.views.edit.formview', name='ereditor'),
