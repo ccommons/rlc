@@ -92,17 +92,17 @@ class Annotation(DiscussionPoint):
 class Event(models.Model):
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     EVENT_TYPES = {
-        'annotation' : 'Annotation',
-        'comment' : 'Comment',
-        'er' : 'EvidenceReview',
-        'user' : 'User',
+        ('annotation', 'Annotation'),
+        ('comment', 'Comment'),
+        ('er', 'EvidenceReview'),
+        ('user', 'User'),
     }
     etype = models.CharField(max_length=15, choices=EVENT_TYPES)
     ACTIONS = {
-        'new',
-        'revised',
-        'updated',
-        'published',
+        ('new', 'New'),
+        ('revised', 'Revised'),
+        ('updated', 'Updated'),
+        ('published', 'Published'),
     }
     action = models.CharField(max_length=10, choices=ACTIONS, null=True)
     # pk of resource table depending on etype, not always integer?
