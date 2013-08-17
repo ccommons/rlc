@@ -5,19 +5,6 @@ from django.contrib.auth.decorators import login_required
 from er.models import Notification
 from er.notification import EVENT_TYPE_HANDLER_MAP
 
-@login_required
-def notification_icon(request):
-    """notification icon indicates whether there is new notification"""
-    req_cxt = RequestContext(request)
-
-    count = Notification.objects.filter(user=request.user, shown=False, read=False).count()
-
-    context = Context({
-    	"count" : count,
-    })
-
-    return(render_to_response("notification_icon.html", context, context_instance=req_cxt))
-
 def parse_notifications(notifications):
     items = []
     etypes = {}
@@ -28,7 +15,12 @@ def parse_notifications(notifications):
             etypes[n.event.etype] = [n]
 
     for etype in etypes:
-        items += EVENT_TYPE_HANDLER_MAP[etype].parse_notifications(etypes[etype])
+        if etype in EVENT_TYPE_HANDLER_MAP:
+            handler = EVENT_TYPE_HANDLER_MAP[etype]()
+            items += handler.parse_notifications(etypes[etype])
+        else:
+            # debug message
+            pass
 
     return items
 
@@ -45,7 +37,7 @@ def notifications_menu(request):
     # group items by unread/read
     unread_items = []
     read_items = []
-    for item in all_itmes:
+    for item in all_items:
         if item.read:
             read_items.append(item)
         else:
