@@ -23,6 +23,9 @@ urlpatterns = patterns('',
     # view one annotation
     # url(r'^er/XXX/notes/ARGS$', 'er.views.document.fullpage', name='mainview'),
 
+    # notification menu
+    url(r'^er/notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),
+
 
     # framework administration
     url(r'^admin/', include(admin.site.urls)),
