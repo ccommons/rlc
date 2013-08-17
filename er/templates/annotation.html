@@ -1,10 +1,11 @@
-<div id="{{ modal_id }}" class="modal fade">
+<div id="{{ modal_id }}" class="modal hide fade" tabindex="-1" role="dialog">
 <div class="modal-dialog">
     <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	<h4 class="modal-title">Open Questions</h4>
     </div>
     <div class="modal-body">
+        <div><a href="#">New Open Question</a></div>
 	{% if num_annotations == 0 %}
 	    <div>No Open Questions <br />(insert link here to create one)</div>
 	{% else %}
