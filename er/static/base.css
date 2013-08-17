@@ -78,9 +78,9 @@ body {
 	font-family: "Open Sans", sans-serif;
 }
 
-.modal {
-	position: absolute;
-}
+/* .modal {
+ 	position: absolute;
+} */
 
 .terms-of-consent-modal {
 	width: 660px;
