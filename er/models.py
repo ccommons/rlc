@@ -72,7 +72,7 @@ class Annotation(DiscussionPoint):
     }
     atype = models.CharField(max_length=10, choices=ANNOTATION_TYPES, default='note')
     # TODO: remove null from the following (easier to debug when null allowed)
-    er_doc = models.ForeignKey(EvidenceReview, related_name="annotation_locations", null=True)
+    er_doc = models.ForeignKey(EvidenceReview, related_name="annotations", null=True)
     er_section = models.ForeignKey(PaperSection, blank=True, null=True, on_delete=models.SET_NULL, related_name="annotation_locations")
 
     def __unicode__(self):

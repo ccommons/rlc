@@ -3,6 +3,7 @@ Rapid Learning Community
 
 General required packages are:
 
+* Python 2.7
 * MySQL server
 * MySQL client
 * Python development environment (for building Python modules)
