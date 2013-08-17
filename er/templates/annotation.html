@@ -5,7 +5,11 @@
 	<h4 class="modal-title">Open Questions</h4>
     </div>
     <div class="modal-body">
-	<div>Open Question Context (if it exists)</div>
+	{% if num_annotations == 0 %}
+	    <div>No Open Questions <br />(insert link here to create one)</div>
+	{% else %}
+	    <div>Open Question Context (if it exists)</div>
+	{% endif %}
 	{% for comment in comments %}
 	<div>
 	    <div style="margin-bottom: 3px; margin-left: {{ comment.level }}0px">
