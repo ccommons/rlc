@@ -3,7 +3,13 @@
     <h4 class="modal-title">New Annotation</h4>
 {% endblock %}
 {% block modal_body %}
-    <form>
-    Compose Annotation Form Here
-    </form>
+<form id="annotation-compose-form">
+{% csrf_token %}
+<h3>New Open Question</h3>
+{{ form.as_p }}
+<div>
+<button type="button" id="annotation-submit" action="{{form_action}}" class="btn">Submit</button>
+<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+</div>
+</form>
 {% endblock %}
