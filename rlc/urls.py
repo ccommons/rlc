@@ -21,7 +21,8 @@ urlpatterns = patterns('',
     # TODO: add specific annotation
     url(r'^er/(?P<er_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.annotations.full_json', name='annotation'),
     # annotation compose
-    url(r'^er/(?P<er_id>\d+)/annotation/compose/(?P<atype>openq)/json$', 'er.views.annotations.compose_json', name='annotation'),
+    url(r'^er/(?P<er_id>\d+)/annotation/compose/(?P<atype>openq)/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
+    url(r'^er/(?P<er_id>\d+)/annotation/new/(?P<atype>openq)/json$', 'er.views.annotations.add_json', name='annotation_new'),
 
     # editor
     url(r'^er/(?P<er_id>\d+)/edit$', 'er.views.edit.formview', name='ereditor'),
