@@ -1,6 +1,7 @@
 from er.models import Comment as mComment
 from er.models import Annotation as mAnnotation
 from er.models import Notification as mNotification
+from er.models import EvidenceReview as mEvidenceReview
 from er.models import Event as mEvent
 
 from django.contrib.auth.models import User
@@ -83,16 +84,27 @@ class commentEventHandler(eventHandler):
     def cast_pks(cls, pks):
         return map(lambda x: int(x), pks)
 
+class EvidenceReviewEventHandler(eventHandler):
+    def __config__(self):
+        self._etype = 'er'
+        self._resource_model = mEvidenceReview
+
+    @classmethod
+    def cast_pks(cls, pks):
+        return map(lambda x: int(x), pks)
+
+
 # XXX make it a subclass of dict, verify key with etype of handler whenever a key/value pair is set
 EVENT_TYPE_HANDLER_MAP = {
     'annotation' : annotationEventHandler,
     'comment' : commentEventHandler,
-    #'er' : EvidenceReviewEventHandler,
+    'er' : EvidenceReviewEventHandler,
     #'user' : UserEventHandler,
 }
 
 class event(object):
     """Represents an event"""
+    MODEL = mEvent
 
     def __init__(self, *args, **kwargs):
         self._event_handler = None
@@ -102,7 +114,7 @@ class event(object):
         self._resource_id = ''
 
         self._resource = None
-        self.model_object = None
+        self._model_object = None
 
         if 'event_handler' in kwargs and kwargs['event_handler']:
             if not isinstance(kwargs['event_handler'], eventHandler):
@@ -110,21 +122,21 @@ class event(object):
             self._event_handler = kwargs['event_handler']
 
         if 'model_object' in kwargs:
-            if isinstance(kwargs['model_object'], MODEL):
+            if isinstance(kwargs['model_object'], self.__class__.MODEL):
                 if self.event_handler:
                     if not self.event_handler.etype == kwargs['model_object'].etype:
                         raise TypeError("model object etype does not match event handler etype")
                 else:
                     # create event handler
                     self._event_handler = EVENT_TYPE_HANDLER_MAP[kwargs['model_object']]()
-                self.model_object = kwargs['model_object']
+                self._model_object = kwargs['model_object']
                 # init from model
-                self.timestamp = self.model_object.timestamp
-                self.action = self.model_object.action
-                self.resource_id = self.model_object.resource_id
-                self.remarks = self.model_object.remarks
+                self.timestamp = self._model_object.timestamp
+                self.action = self._model_object.action
+                self.resource_id = self._model_object.resource_id
+                self.remarks = self._model_object.remarks
             else:
-                raise TypeError('model_object must be an instance of %s' % type(MODEL))
+                raise TypeError('model_object must be an instance of %s' % type(self.__class.__MODEL))
 
         # at this point, _event_handler must have been set
         if not self.event_handler:
@@ -132,7 +144,29 @@ class event(object):
 
         if 'resource' in kwargs:
             self.resource = kwargs['resource']
-    
+
+        if not self._model_object:
+            # create one
+            action = kwargs.get('action', None)
+            valid_actions = [a[0] for a in self.__class__.MODEL.ACTIONS]
+            if action and action not in valid_actions:
+                raise ValueError("action must be None or one of %s" % str(valid_actions))
+            res_id = (self.resource and str(self.resource.pk)) or str(kwargs.get('resource_id', ''))
+            remarks = kwargs.get('remarks', '')
+            self._model_object = self.__class__.MODEL(
+                etype = self.event_handler.etype,
+                action = action,
+                resource_id = res_id,
+                remarks = remarks,
+            )
+            self._model_object.save()
+
+        #at this point, model_object must have been created
+
+    @property
+    def model_object(self):
+        return self._model_object
+
     @property
     def etype(self):
         return self._event_handler.etype
@@ -144,8 +178,8 @@ class event(object):
     @property
     def resource_id(self):
         # get id from resource if one exists
-        if not self._resource_id and self.resource:
-            self.resource_id = self.resource.pk
+        if not self._resource_id and self._resource:
+            self.resource_id = self._resource.pk
         return self._resource_id
 
     @resource_id.setter
@@ -163,8 +197,8 @@ class event(object):
     @property
     def resource(self):
         # get resource if id and etype are set
-        if not self._resource and self.resource_id:
-            self.resource = self.event_handler.get_resource(self.resource_id)
+        if not self._resource and self._resource_id:
+            self.resource = self.event_handler.get_resource(self._resource_id)
         return self._resource
 
     @resource.setter
@@ -197,7 +231,7 @@ class notification(object):
         # create new notification if there are event and user args
         if 'event' in kwargs and 'user' in kwargs:
             if isinstance(kwargs['event'], event) and kwargs['event'].model_object:
-                self.model_object = MODEL(
+                self.model_object = self.__class__.MODEL(
                     user=kwargs['user'],
                     event=kwargs['event'].model_object,
                 )
@@ -206,15 +240,15 @@ class notification(object):
                 self.event = kwargs['event']
 
         if 'model_object' in kwargs:
-            if isinstance(kwargs['model_object'], MODEL):
+            if isinstance(kwargs['model_object'], self.__class__.MODEL):
                 self.model_object = kwargs['model_object']
                 self.user = self.model_object.user
                 self.shown = self.model_object.shown
                 self.read = self.model_object.read
                 self.event = event(model_object=self.model_object.event, event_handler=kwargs.get('event_handler', None))
             else:
-                raise TypeError('model_object must be an instance of %s' % type(MODEL))
+                raise TypeError('model_object must be an instance of %s' % type(self.__class__.MODEL))
 
     @classmethod
     def count(cls, user):
-        return MODEL.objects.filter(user, shown=False, read=False).count()
+        return cls.MODEL.objects.filter(user, shown=False, read=False).count()
