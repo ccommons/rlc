@@ -4,6 +4,10 @@ from django.contrib.auth.decorators import login_required
 
 from er.models import EvidenceReview
 
+from django.core.urlresolvers import reverse
+
+from copy import deepcopy
+
 @login_required
 def index(request):
     """index page"""
@@ -47,12 +51,16 @@ def fullpage(request, *args, **kwargs):
 
     sections = doc.papersection_set.order_by('position')
 
+    oq_kwargs = deepcopy(kwargs)
+    oq_kwargs["atype"] = "openq"
+
     context = Context({
 	"doc" : doc,
 	"doctitle" : "Melanoma RLC: " + doc.title,
     	"main_document" : content,
 	"group_names" : group_names,
 	"sections" : sections,
+        "openq_url" : reverse('annotation', kwargs=oq_kwargs),
     })
     return(render_to_response("er.html", context, context_instance=req_cxt))
 
