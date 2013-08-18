@@ -211,8 +211,7 @@ class notification(object):
                 self.user = self.model_object.user
                 self.shown = self.model_object.shown
                 self.read = self.model_object.read
-                if 'event_handler' in kwargs and isinstance(kwargs['event_handler'], eventHandler):
-                self.event = event(model_object=self.model_object.event, event_handler=kwargs['event_handler'])
+                self.event = event(model_object=self.model_object.event, event_handler=kwargs.get('event_handler', None))
             else:
                 raise TypeError('model_object must be an instance of %s' % type(MODEL))
 
