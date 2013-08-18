@@ -30,7 +30,26 @@ function AnnotationModal() {
             $super.render.bind(this)();
             $('#annotation-compose').click(function(event) {
                 this.close();
-                annotation_compose_init({{ doc.id }});
+                var url = $('#annotation-compose').attr('url');
+                annotation_compose_init(url);
+            }.bind(this));
+        }
+    });
+}
+
+function AnnotationComposeModal() {
+    var $super = new Modal();
+    $.extend(this, $super, {
+        'render' : function() {
+            $super.render.bind(this)();
+            $('#annotation-submit').click(function(event) {
+                // can we get this from the event?
+                var action = $('#annotation-submit').attr('action');
+                var postdata = $('#annotation-compose-form').serialize();
+                alert(action + postdata);
+                $.post(action, postdata);
+                // TODO: finish this off
+                this.close();
             }.bind(this));
         }
     });
@@ -49,15 +68,12 @@ function modal_init(url, modaltype) {
     $.get(url, '', display, 'json');
 }
 
-function annotation_init(doc_id, annotation_id) {
-    // TODO: make this dynamic from URL
-    var url = '/er/' + doc_id + '/annotation/openq/json';
+function annotation_init(url) {
     modal_init(url, AnnotationModal);
 }
 
-function annotation_compose_init(doc_id) {
-    var url = '/er/' + doc_id + '/annotation/compose/openq/json';
-    modal_init(url);
+function annotation_compose_init(url) {
+    modal_init(url, AnnotationComposeModal);
 }
 </script>
 

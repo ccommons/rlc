@@ -3,21 +3,19 @@
     <h4 class="modal-title">Open Questions</h4>
 {% endblock %}
 {% block modal_body %}
-    <div><a href="#">New Open Question</a></div>
-    <div><button type="button" id="annotation-compose" class="btn">New</button></div>
+    <div><button type="button" id="annotation-compose" url="{{ compose_url }}" class="btn">New Open Question</button></div>
     {% if num_annotations == 0 %}
         <div>No Open Questions <br />(insert link here to create one)</div>
     {% else %}
         <div>Open Question Context (if it exists)</div>
-        <div>booger (if it exists)</div>
     {% endif %}
     {% for comment in comments %}
     <div>
         <div style="margin-bottom: 3px; margin-left: {{ comment.level }}0px">
+            <div>{{ comment.text }}</div>
             <div>{{ comment.model_object.user.first_name }}
                  {{ comment.model_object.user.last_name }}
             | {{ comment.timestamp | date }}</div>
-            <div>{{ comment.text }}</div>
             <div>rating |
             {% if comment.level == 0 %}
                 {% if reply_count == 1 %}
@@ -27,6 +25,7 @@
                 {% endif %}
             {% endif %}
             Reply | Follow | Share</div>
+            <hr />
         </div>
     </div>
     {% endfor %}
