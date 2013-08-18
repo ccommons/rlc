@@ -1,5 +1,6 @@
 *.pyc
 *.ipynb
+.*.swp
 
 rlc/siteconfig.py
 rlc/secretkey.py
