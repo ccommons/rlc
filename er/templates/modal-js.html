@@ -52,7 +52,6 @@ function AnnotationComposeModal() {
                 // can we get this from the event?
                 var action = $('#annotation-submit').attr('action');
                 var postdata = $('#annotation-compose-form').serialize();
-                alert(action + postdata);
                 $.post(action, postdata, submit_response_handler, 'json');
             }.bind(this));
         }
