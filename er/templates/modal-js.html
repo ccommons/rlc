@@ -39,6 +39,12 @@ function AnnotationModal() {
 
 function AnnotationComposeModal() {
     var $super = new Modal();
+
+    var submit_response_handler = function(data, texttype) {
+        this.close();
+        annotation_init(data["url"]);
+    }.bind(this);
+
     $.extend(this, $super, {
         'render' : function() {
             $super.render.bind(this)();
@@ -47,9 +53,7 @@ function AnnotationComposeModal() {
                 var action = $('#annotation-submit').attr('action');
                 var postdata = $('#annotation-compose-form').serialize();
                 alert(action + postdata);
-                $.post(action, postdata);
-                // TODO: finish this off
-                this.close();
+                $.post(action, postdata, submit_response_handler, 'json');
             }.bind(this));
         }
     });

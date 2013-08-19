@@ -31,6 +31,7 @@ def full_json(request, *args, **kwargs):
 
     atype = kwargs["atype"]
 
+    # TODO: move this into annotation class
     annotations = doc.annotations.all()
     num_annotations = len(annotations)
     if num_annotations == 0:
@@ -73,7 +74,7 @@ class AnnotationComposeForm(forms.ModelForm):
 
 @login_required
 def compose_json(request, *args, **kwargs):
-    """main compose view"""
+    """annotation compose view"""
     req_cxt = RequestContext(request)
 
     doc = get_doc(**kwargs)
@@ -120,12 +121,28 @@ def compose_json(request, *args, **kwargs):
 @login_required
 @require_POST
 def add_json(request, *args, **kwargs):
-    """main compose view"""
+    """annotation create"""
     req_cxt = RequestContext(request)
 
-    print "well, you submitted the form."
+    form = AnnotationComposeForm(request.POST)
 
-    json = ""
+    if form.is_valid():
+        pass
+
+    doc = get_doc(**kwargs)
+    username = request.user.username
+    atype = form.cleaned_data["atype"]
+    comment = form.cleaned_data["initial_comment_text"]
+
+    a = annotation(index="x", atype=atype, user=username, comment=comment)
+    # TODO: move this into annotation class
+    a.model_object.er_doc = doc
+    a.model_object.save()
+
+    json = simplejson.dumps({
+    	"annotation_id" : a.model_object.id,
+        "url" : reverse('annotation', kwargs=kwargs),
+    })
 
     # TODO: fill in the rest of this
     return(HttpResponse(json, mimetype='application/json'))
