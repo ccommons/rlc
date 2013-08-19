@@ -22,13 +22,13 @@ def index(request):
     return(render_to_response("index.html", context, context_instance=req_cxt))
 
 def get_doc(**kwargs):
-    if "er_id" in kwargs:
-    	er_id = int(kwargs["er_id"])
+    if "doc_id" in kwargs:
+    	doc_id = int(kwargs["doc_id"])
     else:
-    	er_id = -1
+    	doc_id = -1
 
     try:
-	doc = EvidenceReview.objects.get(id=er_id)
+	doc = EvidenceReview.objects.get(id=doc_id)
     except:
     	doc = None
 	# XXX should redirect here to something sane

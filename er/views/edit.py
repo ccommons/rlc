@@ -5,6 +5,8 @@ from django import forms
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 
+from django.core.urlresolvers import reverse
+
 from er.models import EvidenceReview
 
 from document import get_doc
@@ -59,12 +61,13 @@ def change(request, *args, **kwargs):
     	# any more needed?
 	id = form.cleaned_data["id"]
     else:
-	# need better destination
+	# TODO: need better destination
 	return HttpResponseRedirect('/er/')
 
-    kwargs = { "er_id" : id }
+    kwargs = { "doc_id" : id }
     doc = get_doc(**kwargs)
     if doc == None:
+	# TODO: need better destination
 	return HttpResponseRedirect('/er/')
 
     parsed_doc = doctags.parse(form.cleaned_data["content"])
@@ -89,5 +92,5 @@ def change(request, *args, **kwargs):
     doc.publication_date = form.cleaned_data["publication_date"]
     doc.save()
 
-    return HttpResponseRedirect('/er/' + str(id))
+    return HttpResponseRedirect(reverse('document_fullview', kwargs=kwargs))
 
