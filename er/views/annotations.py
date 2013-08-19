@@ -31,8 +31,7 @@ def full_json(request, *args, **kwargs):
 
     atype = kwargs["atype"]
 
-    # TODO: move this into annotation class
-    annotations = doc.annotations.all()
+    annotations = annotation.doc_all(doc)
     num_annotations = len(annotations)
     if num_annotations == 0:
 	a = None
@@ -135,9 +134,7 @@ def add_json(request, *args, **kwargs):
     comment = form.cleaned_data["initial_comment_text"]
 
     a = annotation(index="x", atype=atype, user=username, comment=comment)
-    # TODO: move this into annotation class
-    a.model_object.er_doc = doc
-    a.model_object.save()
+    a.document = doc
 
     json = simplejson.dumps({
     	"annotation_id" : a.model_object.id,
