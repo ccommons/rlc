@@ -33,21 +33,19 @@ def full_json(request, *args, **kwargs):
 
     annotations = annotation.doc_all(doc)
     num_annotations = len(annotations)
-    if num_annotations == 0:
-	a = None
-	comments = []
-    else:
-	a = annotation.fetch(annotations[0].id)
-	comments = a.comment.thread_as_list()
-	author = a.comment.user
+    for a in annotations:
+        a.comments = a.comment.thread_as_list()
+        a.reply_count = len(a.comments) - 1
+
+    selected_annotation = 0
 
     modal_id = "modal-{0}".format(doc.id)
     context = Context({
 	"doc" : doc,
 	"modal_id" : modal_id,
-	"comments" : comments,
-	"reply_count" : len(comments) - 1,
+	"annotations" : annotations,
 	"num_annotations" : num_annotations,
+        "selected_annotation" : selected_annotation,
         "compose_url" : reverse('annotation_compose', kwargs=kwargs),
     })
 
@@ -55,7 +53,6 @@ def full_json(request, *args, **kwargs):
     json = simplejson.dumps({
     	"body_html" : body_html,
 	"modal_id" : modal_id,
-	"test" : 1,
     })
 
     return(HttpResponse(json, mimetype='application/json'))

@@ -1,32 +1,85 @@
 {% extends "modal.html" %}
 {% block modal_title %}
-    <h4 class="modal-title">Open Questions</h4>
+    <h4 class="modal-title">
+        Open Questions
+        {% if num_annotations > 0 %}
+        <div class="pull-right annotation_pager">
+            <a onclick="annotation_page('current_annotation', -1)">&lt;</a>
+            <span id="current_annotation" num_annotations="{{ num_annotations }}" current_pos="{{ selected_annotation }}">
+                {{ selected_annotation|add:1 }}
+            </span>
+            of {{ num_annotations }}
+            <a onclick="annotation_page('current_annotation', 1)">&gt;</a>
+        </div>
+        {% endif %}
+        <div class="pull-right">
+            <button type="button" id="annotation-compose" url="{{ compose_url }}" class="btn">New Open Question</button>
+        </div>
+    </h4>
+    <script language="javascript">
+    function annotation_page(element_id, increment) {
+        var el = $('#' + element_id);
+        var num_annotations = parseInt(el.attr("num_annotations"));
+        var current_pos = parseInt(el.attr("current_pos"));
+        var new_pos = current_pos + increment;
+        if (new_pos < 0) {
+            /* do nothing */
+        } else if (new_pos >= num_annotations) {
+            /* do nothing */
+        } else {
+            el.text((new_pos + 1).toString());
+            el.attr("current_pos", new_pos.toString());
+            var tab_id = "#annotation-activate-" + (new_pos + 1).toString();
+            $(tab_id).tab('show');
+        }
+        /* TODO: disable/enable links */
+    }
+    </script>
 {% endblock %}
 {% block modal_body %}
-    <div><button type="button" id="annotation-compose" url="{{ compose_url }}" class="btn">New Open Question</button></div>
     {% if num_annotations == 0 %}
         <div>No Open Questions <br />(insert link here to create one)</div>
-    {% else %}
-        <div>Open Question Context (if it exists)</div>
     {% endif %}
-    {% for comment in comments %}
-    <div>
-        <div style="margin-bottom: 3px; margin-left: {{ comment.level }}0px">
-            <div>{{ comment.text }}</div>
-            <div>{{ comment.model_object.user.first_name }}
-                 {{ comment.model_object.user.last_name }}
-            | {{ comment.timestamp | date }}</div>
-            <div>rating |
-            {% if comment.level == 0 %}
-                {% if reply_count == 1 %}
-                    1 Reply |
-                {% elif reply_count > 1 %}
-                    {{ reply_count }} Replies |
-                {% endif %}
-            {% endif %}
-            Reply | Follow | Share</div>
-            <hr />
-        </div>
-    </div>
+    <ul id="dummytab" class="nav nav-tabs" style="display: none">
+    {% for a in annotations %}{# tabs #}
+        <li class><a id="annotation-activate-{{ forloop.counter }}" href="#annotation-{{ forloop.counter }}">{{ forloop.counter }}</a></li>
     {% endfor %}
+    </ul>
+    <script language="javascript">
+    $('#dummytab a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    })
+    </script>
+    <div id="myTabContent" class="tab-content">
+    <div>Open Question Context (if it exists)</div>
+    {% for a in annotations %}
+        {% if forloop.first %}
+        <div class="tab-pane fade active in" id="annotation-{{forloop.counter}}">
+        {% else %}
+        <div class="tab-pane fade" id="annotation-{{forloop.counter}}">
+        {% endif %}
+        {% for comment in a.comments %}
+            <div>
+                <div style="margin-bottom: 3px; margin-left: {{ comment.level }}0px">
+                    <div>{{ comment.text }}</div>
+                    <div>{{ comment.model_object.user.first_name }}
+                         {{ comment.model_object.user.last_name }}
+                    | {{ comment.timestamp | date }}</div>
+                    <div>rating |
+                    {% if comment.level == 0 %}
+                        {% if a.reply_count == 1 %}
+                            One Reply |
+                        {% elif a.reply_count > 1 %}
+                            {{ a.reply_count }} Replies |
+                        {% endif %}
+                    {% endif %}
+                    Reply | Follow | Share</div>
+                    <hr />
+                </div>
+            </div>
+        {% endfor %}{# comments #}
+        </div>{# annotation pane #}
+    {% endfor %}{# annotations #}
+    </div>{# tabbed content #}
 {% endblock %}

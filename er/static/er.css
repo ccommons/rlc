@@ -26,3 +26,19 @@
     position: relative;
     bottom:70px;
 }
+
+.modal {
+    cursor: default;
+}
+
+.annotation_pager {
+    margin-right: 20px;
+    margin-left: 20px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
