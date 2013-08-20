@@ -1,12 +1,11 @@
 {% extends "er-containers.html" %}
 {% block table_of_contents %}
-    {% include "modal-js.html" %}
     <ul>
     {% for section in sections %}
     	<li><a href="#{{ section.id }}">{{ section.header_text }}</a></li>
     {% endfor %}
 	<li class="horizontal-separator"></li>
-    	<li><a href="javascript:annotation_init('{{ openq_url }}')">Open Questions</a></li>
+    	<li><a onclick="annotation_init('{{ openq_url }}')">Open Questions</a></li>
     	<li><a href="#">News</a></li>
     	<li><a href="#">Figures and Tables</a></li>
     </ul>
