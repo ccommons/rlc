@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST
 
 
 from er.models import EvidenceReview
-from er.models import Annotation
+from er.models import Annotation, Comment
 
 # annotation view interface
 
@@ -55,6 +55,7 @@ def full_json(request, *args, **kwargs):
     }
     context = Context({
 	"doc" : doc,
+        "atype" : kwargs["atype"],
 	"modal_id" : modal_id,
 	"annotations" : annotations,
 	"num_annotations" : num_annotations,
@@ -159,10 +160,8 @@ def add_json(request, *args, **kwargs):
 
 class AnnotationReplyForm(forms.ModelForm):
     class Meta:
-        model = Annotation
+        model = Comment
         fields = [] 
-
-    original_comment_id = forms.IntegerField(widget=forms.HiddenInput())
 
     # following is for default text widget
     comment_text = forms.CharField(widget=forms.Textarea())
@@ -186,7 +185,6 @@ def reply_json(request, *args, **kwargs):
     original_comment = comment.fetch(id=kwargs["comment_id"])
 
     data = {
-        "original_comment_id" : original_comment.model_object.id,
         "comment_text" : "",
     }
 
@@ -194,11 +192,14 @@ def reply_json(request, *args, **kwargs):
 
     form = AnnotationReplyForm(initial=data)
 
+    form_action = reverse('annotation_reply_new', kwargs=kwargs)
+    print form_action
+
     context = Context({
 	"doc" : doc,
 	"modal_id" : modal_id,
         "form" : form,
-        "form_action" : reverse('annotation_reply_new', kwargs=kwargs),
+        "form_action" : form_action,
         "original_comment" : original_comment,
     })
 
@@ -214,7 +215,6 @@ def reply_json(request, *args, **kwargs):
 @require_POST
 def reply_add_json(request, *args, **kwargs):
     """annotation create"""
-    req_cxt = RequestContext(request)
 
     form = AnnotationReplyForm(request.POST)
 
@@ -223,16 +223,19 @@ def reply_add_json(request, *args, **kwargs):
 
     doc = get_doc(**kwargs)
     username = request.user.username
-    comment = form.cleaned_data["comment_text"]
+    new_comment_text = form.cleaned_data["comment_text"]
 
-    # a = annotation(index="x", atype=atype, user=username, comment=comment)
-    # a.document = doc
+    original_comment_id = kwargs["comment_id"]
+    original_comment = comment.fetch(id=original_comment_id)
 
-    # return_kwargs = dict(kwargs, annotation_id=a.model_object.id)
-    # return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
+    new_comment = original_comment.reply(text=new_comment_text, user=username)
+
+    return_kwargs = dict(kwargs)
+    del return_kwargs["comment_id"]
+    return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
 
     json = simplejson.dumps({
-    	"annotation_id" : a.model_object.id,
+    	"annotation_id" : kwargs["annotation_id"],
         "url" : return_url,
     })
 

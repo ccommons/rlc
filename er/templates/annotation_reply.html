@@ -6,7 +6,7 @@
 <h4 style="margin-top: 5px">Original Comment</h4>
 <div> {{ original_comment.text }} </div>
 <h4>Your Reply:</h4>
-<form id="annotation-reply-form">
+<form id="annotation-compose-form">
 {% csrf_token %}
 {{ form.as_p }}
 <div>

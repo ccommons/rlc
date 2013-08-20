@@ -23,12 +23,12 @@ urlpatterns = patterns('',
     # TODO: add annotation in section and all annotations in section
 
     # annotation compose
-    url(r'^er/(?P<doc_id>\d+)/annotation/compose/(?P<atype>openq)/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/new/(?P<atype>openq)/json$', 'er.views.annotations.add_json', name='annotation_new'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/compose/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/new/json$', 'er.views.annotations.add_json', name='annotation_new'),
 
     # annotation reply to comment
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_json', name='annotation_reply'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_json', name='annotation_reply'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/new/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new'),
 
     # editor
     url(r'^er/(?P<doc_id>\d+)/edit$', 'er.views.edit.formview', name='doc_editor'),
