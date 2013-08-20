@@ -18,8 +18,10 @@ urlpatterns = patterns('',
     # annotations
 
     # general view
-    # TODO: add specific annotation
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.annotations.full_json', name='annotation'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/(?P<annotation_id>\d+)/json$', 'er.views.annotations.full_json', name='annotation_one_of_all'),
+    # TODO: add annotation in section and all annotations in section
+
     # annotation compose
     url(r'^er/(?P<doc_id>\d+)/annotation/compose/(?P<atype>openq)/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
     url(r'^er/(?P<doc_id>\d+)/annotation/new/(?P<atype>openq)/json$', 'er.views.annotations.add_json', name='annotation_new'),

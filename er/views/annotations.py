@@ -31,22 +31,35 @@ def full_json(request, *args, **kwargs):
 
     atype = kwargs["atype"]
 
-    annotations = annotation.doc_all(doc)
-    num_annotations = len(annotations)
-    for a in annotations:
-        a.comments = a.comment.thread_as_list()
-        a.reply_count = len(a.comments) - 1
-
+    # TODO: should probably error out if annotation can't be found
     selected_annotation = 0
 
+    if request.resolver_match.url_name == "annotation_one_of_all":
+        requested_id = int(kwargs["annotation_id"])
+    else:
+        requested_id = None
+
+    annotations = annotation.doc_all(doc)
+    num_annotations = len(annotations)
+    for index, a in enumerate(annotations):
+        a.comments = a.comment.thread_as_list()
+        a.reply_count = len(a.comments) - 1
+        if requested_id != None:
+            if a.model_object.id == requested_id:
+                selected_annotation = index
+
     modal_id = "modal-{0}".format(doc.id)
+    compose_kwargs = {
+        "doc_id" : kwargs["doc_id"],
+        "atype" : kwargs["atype"],
+    }
     context = Context({
 	"doc" : doc,
 	"modal_id" : modal_id,
 	"annotations" : annotations,
 	"num_annotations" : num_annotations,
         "selected_annotation" : selected_annotation,
-        "compose_url" : reverse('annotation_compose', kwargs=kwargs),
+        "compose_url" : reverse('annotation_compose', kwargs=compose_kwargs),
     })
 
     body_html = render_to_string("annotation.html", context, context_instance=req_cxt)
@@ -133,9 +146,12 @@ def add_json(request, *args, **kwargs):
     a = annotation(index="x", atype=atype, user=username, comment=comment)
     a.document = doc
 
+    return_kwargs = dict(kwargs, annotation_id=a.model_object.id)
+    return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
+
     json = simplejson.dumps({
     	"annotation_id" : a.model_object.id,
-        "url" : reverse('annotation', kwargs=kwargs),
+        "url" : return_url,
     })
 
     # TODO: fill in the rest of this
