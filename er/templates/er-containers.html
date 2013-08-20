@@ -1,13 +1,14 @@
 {% extends "threecolumn.html" %}
 
+{% block leftstyle %} style="position: fixed" {% endblock %}
 {% block left-column %}
-    <div class="section-header">
-	table of contents
-    </div>
-    <div id="toc-container" class="toc-container section-container">
-	{% block table_of_contents %}
-	TOC here
-	{% endblock %}
+    <div style="position: fixed" class="span3 no-margin">
+        <div class="section-header"> table of contents </div>
+        <div id="toc-container" class="toc-container section-container">
+            {% block table_of_contents %}
+            TOC here
+            {% endblock %}
+        </div>
     </div>
 {% endblock %}
 
