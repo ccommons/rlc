@@ -199,5 +199,5 @@ class annotation(discussionpoint):
     def doc_all(this_class, doc):
 	"""get all annotations from a document"""
         # TODO: filters (types, sections)
-        return([this_class.fetch(a.id) for a in doc.annotations.all()])
+        return([this_class.fetch(a.id) for a in doc.annotations.order_by('timestamp')])
 
