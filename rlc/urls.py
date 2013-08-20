@@ -26,6 +26,10 @@ urlpatterns = patterns('',
     url(r'^er/(?P<doc_id>\d+)/annotation/compose/(?P<atype>openq)/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
     url(r'^er/(?P<doc_id>\d+)/annotation/new/(?P<atype>openq)/json$', 'er.views.annotations.add_json', name='annotation_new'),
 
+    # annotation reply to comment
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_json', name='annotation_reply'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new'),
+
     # editor
     url(r'^er/(?P<doc_id>\d+)/edit$', 'er.views.edit.formview', name='doc_editor'),
     url(r'^er/(?P<doc_id>\d+)/change$', 'er.views.edit.change', name='doc_change'),

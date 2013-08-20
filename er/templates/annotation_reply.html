@@ -1,0 +1,17 @@
+{% extends "modal.html" %}
+{% block modal_title %}
+    <h4 class="modal-title">Annotation Discussion</h4>
+{% endblock %}
+{% block modal_body %}
+<h4 style="margin-top: 5px">Original Comment</h4>
+<div> {{ original_comment.text }} </div>
+<h4>Your Reply:</h4>
+<form id="annotation-reply-form">
+{% csrf_token %}
+{{ form.as_p }}
+<div>
+<button type="button" id="annotation-submit" action="{{form_action}}" class="btn">Submit</button>
+<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+</div>
+</form>
+{% endblock %}

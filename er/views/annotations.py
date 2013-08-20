@@ -99,7 +99,7 @@ def compose_json(request, *args, **kwargs):
     data = {
         "doc_id" : doc.id,
         "atype" : atype,
-        "initial_comment_text" : "bubb rubb",
+        "initial_comment_text" : "test comment",
     }
 
     modal_id = "modal-compose-{0}".format(doc.id)
@@ -115,7 +115,6 @@ def compose_json(request, *args, **kwargs):
 	"doc" : doc,
 	"modal_id" : modal_id,
         "form" : form,
-        # TODO: fix fixed URL
         "form_action" : reverse('annotation_new', kwargs=kwargs),
     })
 
@@ -141,13 +140,96 @@ def add_json(request, *args, **kwargs):
     doc = get_doc(**kwargs)
     username = request.user.username
     atype = form.cleaned_data["atype"]
-    comment = form.cleaned_data["initial_comment_text"]
+    init_comment = form.cleaned_data["initial_comment_text"]
 
-    a = annotation(index="x", atype=atype, user=username, comment=comment)
+    a = annotation(index="x", atype=atype, user=username, comment=init_comment)
     a.document = doc
 
     return_kwargs = dict(kwargs, annotation_id=a.model_object.id)
     return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
+
+    json = simplejson.dumps({
+    	"annotation_id" : a.model_object.id,
+        "url" : return_url,
+    })
+
+    # TODO: fill in the rest of this
+    return(HttpResponse(json, mimetype='application/json'))
+
+
+class AnnotationReplyForm(forms.ModelForm):
+    class Meta:
+        model = Annotation
+        fields = [] 
+
+    original_comment_id = forms.IntegerField(widget=forms.HiddenInput())
+
+    # following is for default text widget
+    comment_text = forms.CharField(widget=forms.Textarea())
+    # comment_text = forms.CharField(widget=CKEditorWidget())
+
+@login_required
+def reply_json(request, *args, **kwargs):
+    """annotation comment reply view"""
+    req_cxt = RequestContext(request)
+
+    doc = get_doc(**kwargs)
+
+    if doc == None:
+        # TODO: fix this error handling once and for all
+        raise ValueError
+
+    # section = None
+    
+    # TODO: validate comment ID
+
+    original_comment = comment.fetch(id=kwargs["comment_id"])
+
+    data = {
+        "original_comment_id" : original_comment.model_object.id,
+        "initial_comment_text" : "bubb rubb",
+    }
+
+    modal_id = "modal-reply-{0}".format(kwargs["comment_id"])
+
+    form = AnnotationReplyForm(data)
+
+    context = Context({
+	"doc" : doc,
+	"modal_id" : modal_id,
+        "form" : form,
+        "form_action" : reverse('annotation_reply_new', kwargs=kwargs),
+        "original_comment" : original_comment,
+    })
+
+    body_html = render_to_string("annotation_reply.html", context, context_instance=req_cxt)
+    json = simplejson.dumps({
+    	"body_html" : body_html,
+	"modal_id" : modal_id,
+    })
+
+    return(HttpResponse(json, mimetype='application/json'))
+
+@login_required
+@require_POST
+def reply_add_json(request, *args, **kwargs):
+    """annotation create"""
+    req_cxt = RequestContext(request)
+
+    form = AnnotationReplyForm(request.POST)
+
+    if form.is_valid():
+        pass
+
+    doc = get_doc(**kwargs)
+    username = request.user.username
+    comment = form.cleaned_data["comment_text"]
+
+    # a = annotation(index="x", atype=atype, user=username, comment=comment)
+    # a.document = doc
+
+    # return_kwargs = dict(kwargs, annotation_id=a.model_object.id)
+    # return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
 
     json = simplejson.dumps({
     	"annotation_id" : a.model_object.id,
