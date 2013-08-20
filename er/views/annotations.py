@@ -32,7 +32,7 @@ def full_json(request, *args, **kwargs):
     atype = kwargs["atype"]
 
     # TODO: should probably error out if annotation can't be found
-    selected_annotation = 0
+    selected_annotation = 1
 
     if request.resolver_match.url_name == "annotation_one_of_all":
         requested_id = int(kwargs["annotation_id"])
@@ -41,7 +41,7 @@ def full_json(request, *args, **kwargs):
 
     annotations = annotation.doc_all(doc)
     num_annotations = len(annotations)
-    for index, a in enumerate(annotations):
+    for index, a in enumerate(annotations, 1):
         a.comments = a.comment.thread_as_list()
         a.reply_count = len(a.comments) - 1
         if requested_id != None:
@@ -99,12 +99,12 @@ def compose_json(request, *args, **kwargs):
     data = {
         "doc_id" : doc.id,
         "atype" : atype,
-        "initial_comment_text" : "test comment",
+        "initial_comment_text" : "",
     }
 
     modal_id = "modal-compose-{0}".format(doc.id)
 
-    form = AnnotationComposeForm(data)
+    form = AnnotationComposeForm(initial=data)
 
     # if there is no section, this is an open question and we do not allow
     # the user to choose the annotation type
@@ -187,12 +187,12 @@ def reply_json(request, *args, **kwargs):
 
     data = {
         "original_comment_id" : original_comment.model_object.id,
-        "initial_comment_text" : "bubb rubb",
+        "comment_text" : "",
     }
 
     modal_id = "modal-reply-{0}".format(kwargs["comment_id"])
 
-    form = AnnotationReplyForm(data)
+    form = AnnotationReplyForm(initial=data)
 
     context = Context({
 	"doc" : doc,

@@ -4,37 +4,18 @@
         Open Questions
         {% if num_annotations > 0 %}
         <div class="pull-right annotation_pager">
-            <a onclick="annotation_page('current_annotation', -1)">&lt;</a>
+            <a class="annotation-page" incr="-1" target_el="current_annotation">&lt;</a>
             <span id="current_annotation" num_annotations="{{ num_annotations }}" current_pos="{{ selected_annotation }}">
-                {{ selected_annotation|add:1 }}
+                {{ selected_annotation }}
             </span>
             of {{ num_annotations }}
-            <a onclick="annotation_page('current_annotation', 1)">&gt;</a>
+            <a class="annotation-page" incr="1" target_el="current_annotation">&gt;</a>
         </div>
         {% endif %}
         <div class="pull-right">
             <button type="button" id="annotation-compose" url="{{ compose_url }}" class="btn">New Open Question</button>
         </div>
     </h4>
-    <script language="javascript">
-    function annotation_page(element_id, increment) {
-        var el = $('#' + element_id);
-        var num_annotations = parseInt(el.attr("num_annotations"));
-        var current_pos = parseInt(el.attr("current_pos"));
-        var new_pos = current_pos + increment;
-        if (new_pos < 0) {
-            /* do nothing */
-        } else if (new_pos >= num_annotations) {
-            /* do nothing */
-        } else {
-            el.text((new_pos + 1).toString());
-            el.attr("current_pos", new_pos.toString());
-            var tab_id = "#annotation-activate-" + (new_pos + 1).toString();
-            $(tab_id).tab('show');
-        }
-        /* TODO: disable/enable links */
-    }
-    </script>
 {% endblock %}
 {% block modal_body %}
     {% if num_annotations == 0 %}
@@ -54,7 +35,7 @@
     <div id="myTabContent" class="tab-content">
     <div>Open Question Context (if it exists)</div>
     {% for a in annotations %}
-        {% if forloop.counter0 == selected_annotation %}
+        {% if forloop.counter == selected_annotation %}
         <div class="tab-pane fade active in" id="annotation-{{forloop.counter}}">
         {% else %}
         <div class="tab-pane fade" id="annotation-{{forloop.counter}}">
