@@ -31,23 +31,21 @@ def full_json(request, *args, **kwargs):
 
     atype = kwargs["atype"]
 
-    annotations = doc.annotations.all()
+    annotations = annotation.doc_all(doc)
     num_annotations = len(annotations)
-    if num_annotations == 0:
-	a = None
-	comments = []
-    else:
-	a = annotation.fetch(annotations[0].id)
-	comments = a.comment.thread_as_list()
-	author = a.comment.user
+    for a in annotations:
+        a.comments = a.comment.thread_as_list()
+        a.reply_count = len(a.comments) - 1
+
+    selected_annotation = 0
 
     modal_id = "modal-{0}".format(doc.id)
     context = Context({
 	"doc" : doc,
 	"modal_id" : modal_id,
-	"comments" : comments,
-	"reply_count" : len(comments) - 1,
+	"annotations" : annotations,
 	"num_annotations" : num_annotations,
+        "selected_annotation" : selected_annotation,
         "compose_url" : reverse('annotation_compose', kwargs=kwargs),
     })
 
@@ -55,7 +53,6 @@ def full_json(request, *args, **kwargs):
     json = simplejson.dumps({
     	"body_html" : body_html,
 	"modal_id" : modal_id,
-	"test" : 1,
     })
 
     return(HttpResponse(json, mimetype='application/json'))
@@ -73,7 +70,7 @@ class AnnotationComposeForm(forms.ModelForm):
 
 @login_required
 def compose_json(request, *args, **kwargs):
-    """main compose view"""
+    """annotation compose view"""
     req_cxt = RequestContext(request)
 
     doc = get_doc(**kwargs)
@@ -120,12 +117,26 @@ def compose_json(request, *args, **kwargs):
 @login_required
 @require_POST
 def add_json(request, *args, **kwargs):
-    """main compose view"""
+    """annotation create"""
     req_cxt = RequestContext(request)
 
-    print "well, you submitted the form."
+    form = AnnotationComposeForm(request.POST)
 
-    json = ""
+    if form.is_valid():
+        pass
+
+    doc = get_doc(**kwargs)
+    username = request.user.username
+    atype = form.cleaned_data["atype"]
+    comment = form.cleaned_data["initial_comment_text"]
+
+    a = annotation(index="x", atype=atype, user=username, comment=comment)
+    a.document = doc
+
+    json = simplejson.dumps({
+    	"annotation_id" : a.model_object.id,
+        "url" : reverse('annotation', kwargs=kwargs),
+    })
 
     # TODO: fill in the rest of this
     return(HttpResponse(json, mimetype='application/json'))

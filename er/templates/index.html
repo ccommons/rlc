@@ -3,7 +3,7 @@
 {% block content %}
     <ul>
     {% for doc in docs %}
-	<li><a href="er/{{doc.id}}">{{doc.title}}</a></li>
+	<li><a href="{% url 'document_fullview' doc_id=doc.id %}">{{doc.title}}</a></li>
     {% endfor %}
     </ul>
 {% endblock %}

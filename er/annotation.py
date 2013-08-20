@@ -185,3 +185,19 @@ class annotation(discussionpoint):
 	else:
 	    raise ValueError("annotation type must be one of " + str(valid_types))
 
+    @property
+    def document(self):
+    	"""annotation type"""
+	return self.model_object.er_doc
+
+    @document.setter
+    def document(self, value):
+        self.model_object.er_doc = value
+        self.model_object.save()
+
+    @classmethod
+    def doc_all(this_class, doc):
+	"""get all annotations from a document"""
+        # TODO: filters (types, sections)
+        return([this_class.fetch(a.id) for a in doc.annotations.order_by('timestamp')])
+

@@ -6,32 +6,28 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # index page
-    url(r'^$', 'er.views.document.index', name='index'),
+    url(r'^$', 'er.views.document.index', name='root_index'),
     url(r'^er/$', 'er.views.document.index', name='index'),
 
     # main view
     #
     # url(r'^er/$', 'er.views.document.fullpage', name='mainview'),
     #
-    url(r'^er/(?P<er_id>\d+)$', 'er.views.document.fullpage', name='mainview'),
+    url(r'^er/(?P<doc_id>\d+)$', 'er.views.document.fullpage', name='document_fullview'),
 
     # annotations
 
     # general view
     # TODO: add specific annotation
-    url(r'^er/(?P<er_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.annotations.full_json', name='annotation'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.annotations.full_json', name='annotation'),
     # annotation compose
-    url(r'^er/(?P<er_id>\d+)/annotation/compose/(?P<atype>openq)/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
-    url(r'^er/(?P<er_id>\d+)/annotation/new/(?P<atype>openq)/json$', 'er.views.annotations.add_json', name='annotation_new'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/compose/(?P<atype>openq)/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/new/(?P<atype>openq)/json$', 'er.views.annotations.add_json', name='annotation_new'),
 
     # editor
-    url(r'^er/(?P<er_id>\d+)/edit$', 'er.views.edit.formview', name='ereditor'),
-    url(r'^er/(?P<er_id>\d+)/change$', 'er.views.edit.change', name='erchange'),
+    url(r'^er/(?P<doc_id>\d+)/edit$', 'er.views.edit.formview', name='doc_editor'),
+    url(r'^er/(?P<doc_id>\d+)/change$', 'er.views.edit.change', name='doc_change'),
 
-    # get all annotations
-    # url(r'^er/XXX/notes/', 'er.views.document.fullpage', name='mainview'),
-    # view one annotation
-    # url(r'^er/XXX/notes/ARGS$', 'er.views.document.fullpage', name='mainview'),
 
     # notification menu
     url(r'^er/notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),

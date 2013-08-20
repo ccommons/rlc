@@ -18,7 +18,7 @@
     <div>Last Published: {{ doc.publication_date|date:"F j, Y" }} | <a href="{{ doc.publication_link }}">Download</a></div>
 
     {% if "Editor" in group_names %}
-	<a href="/er/{{ doc.id }}/edit">edit</a>
+	<a href="{% url 'doc_editor' doc_id=doc.id %}">edit</a>
     {% endif %}
     <div class="paper-content-container">
     {{ main_document | safe }}
