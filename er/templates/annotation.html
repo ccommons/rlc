@@ -1,8 +1,8 @@
 {% extends "modal.html" %}
 {% block modal_title %}
     <h4 class="modal-title">
-        Open Questions
-        {% if num_annotations > 0 %}
+        {{ atype_name }}{{ num_annotations|pluralize}}
+        {% if num_annotations > 1 %}
         <div class="pull-right annotation_pager">
             <a class="annotation-page" incr="-1" target_el="current_annotation">&lt;</a>
             <span id="current_annotation" num_annotations="{{ num_annotations }}" current_pos="{{ selected_annotation }}">
@@ -12,9 +12,11 @@
             <a class="annotation-page" incr="1" target_el="current_annotation">&gt;</a>
         </div>
         {% endif %}
+        {% if this_url_name == "annotation" and atype == "openq" %}
         <div class="pull-right">
             <button type="button" id="annotation-compose" url="{{ compose_url }}" class="btn">New Open Question</button>
         </div>
+        {% endif %}
     </h4>
 {% endblock %}
 {% block modal_body %}

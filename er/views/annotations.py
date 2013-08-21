@@ -1,4 +1,5 @@
 from django.template import Context, RequestContext, Template
+from django.template import loader as template_loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 
@@ -15,7 +16,17 @@ from django.http import HttpResponse
 from django import forms
 from django.core.urlresolvers import reverse
 
+from ckeditor.widgets import CKEditorWidget
+
 from document import get_doc
+
+def atype_to_name(atype):
+    for t in Annotation.ANNOTATION_TYPES:
+        if t[0] == atype:
+            return(t[1])
+
+    return(None)
+
 
 @login_required
 def full_json(request, *args, **kwargs):
@@ -36,7 +47,7 @@ def full_json(request, *args, **kwargs):
     # TODO: should probably error out if annotation can't be found
     selected_annotation = 1
 
-    if this_url_name == "annotation_one_of_all":
+    if this_url_name in ["annotation_one_of_all", "annotation_one_in_block"]:
         requested_id = int(kwargs["annotation_id"])
     else:
         requested_id = None
@@ -59,19 +70,24 @@ def full_json(request, *args, **kwargs):
                 selected_annotation = index
 
     modal_id = "modal-{0}".format(doc.id)
-    compose_kwargs = {
-        "doc_id" : kwargs["doc_id"],
-        "atype" : kwargs["atype"],
-    }
+
     context = Context({
 	"doc" : doc,
         "atype" : kwargs["atype"],
+        "atype_name" : atype_to_name(kwargs["atype"]),
 	"modal_id" : modal_id,
 	"annotations" : annotations,
 	"num_annotations" : num_annotations,
+        "this_url_name" : this_url_name,
         "selected_annotation" : selected_annotation,
-        "compose_url" : reverse('annotation_compose', kwargs=compose_kwargs),
     })
+
+    if (this_url_name == "annotation" and atype == "openq"):
+        compose_kwargs = {
+            "doc_id" : kwargs["doc_id"],
+            "atype" : kwargs["atype"],
+        }
+        context["compose_url"] = reverse('annotation_compose', kwargs=compose_kwargs),
 
     body_html = render_to_string("annotation.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
@@ -88,9 +104,9 @@ class AnnotationComposeForm(forms.ModelForm):
 
     doc_id = forms.IntegerField(widget=forms.HiddenInput())
 
-    initial_comment_text = forms.CharField(widget=forms.Textarea())
     # initial_comment_text = forms.CharField(widget=CKEditorWidget())
     # following is for default text widget
+    initial_comment_text = forms.CharField(widget=forms.Textarea())
 
 @login_required
 def compose_json(request, *args, **kwargs):
@@ -98,35 +114,45 @@ def compose_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
 
     doc = get_doc(**kwargs)
+    this_url_name = request.resolver_match.url_name
 
     if doc == None:
         # TODO: fix this error handling once and for all
         raise ValueError
 
-    atype = kwargs["atype"]
-
-    section = None
-
     data = {
         "doc_id" : doc.id,
-        "atype" : atype,
         "initial_comment_text" : "",
     }
+
+    if this_url_name == 'annotation_compose_in_block':
+        block_id = kwargs["block_id"]
+        form_action = reverse('annotation_new_in_block', kwargs=kwargs)
+    elif this_url_name == 'annotation_compose':
+        atype = kwargs["atype"]
+        data["atype"] = atype
+        block_id = None
+        form_action = reverse('annotation_new', kwargs=kwargs)
+    else:
+        # should not reach
+        block_id = None
+
 
     modal_id = "modal-compose-{0}".format(doc.id)
 
     form = AnnotationComposeForm(initial=data)
 
-    # if there is no section, this is an open question and we do not allow
+    # if there is no block, this is an open question and we do not allow
     # the user to choose the annotation type
-    if section == None:
+    if block_id == None:
         form.fields["atype"].widget = forms.HiddenInput()
 
     context = Context({
 	"doc" : doc,
+        # "atype_name" : atype_to_name(kwargs["atype"]),
 	"modal_id" : modal_id,
         "form" : form,
-        "form_action" : reverse('annotation_new', kwargs=kwargs),
+        "form_action" : form_action,
     })
 
     body_html = render_to_string("annotation_compose.html", context, context_instance=req_cxt)
@@ -142,6 +168,7 @@ def compose_json(request, *args, **kwargs):
 def add_json(request, *args, **kwargs):
     """annotation create"""
     req_cxt = RequestContext(request)
+    this_url_name = request.resolver_match.url_name
 
     form = AnnotationComposeForm(request.POST)
 
@@ -156,8 +183,22 @@ def add_json(request, *args, **kwargs):
     a = annotation(index="x", atype=atype, user=username, comment=init_comment)
     a.document = doc
 
+    if this_url_name == "annotation_new_in_block":
+        # TODO: move this to model
+        block = PaperBlock.objects.get(tag_id=kwargs["block_id"])
+        a.model_object.doc_block = block
+        a.model_object.save()
+
     return_kwargs = dict(kwargs, annotation_id=a.model_object.id)
-    return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
+
+    if this_url_name == "annotation_new":
+        return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
+    elif this_url_name == "annotation_new_in_block":
+        return_kwargs["atype"] = atype
+        return_url = reverse('annotation_one_in_block', kwargs=return_kwargs)
+    else:
+        # should not be reached
+        return_url = None
 
     json = simplejson.dumps({
     	"annotation_id" : a.model_object.id,
@@ -173,9 +214,9 @@ class AnnotationReplyForm(forms.ModelForm):
         model = Comment
         fields = [] 
 
+    # comment_text = forms.CharField(widget=CKEditorWidget())
     # following is for default text widget
     comment_text = forms.CharField(widget=forms.Textarea())
-    # comment_text = forms.CharField(widget=CKEditorWidget())
 
 @login_required
 def reply_json(request, *args, **kwargs):
@@ -260,6 +301,9 @@ def preview_json(request, *args, **kwargs):
     doc = get_doc(**kwargs)
 
     previews = []
+
+    preview_template = template_loader.get_template("annotation_preview.html")
+
     for block in doc.paperblock_set.all():
         block_id = block.tag_id
         context = {
@@ -270,7 +314,7 @@ def preview_json(request, *args, **kwargs):
         # XXX pull these from model
         preview_data = {
             "openq" : [],
-            "notes" : [],
+            "note" : [],
             "proprev" : [],
             "rev" : [],
         }
@@ -283,7 +327,13 @@ def preview_json(request, *args, **kwargs):
             context[t + "_list"] = preview_data[t]
             context[t + "_count"] = len(preview_data[t])
 
-        html = render_to_string("annotation_preview.html", context, context_instance=req_cxt)
+        context["compose_url"] = reverse("annotation_compose_in_block", kwargs={
+            "doc_id" : kwargs["doc_id"],
+            "block_id" : block_id,
+        })
+
+        html = preview_template.render(Context(context))
+        # html = render_to_string("annotation_preview.html", context, context_instance=req_cxt)
         previews.append({
             "block_id" : block_id,
             "html" : html,
