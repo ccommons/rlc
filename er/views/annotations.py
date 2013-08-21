@@ -54,7 +54,7 @@ def full_json(request, *args, **kwargs):
 
     # get annotations
     if this_url_name in [ "annotation", "annotation_one_of_all" ]:
-        annotations = annotation.doc_all(doc)
+        annotations = [a for a in annotation.doc_all(doc) if a.atype == kwargs["atype"]]
     else:
         # TODO: use annotation model for this
         block = PaperBlock.objects.get(tag_id=kwargs["block_id"])
@@ -87,7 +87,7 @@ def full_json(request, *args, **kwargs):
             "doc_id" : kwargs["doc_id"],
             "atype" : kwargs["atype"],
         }
-        context["compose_url"] = reverse('annotation_compose', kwargs=compose_kwargs),
+        context["compose_url"] = reverse('annotation_compose', kwargs=compose_kwargs)
 
     body_html = render_to_string("annotation.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
