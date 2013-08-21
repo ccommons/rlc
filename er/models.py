@@ -31,12 +31,20 @@ class PaperAuthorship(models.Model):
 
 
 class PaperSection(models.Model):
+    # id = models.CharField(primary_key=True, max_length=100)
     # this will be the uuid in the tag
-    id = models.CharField(primary_key=True, max_length=100)
+    tag_id = models.CharField(max_length=100)
     paper = models.ForeignKey(EvidenceReview)
     header_text = models.CharField(max_length=100)
     position = models.IntegerField()
 
+class PaperBlock(models.Model):
+    # id = models.CharField(primary_key=True, max_length=100)
+    # this will be the uuid in the tag
+    tag_id = models.CharField(max_length=100)
+    paper = models.ForeignKey(EvidenceReview)
+    preview_text = models.CharField(max_length=100)
+    position = models.IntegerField()
 
 # Annotation models
 class Comment(models.Model):
@@ -73,7 +81,7 @@ class Annotation(DiscussionPoint):
     atype = models.CharField(max_length=10, choices=ANNOTATION_TYPES, default='note')
     # TODO: remove null from the following (easier to debug when null allowed)
     er_doc = models.ForeignKey(EvidenceReview, related_name="annotations", null=True)
-    er_section = models.ForeignKey(PaperSection, blank=True, null=True, on_delete=models.SET_NULL, related_name="annotation_locations")
+    doc_block = models.ForeignKey(PaperBlock, blank=True, null=True, on_delete=models.SET_NULL, related_name="annotation_locations")
 
     def __unicode__(self):
     	return("Annotation id: {0} / ct: {1}".format(self.id, self.context))
