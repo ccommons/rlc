@@ -17,8 +17,13 @@
     <div>Last Published: {{ doc.publication_date|date:"F j, Y" }} | <a href="{{ doc.publication_link }}">Download</a></div>
 
     {% if "Editor" in group_names %}
+        <div>
 	<a href="{% url 'doc_editor' doc_id=doc.id %}">edit</a>
+        </div>
     {% endif %}
+    <div>
+	<a onclick="annotation_previews('{% url 'annotation_previews' doc_id=doc.id %}')">show annotations</a>
+    </div>
     <div class="paper-content-container">
     {{ main_document | safe }}
     </div>

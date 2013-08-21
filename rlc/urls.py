@@ -17,9 +17,14 @@ urlpatterns = patterns('',
 
     # annotations
 
+    # previews
+    url(r'^er/(?P<doc_id>\d+)/annotation/previews/json$', 'er.views.annotations.preview_json', name='annotation_previews'),
+
     # general view
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.annotations.full_json', name='annotation'),
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/(?P<annotation_id>\d+)/json$', 'er.views.annotations.full_json', name='annotation_one_of_all'),
+
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/json$', 'er.views.annotations.full_json', name='annotations_in_section'),
     # TODO: add annotation in section and all annotations in section
 
     # annotation compose

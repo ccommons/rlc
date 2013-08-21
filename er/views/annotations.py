@@ -2,16 +2,16 @@ from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 
-
-from er.models import EvidenceReview
+from er.models import EvidenceReview, PaperBlock
 from er.models import Annotation, Comment
+
+from er.annotation import annotation, comment
 
 # annotation view interface
 
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.http import HttpResponse
-from er.annotation import annotation, comment
 from django import forms
 from django.core.urlresolvers import reverse
 
@@ -21,6 +21,8 @@ from document import get_doc
 def full_json(request, *args, **kwargs):
     """annotation view"""
     req_cxt = RequestContext(request)
+
+    this_url_name = request.resolver_match.url_name
 
     doc = get_doc(**kwargs)
 
@@ -34,12 +36,20 @@ def full_json(request, *args, **kwargs):
     # TODO: should probably error out if annotation can't be found
     selected_annotation = 1
 
-    if request.resolver_match.url_name == "annotation_one_of_all":
+    if this_url_name == "annotation_one_of_all":
         requested_id = int(kwargs["annotation_id"])
     else:
         requested_id = None
 
-    annotations = annotation.doc_all(doc)
+    # get annotations
+    if this_url_name in [ "annotation", "annotation_one_of_all" ]:
+        annotations = annotation.doc_all(doc)
+    else:
+        # TODO: use annotation model for this
+        block = PaperBlock.objects.get(tag_id=kwargs["block_id"])
+        objs = block.annotations.filter(atype=kwargs["atype"])
+        annotations = [annotation.fetch(o.id) for o in objs]
+
     num_annotations = len(annotations)
     for index, a in enumerate(annotations, 1):
         a.comments = a.comment.thread_as_list()
@@ -242,4 +252,43 @@ def reply_add_json(request, *args, **kwargs):
     # TODO: fill in the rest of this
     return(HttpResponse(json, mimetype='application/json'))
 
+
+@login_required
+def preview_json(request, *args, **kwargs):
+    req_cxt = RequestContext(request)
+
+    doc = get_doc(**kwargs)
+
+    previews = []
+    for block in doc.paperblock_set.all():
+        block_id = block.tag_id
+        context = {
+            "doc" : doc,
+            "block_id" : block_id,
+        }
+
+        # XXX pull these from model
+        preview_data = {
+            "openq" : [],
+            "notes" : [],
+            "proprev" : [],
+            "rev" : [],
+        }
+
+        # TODO: make this use the annotation class
+        for a in block.annotations.all():
+            preview_data[a.atype].append(a)
+        
+        for t in preview_data:
+            context[t + "_list"] = preview_data[t]
+            context[t + "_count"] = len(preview_data[t])
+
+        html = render_to_string("annotation_preview.html", context, context_instance=req_cxt)
+        previews.append({
+            "block_id" : block_id,
+            "html" : html,
+        })
+
+    json = simplejson.dumps(previews)
+    return(HttpResponse(json, mimetype='application/json'))
 
