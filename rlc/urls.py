@@ -34,6 +34,9 @@ urlpatterns = patterns('',
     # notification menu
     url(r'^er/notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),
 
+    # profile
+    url(r'^er/myprofile/json$', 'er.views.profile.profile_json', name='myprofile'),
+
 
     # framework administration
     url(r'^admin/', include(admin.site.urls)),
