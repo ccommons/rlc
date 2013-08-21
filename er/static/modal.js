@@ -1,4 +1,5 @@
-<script language="javascript">
+/* modal window interface for RLC */
+
 function Modal() {
     $.extend(this, {
         'content_element' : null,
@@ -30,8 +31,34 @@ function AnnotationModal() {
             $super.render.bind(this)();
             $('#annotation-compose').click(function(event) {
                 this.close();
-                var url = $('#annotation-compose').attr('url');
+                var url = $(event.currentTarget).attr('url');
                 annotation_compose_init(url);
+            }.bind(this));
+            $('a.annotation-reply').click(function(event) {
+                // TODO: replace generic compose with inline editor
+                this.close();
+                var url = $(event.currentTarget).attr('reply_url');
+                annotation_compose_init(url);
+            }.bind(this));
+            $('a.annotation-page').click(function(event) {
+                var source = $(event.currentTarget);
+                var el = $('#' + source.attr("target_el"));
+                var increment = parseInt(source.attr("incr"));
+                var num_annotations = parseInt(el.attr("num_annotations"));
+                var current_pos = parseInt(el.attr("current_pos"));
+                var new_pos = current_pos + increment;
+                if (new_pos == 0) {
+                    /* do nothing */
+                } else if (new_pos > num_annotations) {
+                    /* do nothing */
+                } else {
+                    var new_pos_str = new_pos.toString();
+                    el.text(new_pos_str);
+                    el.attr("current_pos", new_pos_str);
+                    var tab_id = "#annotation-activate-" + new_pos_str;
+                    $(tab_id).tab('show');
+                }
+                /* TODO: show/hide links */
             }.bind(this));
         }
     });
@@ -78,5 +105,3 @@ function annotation_init(url) {
 function annotation_compose_init(url) {
     modal_init(url, AnnotationComposeModal);
 }
-</script>
-
