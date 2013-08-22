@@ -85,6 +85,15 @@ function AnnotationComposeModal() {
     });
 }
 
+function MyProfileModal() {
+    var $super = new Modal();
+    $.extend(this, $super, {
+        'render' : function() {
+            $super.render.bind(this)();
+        }
+    });
+}
+
 function modal_init(url, modaltype) {
     if (typeof(modaltype) === 'undefined') {
         var modaltype = Modal;
@@ -104,4 +113,8 @@ function annotation_init(url) {
 
 function annotation_compose_init(url) {
     modal_init(url, AnnotationComposeModal);
+}
+
+function myprofile_init(url) {
+    modal_init(url, MyProfileModal);
 }
