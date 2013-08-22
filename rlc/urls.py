@@ -17,18 +17,30 @@ urlpatterns = patterns('',
 
     # annotations
 
+    # previews
+    url(r'^er/(?P<doc_id>\d+)/annotation/previews/json$', 'er.views.annotations.preview_json', name='annotation_previews'),
+
     # general view
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.annotations.full_json', name='annotation'),
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/(?P<annotation_id>\d+)/json$', 'er.views.annotations.full_json', name='annotation_one_of_all'),
-    # TODO: add annotation in section and all annotations in section
 
-    # annotation compose
+    # views in blocks
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/json$', 'er.views.annotations.full_json', name='annotations_in_block'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/json$', 'er.views.annotations.full_json', name='annotation_one_in_block'),
+
+    # annotation compose (no block)
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/compose/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/new/json$', 'er.views.annotations.add_json', name='annotation_new'),
 
+    # annotation compose (in block)
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/any/compose/json$', 'er.views.annotations.compose_json', name='annotation_compose_in_block'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/any/new/json$', 'er.views.annotations.add_json', name='annotation_new_in_block'),
+
     # annotation reply to comment
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_json', name='annotation_reply'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/new/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_json', name='annotation_reply'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/new/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new'),
+
+    # TODO: reply to comment in block
 
     # editor
     url(r'^er/(?P<doc_id>\d+)/edit$', 'er.views.edit.formview', name='doc_editor'),

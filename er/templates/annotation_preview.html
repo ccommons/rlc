@@ -1,0 +1,22 @@
+<div class="annotation-preview">
+
+{% if note_count > 0 %}
+    <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='note' %}')">
+        [{{ note_count }} Note{{ note_count|pluralize }}]
+    </a>
+{% endif %}
+
+{% if openq_count > 0 %}
+    <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='openq' %}')">
+        [{{ openq_count }} Open Question{{ openq_count|pluralize }}]
+    </a>
+{% endif %}
+
+<a onclick="annotation_compose_init('{{ compose_url }}')">[Add Annotation]</a>
+
+{% comment %}
+<a>[Proposed Revisions]</a>
+<a>[Revisions]</a>
+{% endcomment %}
+
+</div>

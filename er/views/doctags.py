@@ -1,16 +1,18 @@
 from bs4 import BeautifulSoup
 import uuid
 
+debug = False
+
 def parse(doc_txt):
     doc = BeautifulSoup(doc_txt, "html.parser")
     return(doc)
 
-def section_info(doc):
+def get_tag_info(doc, tag_types):
     """get section information in a document
        you must process doc with add_header_id_attrs() first"""
     position = 0
     tag_info = [] # needs : id, header text, position
-    for tag in doc.find_all(["h1", "h2"]):
+    for tag in doc.find_all(tag_types, recursive=False):
 	tag_info.append({
 	    "id" : tag["id"],
 	    "text" : unicode(tag.string),
@@ -20,39 +22,51 @@ def section_info(doc):
 
     return(tag_info)
 
+def section_info(doc):
+    return(get_tag_info(doc, ["h1", "h2"]))
+
+def block_info(doc):
+    return(get_tag_info(doc, ["div", "p"]))
+
 def add_id_attrs(doc, tag, id_prefix):
     """add id attributes to a document as needed"""
 
     id_prefix_length = len(id_prefix)
     div_ids = {}
 
-    for tag in doc.find_all(tag):
+    for tag in doc.find_all(tag, recursive=False):
 	gen_id = True
 
 	# look for a pre-existing id attribute
 	if tag.has_attr("id"):
 	    if tag.attrs["id"] in div_ids:
 		# duplicate id; generate a new one
-		# print ("duplicate: " + tag.attrs["id"])
+		if debug:
+                    print ("duplicate: " + tag.attrs["id"])
 		gen_id = True 
 	    else: 
 		id = tag.attrs["id"]
 		if id[:id_prefix_length] == id_prefix:
 		    # this id exists and is valid; don't generate a new one
-		    # print ("pre-existing: " + id)
+                    if debug:
+                        print ("pre-existing: " + id)
 		    div_ids[id] = True
 		    gen_id = False 
 		else:
 		    # this id exists, but is invalid; generate a new one
-		    # print ("incorrect prefix: " + id)
+                    if debug:
+                        print ("incorrect prefix: " + id)
 		    gen_id = True 
 	else:
 	    # no id at all; generate a new one
-	    # print ("no id")
+            if debug:
+                print ("no id:")
 	    gen_id = True
 
 	if gen_id:
 	    tag["id"] = id_prefix + str(uuid.uuid4())
+            if debug:
+                print (" > new id:" + tag["id"])
 
     # not really necessary, because doc is mutable and has been changed
     return(doc)
@@ -67,6 +81,7 @@ def add_header_id_attrs(doc):
 
 def add_ids(doc):
     doc = add_id_attrs(doc, "div", "erb-")
+    doc = add_id_attrs(doc, "p", "erb-")
     doc = add_id_attrs(doc, "h1", "erh-")
     doc = add_id_attrs(doc, "h2", "erh-")
     return(doc)
@@ -75,6 +90,7 @@ def add_ids(doc):
 # so that we can get the TOC
 
 if __name__ == "__main__":
+    debug = True
     testdoc = """<h1>sec1</h1><div>here is some stuff</div>
     <div id="erb-exists">this one has an id already</div>
     <div id="erb-exists">this one reuses, needs new one</div>

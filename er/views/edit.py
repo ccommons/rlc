@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 
 from django.core.urlresolvers import reverse
 
-from er.models import EvidenceReview
+from er.models import EvidenceReview, PaperSection, PaperBlock
 
 from document import get_doc
 
@@ -73,6 +73,9 @@ def change(request, *args, **kwargs):
     parsed_doc = doctags.parse(form.cleaned_data["content"])
     doctags.add_ids(parsed_doc)
 
+    # TODO: deleting and adding section info is currently very slow
+    # due to the relations, use deltas to speed it up
+
     # delete previous section info
     for section in doc.papersection_set.all():
     	section.delete()
@@ -81,10 +84,25 @@ def change(request, *args, **kwargs):
     section_info = doctags.section_info(parsed_doc)
     for section in section_info:
     	doc.papersection_set.create(
-	    id=section["id"],
+	    tag_id=section["id"],
 	    header_text=section["text"],
 	    position=section["position"],
 	)
+
+    # delete previous block info
+    for block in doc.paperblock_set.all():
+    	block.delete()
+
+    # create new block info
+    block_info = doctags.block_info(parsed_doc)
+    for block in block_info:
+        o = PaperBlock(
+            tag_id = block["id"],
+            preview_text = block["text"][:100],
+            position = block["position"],
+            paper = doc,
+        )
+        o.save()
 
     doc.content = str(parsed_doc)
     doc.title = form.cleaned_data["title"]

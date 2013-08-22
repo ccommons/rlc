@@ -3,9 +3,16 @@
 {% block content %}
     <ul>
     {% for item in unread %}
-	<li>{{item}}</li>
+        {% ifequal item.event.etype "er" %}
+            {% if item.event.resource %}
+                <li>{{item.event.resource.title}}</li>
+            {% endif %}
+        {% else %}{% ifequal item.event.etype "annotation" %}
+            {% if item.event.resource %}
+                <li>{{item.event.resource.atype}}</li>
+            {% endif %}
+        {% endifequal %}{% endifequal %}
     {% endfor %}
     </ul>
-    <ul>
 {% endblock %}
 

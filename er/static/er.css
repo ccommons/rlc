@@ -42,6 +42,18 @@
     user-select: none;
 }
 
+.annotation-preview {
+    cursor: default;
+    margin-bottom: 13px;
+}
+
+.logo {
+    display: inline-block;
+    background: url("img/logoRLC.png") !important;
+    width: 231px !important;
+    height: 55px !important;
+}
+
 .modal-title .profile-name {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -121,4 +133,3 @@
 #profile-details label {
     text-transform: uppercase;
 }
-
