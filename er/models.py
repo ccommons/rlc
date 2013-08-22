@@ -56,6 +56,7 @@ class PaperBlock(models.Model):
 class Comment(models.Model):
     # parent is null if this is the root comment
     parent = models.ForeignKey('self', blank=True, null=True, related_name="replies")
+    root = models.ForeignKey('self', blank=True, null=True, related_name="all_replies")
 
     user = models.ForeignKey(User)
     text = models.TextField()
