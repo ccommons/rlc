@@ -42,3 +42,83 @@
     user-select: none;
 }
 
+.modal-title .profile-name {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.modal-title .profile-title,
+.modal-title .profile-institution,
+.modal-title .profile-dept {
+    font-size: 0.45em;
+    display: block;
+}
+
+.profile-header {
+    display:-moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    *display:inline;
+    width: 265px;
+}
+
+.profile-summary {
+    font-size: 0.5em;
+    display:-moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    *display:inline;
+    position: relative;
+    vertical-align: top;
+}
+
+.profile-summary ul {
+    background-color: #ccc;
+    padding: 5px;
+    padding-left: 0;
+    margin: 0;
+
+}
+
+.profile-summary-item {
+    width: 4.7em;
+    height: 4.5em;
+    display:-moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    *display:inline;
+    font-size: 0.7em;
+    line-height: 1.2em;
+    vertical-align: top;
+    text-align: center;
+    padding: 5px;
+    border-left: 1px solid #000;
+    margin: 0;
+}
+
+.profile-summary-item:first-child {
+    border-left: 0;
+}
+
+.profile-summary-counter {
+    line-height: 1.2em;
+    font-size: 1.5em;
+    font-weight: bold;
+    font-style: italic;
+    display: block;
+}
+
+#profile-details p {
+    font-size: 0.9em;
+}
+
+#profile-details label,
+#profile-details input {
+    font-size: 1em;
+}
+
+#profile-details label {
+    text-transform: uppercase;
+}
+
