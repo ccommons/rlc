@@ -1,0 +1,52 @@
+{% extends "modal.html" %}
+{% block modal_title %}
+    <div class="modal-title">
+        <div class="profile-header">
+            <span class="profile-name">{{ user.first_name }} {{user.last_name }}</span>
+            {% if profile.title %}<span class="profile-title">{{ profile.title }}</span>{% endif %}
+            {% if profile.department %}<span class="profile-dept">{{ profile.department }}</span>{% endif %}
+            {% if profile.institution %}<span class="profile-institution">{{ profile.institution }}</span>{% endif %}
+        </div>
+        <div class="profile-summary">
+            <ul>
+            <li class="profile-summary-item"><span class="profile-summary-counter">{{ num_note }}</span>Note{{ num_note|pluralize }}</li>
+            <li class="profile-summary-item"><span class="profile-summary-counter">{{ num_proprev }}</span>Proposed Revision{{ num_proprev|pluralize }}</li>
+            <li class="profile-summary-item"><span class="profile-summary-counter">{{ num_openq }}</span>Open Question{{ num_openq|pluralize }}</li>
+            <li class="profile-summary-item"><span class="profile-summary-counter">{{ num_comment }}</span>Comment{{ num_comment|pluralize }}</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+{% block modal_body %}
+    <ul id="dummytab" class="nav nav-tabs" >
+    <li><a id="profile-tab-details" href="#profile-details">Details</a></li>
+    <li><a id="profile-tab-conversations" href="#profile-conversations">Conversations</a></li>
+    </ul>
+    <script language="javascript">
+    $('#dummytab a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    })
+    </script>
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade active in" id="profile-details">
+        {{ form.as_p }}
+        </div>
+        <div class="tab-pane fade" id="profile-conversations">
+            <ul>
+            {% for item in items %}
+                <li class="profile-conv-item" id="profile-conv-{{ item.id }}">
+                    <p class="profile-conv-line1">{{ item.ctype|upper }} | {{ item.age|upper }}</p>
+                    <p class="profile-conv-context"><a href="{{ item.url }}">{{ item.context }}</a></p>
+                    <p class="profile-conv-line3">
+                        rating 
+                        {% if item.comments %}| {{ item.comments }} Comment{{ item.comments|pluralize }} {% endif %}
+                    </p>
+                </li>
+            {% empty %}
+                <li class="profile-conv-empty">No conversation</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>{# tabbed content #}
+{% endblock %}
