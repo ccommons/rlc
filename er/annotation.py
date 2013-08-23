@@ -58,6 +58,25 @@ class comment(object):
 	self.model_object.parent = parent_comment.model_object
 	self.model_object.save()
 
+    def is_root(self):
+        """determine if the current comment is the root (initial comment)"""
+        # this can be made to not use the model object, but that will
+        # affect performance (it will instantiate a new object)
+        return(self.model_object.parent == None)
+
+    @property
+    def root(self):
+	"""get root comment"""
+	if self.is_root():
+	    return self
+	else:
+	    return self.__class__.fetch(self.model_object.root.id)
+
+    @root.setter
+    def root(self, root_comment):
+	self.model_object.root = root_comment.model_object
+	self.model_object.save()
+
     @classmethod
     def fetch(comment, id):
 	"""get comment by index"""
@@ -67,8 +86,10 @@ class comment(object):
 	return(c)
 
     def reply(self, *args, **kwargs):
+        """reply to a comment"""
 	reply_comment = self.__class__(*args, **kwargs)
 	reply_comment.parent = self
+        reply_comment.root = self.root
 	return(reply_comment)
 
     def thread_as_list(self):
@@ -92,6 +113,22 @@ class comment(object):
 		    comment_stack.append((replies, level + 1))
 
 	return(output)
+
+    @classmethod
+    def fetch_by_user(comment, username, **kwargs):
+	"""get all comments by a user
+           use max=n to limit number of results"""
+        user = User.objects.get(username=username)
+        comments = user.comment_set.order_by('-timestamp')
+
+        comments = comments.all()
+
+        if "max" in kwargs:
+            max = int(kwargs["max"])
+            comments = comments[:max]
+
+	return([comment.fetch(c.id) for c in comments])
+
 
 class discussionpoint(object):
     """Discussion point abstract base class"""
