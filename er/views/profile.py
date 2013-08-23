@@ -32,7 +32,7 @@ class conversationItem(object):
         'note' : 'Note',
     }
 
-    def __init__(self, id):
+    def __init__(self, id, **kwargs):
         self._id = id
         self._ctype = ""
         self._age = ""
@@ -43,13 +43,22 @@ class conversationItem(object):
 
         self._timestamp = None
         self._now = datetime.utcnow()
+
+        # for generating url
+        self._doc_id = kwargs.get('doc_id', '')
+        self._atype = kwargs.get('atype', '')
+        self._annotation_id = kwargs.get('annotation_id', '')
     
     @property
     def url(self):
+        if not self._url:
+            if self._doc_id and self._atype and self._annotation_id:
+                url_kwargs = dict(
+                        doc_id=self._doc_id,
+                        atype=self._atype,
+                        annotation_id=self._annotation_id)
+                self._url = reverse('annotation_one_of_all', kwargs=url_kwargs)
         return self._url
-    @url.setter
-    def url(self, url):
-        self._url = url
 
     @property
     def id(self):
@@ -123,13 +132,12 @@ def profile_json(request, *args, **kwargs):
     conv_count = {'comment':0}
     conv_items = []
     for c in comments:
-        conv_item = conversationItem(c.model_object.id)
         try:
+            # TODO: incorporate into comment class
+            a = c.root.model_object.annotation
+            conv_item = conversationItem(c.model_object.id, doc_id=a.er_doc.id, atype=a.atype, annotation_id=a.id)
             if c.is_root():
                 # an annotation
-                # TODO: incorporate into comment class
-                a = c.model_object.annotation
-
                 if a.atype in conv_count:
                     conv_count[a.atype] += 1
                 else:

@@ -101,6 +101,9 @@ function MyProfileModal() {
     $.extend(this, $super, {
         'render' : function() {
             $super.render.bind(this)();
+            $('#profile-conversations a').click(function(event) {
+                this.close();
+            }.bind(this));
         }
     });
 }
