@@ -52,13 +52,18 @@ def full_json(request, *args, **kwargs):
     else:
         requested_id = None
 
+    show_compose_button = False
+
     # get annotations
     if this_url_name in [ "annotation", "annotation_one_of_all" ]:
-        annotations = [a for a in annotation.doc_all(doc) if a.atype == kwargs["atype"]]
+        # TODO: move this into annotation class
+        annotations = [a for a in annotation.doc_all(doc) if a.atype == atype]
+        if atype == "openq":
+            show_compose_button = True
     else:
-        # TODO: use annotation model for this
+        # TODO: also use annotation class for this
         block = PaperBlock.objects.get(tag_id=kwargs["block_id"])
-        objs = block.annotations.filter(atype=kwargs["atype"])
+        objs = block.annotations.filter(atype=atype)
         annotations = [annotation.fetch(o.id) for o in objs]
 
     num_annotations = len(annotations)
@@ -80,6 +85,7 @@ def full_json(request, *args, **kwargs):
 	"num_annotations" : num_annotations,
         "this_url_name" : this_url_name,
         "selected_annotation" : selected_annotation,
+        "show_compose_button" : show_compose_button,
     })
 
     if (this_url_name == "annotation" and atype == "openq"):
