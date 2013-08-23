@@ -113,12 +113,19 @@ def full_json(request, *args, **kwargs):
 
     return(HttpResponse(json, mimetype='application/json'))
 
+compose_choices = [c for c in Annotation.ANNOTATION_TYPES
+                             if c[0] != 'rev']
+# TODO: move this to model
+default_choice="note"
+
 class AnnotationComposeForm(forms.ModelForm):
     class Meta:
         model = Annotation
-        fields = ['atype'] 
+        # fields = ['atype'] 
+        fields = [] 
 
     doc_id = forms.IntegerField(widget=forms.HiddenInput())
+    atype = forms.ChoiceField(choices=compose_choices, widget=forms.RadioSelect)
 
     # initial_comment_text = forms.CharField(widget=CKEditorWidget())
     # following is for default text widget
@@ -144,6 +151,7 @@ def compose_json(request, *args, **kwargs):
     if this_url_name == 'annotation_compose_in_block':
         block_id = kwargs["block_id"]
         form_action = reverse('annotation_new_in_block', kwargs=kwargs)
+        data["atype"] = default_choice
     elif this_url_name == 'annotation_compose':
         atype = kwargs["atype"]
         data["atype"] = atype
@@ -151,6 +159,7 @@ def compose_json(request, *args, **kwargs):
         form_action = reverse('annotation_new', kwargs=kwargs)
     else:
         # should not reach
+        # TODO: raise correct extension
         block_id = None
 
 
