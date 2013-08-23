@@ -1,3 +1,10 @@
+.logo {
+    display: inline-block;
+    background: url("img/logoRLC.png") !important;
+    width: 231px !important;
+    height: 55px !important;
+}
+
 #toc-container {
 	padding: 9px 12px;
 	/* max-height: 300px; */
@@ -47,11 +54,14 @@
     margin-bottom: 13px;
 }
 
-.logo {
-    display: inline-block;
-    background: url("img/logoRLC.png") !important;
-    width: 231px !important;
-    height: 55px !important;
+.annotation-context {
+    font-size: 1.5em;
+    line-height: 1.5em;
+    margin-bottom: 7px;
+}
+
+.annotation-comment-author {
+    text-transform: uppercase;
 }
 
 .modal-title .profile-name {

@@ -35,21 +35,30 @@
     })
     </script>
     <div id="myTabContent" class="tab-content">
-    <div>Open Question Context (if it exists)</div>
     {% for a in annotations %}
         {% if forloop.counter == selected_annotation %}
         <div class="tab-pane fade active in" id="annotation-{{forloop.counter}}">
         {% else %}
         <div class="tab-pane fade" id="annotation-{{forloop.counter}}">
         {% endif %}
+        {% if a.model_object.doc_block != None %}
+        <div class="annotation-context">
+            {# TODO: move model_object stuff into annotation class #}
+            <a block_id="{{ a.model_object.doc_block.tag_id }}">
+                {{ a.model_object.doc_block.preview_text }}
+            </a>
+        </div>
+        {% endif %}
         {% for comment in a.comments %}
             <div>
                 <div style="margin-bottom: 3px; margin-left: {{ comment.level }}0px">
-                    <div>{{ comment.text }}</div>
-                    <div>{{ comment.model_object.user.first_name }}
-                         {{ comment.model_object.user.last_name }}
-                    | {{ comment.timestamp | date }}</div>
-                    <div>rating |
+                    <div class="annotation-comment-text">{{ comment.text }}</div>
+                    <div class="annotation-comment-author">
+                         {{ comment.model_object.user.first_name }}
+                         {{ comment.model_object.user.last_name }} |
+                         {{ comment.timestamp | date }}
+                    </div>
+                    <div class="annotation-comment-actions">rating |
                     {% if comment.level == 0 %}
                         {% if a.reply_count == 1 %}
                             One Reply |
