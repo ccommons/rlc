@@ -133,3 +133,19 @@
 #profile-details label {
     text-transform: uppercase;
 }
+
+#profile-conversations ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.profile-conv-item {
+    padding-top: 1em;
+    border-top : 2px dashed #ccc;
+}
+
+.profile-conv-item:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
