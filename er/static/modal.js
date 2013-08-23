@@ -60,6 +60,17 @@ function AnnotationModal() {
                 }
                 /* TODO: show/hide links */
             }.bind(this));
+            $('.annotation-context a').click(function(event) {
+                // TODO: replace generic compose with inline editor
+                var block_id = $(event.currentTarget).attr('block_id');
+                this.close();
+                var els = $('#' + block_id).get();
+                if (els.length > 0) {
+                    els[0].scrollIntoView(true);
+                    // TODO: move this to a new function that also adjusts
+                    // the location versus the header
+                }
+            }.bind(this));
         }
     });
 }
