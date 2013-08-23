@@ -9,8 +9,8 @@ from django import forms
 from django.core.urlresolvers import reverse
 
 from er.models import Profile
-#from er.models import Comment, Annotation
 from er.annotation import comment
+from er.views.annotations import atype_to_name
 
 from datetime import datetime
 
@@ -24,13 +24,6 @@ class UpdateProfileForm(forms.Form):
 
 class conversationItem(object):
     """Transform data for presentation"""
-
-    CTYPE_MAP = {
-        'openq' : 'Open Question',
-        'proprev' : 'Proposed Revision',
-        'rev' : 'Revision',
-        'note' : 'Note',
-    }
 
     def __init__(self, id, **kwargs):
         self._id = id
@@ -69,7 +62,7 @@ class conversationItem(object):
         return self._ctype
     @ctype.setter
     def ctype(self, ctype):
-        self._ctype = self.__class__.CTYPE_MAP.get(ctype, ctype)
+        self._ctype = atype_to_name(ctype) or ctype
     
     @property
     def context(self):
