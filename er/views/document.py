@@ -54,10 +54,15 @@ def fullpage(request, *args, **kwargs):
     oq_kwargs = deepcopy(kwargs)
     oq_kwargs["atype"] = "openq"
 
+    # TODO: fix this
+    from annotations import AnnotationComposeForm
+    dummyform = AnnotationComposeForm()
+
     context = Context({
 	"doc" : doc,
 	"doctitle" : "Melanoma RLC: " + doc.title,
     	"main_document" : content,
+        "widget_media" : dummyform.media,
 	"group_names" : group_names,
 	"sections" : sections,
         "openq_url" : reverse('annotation', kwargs=oq_kwargs),
