@@ -12,7 +12,7 @@
             <a class="annotation-page" incr="1" target_el="current_annotation">&gt;</a>
         </div>
         {% endif %}
-        {% if this_url_name == "annotation" and atype == "openq" %}
+        {% if show_compose_button %}{# this can be moved here, but it's long #}
         <div class="pull-right">
             <button type="button" id="annotation-compose" url="{{ compose_url }}" class="btn">New Open Question</button>
         </div>
