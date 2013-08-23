@@ -2,7 +2,7 @@
 {% block table_of_contents %}
     <ul>
     {% for section in sections %}
-    	<li><a href="#{{ section.id }}">{{ section.header_text }}</a></li>
+    	<li><a href="#{{ section.tag_id }}">{{ section.header_text }}</a></li>
     {% endfor %}
 	<li class="horizontal-separator"></li>
     	<li><a onclick="annotation_init('{{ openq_url }}')">Open Questions</a></li>
