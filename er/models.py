@@ -79,12 +79,12 @@ class DiscussionPoint(models.Model):
 
 class Annotation(DiscussionPoint):
     context = models.CharField(max_length=100)
-    ANNOTATION_TYPES = {
+    ANNOTATION_TYPES = [
     	('note', 'Note'),
     	('openq', 'Open Question'),
     	('proprev', 'Proposed Revision'),
     	('rev', 'Revision'),
-    }
+    ]
     atype = models.CharField(max_length=10, choices=ANNOTATION_TYPES, default='note')
     # TODO: remove null from the following (easier to debug when null allowed)
     er_doc = models.ForeignKey(EvidenceReview, related_name="annotations", null=True)
