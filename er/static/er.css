@@ -21,6 +21,15 @@
 	cursor: pointer;
 }
 
+.document-container, .summary-container {
+    border: 1px solid #ccc;
+    padding: 3px 10px;
+    background-color: #ffffff;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    margin-bottom: 20px;
+}
+
 .paper-content-container h1 {
     font-style: italic;
     font-size: 20px;
@@ -77,6 +86,31 @@
     display: block;
 }
 
+/* this inline taken from bootstrap.css */
+.inline-radio ul {
+    margin-left: 0;
+    list-style: none;
+}
+
+.inline-radio ul > li,
+.inline-radio ol.inline > li {
+    display: inline-block;
+    *display: inline;
+    /* IE7 inline-block hack */
+
+    *zoom: 1;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.inline-radio ul > li input,
+.inline-radio ol.inline > li input {
+    margin-top: -2px;
+    height: auto;
+}
+
 .profile-header {
     display:-moz-inline-stack;
     display: inline-block;
@@ -85,25 +119,35 @@
     width: 265px;
 }
 
-.profile-summary {
+.profile-summary,
+.document-summary {
     font-size: 0.5em;
     display:-moz-inline-stack;
     display: inline-block;
-    zoom: 1;
+   // zoom: 1;
     *display:inline;
     position: relative;
     vertical-align: top;
 }
 
-.profile-summary ul {
+.profile-summary {
+    zoom: 1;
+}
+
+.document-summary {
+    zoom: 1.8;
+}
+
+.profile-summary ul,
+.document-summary ul {
     background-color: #ccc;
     padding: 5px;
     padding-left: 0;
     margin: 0;
-
 }
 
-.profile-summary-item {
+.profile-summary-item,
+.document-summary-item {
     width: 4.7em;
     height: 4.5em;
     display:-moz-inline-stack;
@@ -119,16 +163,26 @@
     margin: 0;
 }
 
-.profile-summary-item:first-child {
+.document-summary-item {
+    font-size: 0.8em;
+}
+
+.profile-summary-item:first-child,
+.document-summary-item:first-child {
     border-left: 0;
 }
 
-.profile-summary-counter {
+.profile-summary-counter,
+.document-summary-counter {
     line-height: 1.2em;
-    font-size: 1.5em;
+    font-size: 2.0em;
     font-weight: bold;
     font-style: italic;
     display: block;
+}
+
+.document-summary-counter {
+    font-size: 2.5em;
 }
 
 #profile-details p {
