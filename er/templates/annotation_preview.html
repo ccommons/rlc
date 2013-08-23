@@ -12,11 +12,18 @@
     </a>
 {% endif %}
 
-<a onclick="annotation_compose_init('{{ compose_url }}')">[Add Annotation]</a>
+{% if proprev_count > 0 %}
+    <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='proprev' %}')">
+        [{{ proprev_count }} Proposed Revision{{ proprev_count|pluralize }}]
+    </a>
+{% endif %}
 
-{% comment %}
-<a>[Proposed Revisions]</a>
-<a>[Revisions]</a>
-{% endcomment %}
+{% if rev_count > 0 %}
+    <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='rev' %}')">
+        [{{ rev_count }} Revision{{ rev_count|pluralize }}]
+    </a>
+{% endif %}
+<br />
+<a onclick="annotation_compose_init('{{ compose_url }}')">[Add&nbsp;Annotation]</a>
 
 </div>
