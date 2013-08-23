@@ -57,7 +57,12 @@
                             {{ a.reply_count }} Replies |
                         {% endif %}
                     {% endif %}
-                    <a class="annotation-reply" reply_url="{% url 'annotation_reply' doc_id=doc.id atype=atype annotation_id=a.model_object.id comment_id=comment.model_object.id %}">
+                    {% if reply_url_name == "annotation_reply" %}
+                    <a class="annotation-reply" reply_url="{% url reply_url_name doc_id=doc.id atype=atype annotation_id=a.model_object.id comment_id=comment.model_object.id %}">
+                    {% else %}
+                    {# reply_url_name == "annotation_reply_in_block" #}
+                    <a class="annotation-reply" reply_url="{% url reply_url_name doc_id=doc.id atype=atype annotation_id=a.model_object.id comment_id=comment.model_object.id block_id=block_id%}">
+                    {% endif %}
                         Reply
                     </a>
                     | Follow | Share</div>

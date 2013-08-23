@@ -55,16 +55,22 @@ def full_json(request, *args, **kwargs):
     show_compose_button = False
 
     # get annotations
-    if this_url_name in [ "annotation", "annotation_one_of_all" ]:
+    if this_url_name in ["annotation", "annotation_one_of_all"]:
         # TODO: move this into annotation class
         annotations = [a for a in annotation.doc_all(doc) if a.atype == atype]
         if atype == "openq":
             show_compose_button = True
-    else:
+        reply_url_name = "annotation_reply"
+    elif this_url_name in ["annotations_in_block", "annotation_one_in_block"]:
         # TODO: also use annotation class for this
         block = PaperBlock.objects.get(tag_id=kwargs["block_id"])
         objs = block.annotations.filter(atype=atype)
         annotations = [annotation.fetch(o.id) for o in objs]
+        reply_url_name = "annotation_reply_in_block"
+    else:
+        # should not be reached
+        # TODO: raise proper exception (this will error out some other way)
+        pass
 
     num_annotations = len(annotations)
     for index, a in enumerate(annotations, 1):
@@ -86,7 +92,11 @@ def full_json(request, *args, **kwargs):
         "this_url_name" : this_url_name,
         "selected_annotation" : selected_annotation,
         "show_compose_button" : show_compose_button,
+        "reply_url_name" : reply_url_name,
     })
+    
+    if reply_url_name == "annotation_reply_in_block":
+        context["block_id"] = kwargs["block_id"]
 
     if (this_url_name == "annotation" and atype == "openq"):
         compose_kwargs = {
@@ -225,8 +235,9 @@ class AnnotationReplyForm(forms.ModelForm):
     comment_text = forms.CharField(widget=forms.Textarea())
 
 @login_required
-def reply_json(request, *args, **kwargs):
+def reply_compose_json(request, *args, **kwargs):
     """annotation comment reply view"""
+    this_url_name = request.resolver_match.url_name
     req_cxt = RequestContext(request)
 
     doc = get_doc(**kwargs)
@@ -249,8 +260,14 @@ def reply_json(request, *args, **kwargs):
 
     form = AnnotationReplyForm(initial=data)
 
-    form_action = reverse('annotation_reply_new', kwargs=kwargs)
-    print form_action
+    if this_url_name == "annotation_reply":
+        form_action = reverse('annotation_reply_new', kwargs=kwargs)
+    elif this_url_name == "annotation_reply_in_block":
+        form_action = reverse('annotation_reply_new_in_block', kwargs=kwargs)
+    else:
+        # should not be reached
+        # TODO: raise error
+        form_action = None
 
     context = Context({
 	"doc" : doc,
@@ -273,6 +290,8 @@ def reply_json(request, *args, **kwargs):
 def reply_add_json(request, *args, **kwargs):
     """annotation create"""
 
+    this_url_name = request.resolver_match.url_name
+
     form = AnnotationReplyForm(request.POST)
 
     if form.is_valid():
@@ -289,7 +308,15 @@ def reply_add_json(request, *args, **kwargs):
 
     return_kwargs = dict(kwargs)
     del return_kwargs["comment_id"]
-    return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
+
+    if this_url_name == "annotation_reply_new":
+        return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
+    elif this_url_name == "annotation_reply_new_in_block":
+        return_url = reverse('annotation_one_in_block', kwargs=return_kwargs)
+    else:
+        # should not be reached
+        # TODO: raise correct exception
+        return_url = False
 
     json = simplejson.dumps({
     	"annotation_id" : kwargs["annotation_id"],
