@@ -36,11 +36,13 @@ urlpatterns = patterns('',
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/any/compose/json$', 'er.views.annotations.compose_json', name='annotation_compose_in_block'),
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/any/new/json$', 'er.views.annotations.add_json', name='annotation_new_in_block'),
 
-    # annotation reply to comment
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_json', name='annotation_reply'),
+    # annotation reply to comment (not in block)
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_compose_json', name='annotation_reply'),
     url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/new/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new'),
 
-    # TODO: reply to comment in block
+    # annotation reply to comment (in block)
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_compose_json', name='annotation_reply_in_block'),
+    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/new/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new_in_block'),
 
     # editor
     url(r'^er/(?P<doc_id>\d+)/edit$', 'er.views.edit.formview', name='doc_editor'),
