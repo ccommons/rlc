@@ -18,7 +18,7 @@ from django.core.urlresolvers import reverse
 
 from ckeditor.widgets import CKEditorWidget
 
-from document import get_doc
+from docutils import get_doc
 
 def atype_to_name(atype):
     for t in Annotation.ANNOTATION_TYPES:
@@ -27,6 +27,18 @@ def atype_to_name(atype):
 
     return(None)
 
+def annotation_summary(doc):
+    counts = {
+        "num_note" : 0,
+        "num_openq" : 0,
+        "num_proprev" : 0,
+        "num_rev" : 0,
+    }
+    # the string-append is slow but probably insignificant
+    for a in annotation.doc_all(doc):
+        counts["num_" + a.atype] += 1
+
+    return(counts)
 
 @login_required
 def full_json(request, *args, **kwargs):
@@ -125,11 +137,11 @@ class AnnotationComposeForm(forms.ModelForm):
         fields = [] 
 
     doc_id = forms.IntegerField(widget=forms.HiddenInput())
-    atype = forms.ChoiceField(choices=compose_choices, widget=forms.RadioSelect)
+    atype = forms.ChoiceField(choices=compose_choices, widget=forms.RadioSelect, label = "Annotation Type")
 
-    # initial_comment_text = forms.CharField(widget=CKEditorWidget())
+    # initial_comment_text = forms.CharField(widget=CKEditorWidget(), label="")
     # following is for default text widget
-    initial_comment_text = forms.CharField(widget=forms.Textarea())
+    initial_comment_text = forms.CharField(widget=forms.Textarea(), label="")
 
 @login_required
 def compose_json(request, *args, **kwargs):
@@ -203,6 +215,11 @@ def add_json(request, *args, **kwargs):
     doc = get_doc(**kwargs)
     user = request.user
     atype = form.cleaned_data["atype"]
+
+    # TODO: reject this if atype == "rev"
+    # (can't add revision directly like this, but perhaps editor can do
+    # that later)
+
     init_comment = form.cleaned_data["initial_comment_text"]
 
     a = annotation(index="x", atype=atype, user=user, comment=init_comment)
