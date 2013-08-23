@@ -21,10 +21,11 @@ class comment(object):
 
 	# create new comment if there are args
 	# TODO: clean up argument validation
+        # (make sure that "user" is actually a user, for example)
 	if "text" in kwargs:
 	    self.model_object = self.CommentModel(
 		text=kwargs["text"],
-		user=User.objects.get(username=kwargs["user"]),
+		user=kwargs["user"],
 	    )
 
 	    self.model_object.save()
@@ -115,10 +116,10 @@ class comment(object):
 	return(output)
 
     @classmethod
-    def fetch_by_user(comment, username, **kwargs):
+    def fetch_by_user(comment, user, **kwargs):
 	"""get all comments by a user
            use max=n to limit number of results"""
-        user = User.objects.get(username=username)
+        # TODO: validate user object
         comments = user.comment_set.order_by('-timestamp')
 
         comments = comments.all()
@@ -176,6 +177,7 @@ class discussionpoint(object):
 	self.timestamp = mo.timestamp
 	self.id = mo.id
 	self.comment = comment.fetch(mo.initial_comment.id)
+	self.user = self.comment.user
 	self.init_from_model()
 
     def init_from_model(self):

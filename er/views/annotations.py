@@ -182,11 +182,11 @@ def add_json(request, *args, **kwargs):
         pass
 
     doc = get_doc(**kwargs)
-    username = request.user.username
+    user = request.user
     atype = form.cleaned_data["atype"]
     init_comment = form.cleaned_data["initial_comment_text"]
 
-    a = annotation(index="x", atype=atype, user=username, comment=init_comment)
+    a = annotation(index="x", atype=atype, user=user, comment=init_comment)
     a.document = doc
 
     if this_url_name == "annotation_new_in_block":
@@ -279,13 +279,13 @@ def reply_add_json(request, *args, **kwargs):
         pass
 
     doc = get_doc(**kwargs)
-    username = request.user.username
+    user = request.user
     new_comment_text = form.cleaned_data["comment_text"]
 
     original_comment_id = kwargs["comment_id"]
     original_comment = comment.fetch(id=original_comment_id)
 
-    new_comment = original_comment.reply(text=new_comment_text, user=username)
+    new_comment = original_comment.reply(text=new_comment_text, user=user)
 
     return_kwargs = dict(kwargs)
     del return_kwargs["comment_id"]
