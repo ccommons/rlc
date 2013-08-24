@@ -98,11 +98,25 @@ function AnnotationComposeModal() {
 
 function MyProfileModal() {
     var $super = new Modal();
+
+    var submit_response_handler = function(data, texttype) {
+        this.close();
+        this.content_delete();
+        this.content_set(data["body_html"], data["modal_id"]);
+        this.render();
+    }.bind(this);
+
     $.extend(this, $super, {
         'render' : function() {
             $super.render.bind(this)();
             $('#profile-conversations a').click(function(event) {
                 this.close();
+            }.bind(this));
+            $('#profile-update-submit').click(function(event) {
+                // can we get this from the event?
+                var action = $('#profile-update-submit').attr('action');
+                var postdata = $('#profile-update-form').serialize();
+                $.post(action, postdata, submit_response_handler, 'json');
             }.bind(this));
         }
     });

@@ -19,7 +19,7 @@
 {% endblock %}
 {% block modal_body %}
     <ul id="dummytab" class="nav nav-tabs" >
-    <li><a id="profile-tab-details" href="#profile-details">Details</a></li>
+    <li class="active"><a id="profile-tab-details" href="#profile-details">Details</a></li>
     <li><a id="profile-tab-conversations" href="#profile-conversations">Conversations</a></li>
     </ul>
     <script language="javascript">
@@ -30,7 +30,38 @@
     </script>
     <div id="myTabContent" class="tab-content">
         <div class="tab-pane fade active in" id="profile-details">
-        {{ form.as_p }}
+        <form id="profile-update-form">
+        <div>
+        {{ profile_form.as_p }}
+        {% csrf_token %}
+        </div>
+        <div class="right">
+            <p><label>Email Alerts</label></p>
+            <ul class="email-preference-group">
+                <li>{{ email_form.all_notifications }} All notifications</li>
+            </ul>
+            <ul class="email-preference-group">
+                <li>{{ email_form.activity_all }} When there's activity on one of my:</li>
+                <li>{{ email_form.activity_note }} Notes</li>
+                <li>{{ email_form.activity_rev }} Revisions</li>
+                <li>{{ email_form.activity_openq }} Open Questions</li>
+                <li>{{ email_form.activity_comment }} Comments</li></li></li></li>
+            </ul>
+            <ul class="email-preference-group">
+                <li>{{ email_form.er_all }} When there's activity on one of my:</li>
+                <li>{{ email_form.er_revised }} Revised</li>
+                <li>{{ email_form.er_updated }} Updated</li>
+                <li>{{ email_form.er_published }} Published</li>
+            </ul>
+            <ul class="email-preference-group">
+                <li>{{ email_form.new_members }} New members</li>
+            </ul>
+        </div>
+        <div id="profile-update-form-buttons">
+            <button type="button" id="profile-update-submit" action="{{ form_action }}" class="btn">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+        </form>
         </div>
         <div class="tab-pane fade" id="profile-conversations">
             <ul>

@@ -1,124 +1,59 @@
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
 
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.http import HttpResponse
 from django import forms
-from django.core.urlresolvers import reverse
 
-from er.models import Profile
+from er.models import Profile, EmailPreferences
 from er.annotation import comment
-from er.views.annotations import atype_to_name
-
-from datetime import datetime
+from er.profile import conversationItem
 
 class UpdateProfileForm(forms.Form):
     title = forms.CharField(required=False, max_length=100)
     department = forms.CharField(required=False, max_length=100)
     institution = forms.CharField(required=False, max_length=100)
     email = forms.EmailField(required=False)
-    new_password = forms.CharField(widget=forms.PasswordInput)
-    new_password2 = forms.CharField(label="New password (again)", widget=forms.PasswordInput)
+    new_password = forms.CharField(required=False, widget=forms.PasswordInput)
+    new_password2 = forms.CharField(required=False, label="New password (again)", widget=forms.PasswordInput)
 
-class conversationItem(object):
-    """Transform data for presentation"""
+    def clean(self):
+        password = self.cleaned_data.get('new_password')
+        password2 = self.cleaned_data.get('new_password2')
+        if password != password2:
+            # can't target specific field in current version or django
+            # the error is put in self.non_field_errors
+            # workaround is not using .as_p(), print non_field_errors before password field
+            raise forms.ValidationError("Passwords don't match")
+        return self.cleaned_data
 
-    def __init__(self, id, **kwargs):
-        self._id = id
-        self._ctype = ""
-        self._age = ""
-        self._url = ""
-        self._context = ""
-        self._ratings = 0
-        self._comments = 0
-
-        self._timestamp = None
-        self._now = datetime.utcnow()
-
-        # for generating url
-        self._doc_id = kwargs.get('doc_id', '')
-        self._atype = kwargs.get('atype', '')
-        self._annotation_id = kwargs.get('annotation_id', '')
-    
-    @property
-    def url(self):
-        if not self._url:
-            if self._doc_id and self._atype and self._annotation_id:
-                url_kwargs = dict(
-                        doc_id=self._doc_id,
-                        atype=self._atype,
-                        annotation_id=self._annotation_id)
-                self._url = reverse('annotation_one_of_all', kwargs=url_kwargs)
-        return self._url
-
-    @property
-    def id(self):
-        return self._id
-
-    @property
-    def ctype(self):
-        return self._ctype
-    @ctype.setter
-    def ctype(self, ctype):
-        self._ctype = atype_to_name(ctype) or ctype
-    
-    @property
-    def context(self):
-        return self._context
-    @context.setter
-    def context(self, context):
-        self._context = context
-    
-    @property
-    def comments(self):
-        return self._comments
-    @comments.setter
-    def comments(self, comments):
-        self._comments = comments
-
-    @property
-    def timestamp(self):
-        return self._timestamp
-    @timestamp.setter
-    def timestamp(self, timestamp):
-        if self._timestamp:
-            raise Exception("timestamp has been set before")
-        timestamp = timestamp.replace(tzinfo=None)
-        self._timestamp = timestamp
-        # set age
-        timedelta = self._now - timestamp
-        daysdiff = self._now.day - timestamp.day
-        if timedelta.days <2:
-            if not daysdiff:
-                # hour/minute
-                hours = int(timedelta.seconds)/3600
-                if hours < 1:
-                    minutes = int(timedelta.seconds)/60
-                    display = '%d minute%s ago' % (minutes, '' if minutes == 1 else 's')
-                else:
-                    display = '%d hour%s ago' % (hours, '' if hours == 1 else 's')
-            elif daysdiff == 1:
-                display = "yesterday"
-            else:
-                display = "2 days ago"
-        else:
-            display = '%s days ago' % daysdiff
-        self._age = display
-
-    @property
-    def age(self):
-        return self._age
+class UpdateEmailPreferenceForm(forms.Form):
+    all_notifications = forms.BooleanField(required=False)
+    activity_all = forms.BooleanField(required=False)
+    activity_note = forms.BooleanField(required=False)
+    activity_rev = forms.BooleanField(required=False)
+    activity_openq = forms.BooleanField(required=False)
+    activity_comment = forms.BooleanField(required=False)
+    er_all = forms.BooleanField(required=False)
+    er_revised = forms.BooleanField(required=False)
+    er_updated = forms.BooleanField(required=False)
+    er_published = forms.BooleanField(required=False)
+    new_members = forms.BooleanField(required=False)
 
 @login_required
 def profile_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
     user = request.user
     try:
-        profile = Profile.objects.get(user=user)
+        profile = user.profile
     except:
         profile = Profile(user=user)
+
+    try:
+        email_pref = user.emailpreferences
+    except:
+        email_pref = EmailPreferences(user=user)
 
     comments = comment.fetch_by_user(user)
 
@@ -154,16 +89,88 @@ def profile_json(request, *args, **kwargs):
             conv_items.append(conv_item)
 
     modal_id = "modal_id_myprofile"
-    profile_data = {
-        "title" : profile.title,
-        "department" : profile.department,
-        "institution" : profile.institution,
-        "email" : user.email,
-    }
-    form = UpdateProfileForm(initial=profile_data)
+
+    # handle form submission
+    if request.method == 'POST':
+        profile_form = UpdateProfileForm(request.POST)
+        email_form = UpdateEmailPreferenceForm(request.POST)
+        if profile_form.is_valid() and email_form.is_valid():
+            # save
+            cd = profile_form.cleaned_data
+            profile.title = cd['title']
+            profile.department = cd['department']
+            profile.institution = cd['institution']
+            profile.save()
+            if cd['new_password']:
+                user.set_password(cd['new_password'])
+            user.email = cd['email']
+            user.save()
+            cd = email_form.cleaned_data
+
+            email_pref.activity_note = cd['activity_note']
+            email_pref.activity_rev = cd['activity_rev']
+            email_pref.activity_openq = cd['activity_openq']
+            email_pref.activity_comment = cd['activity_comment']
+            email_pref.er_revised = cd['er_revised']
+            email_pref.er_updated = cd['er_updated']
+            email_pref.er_published = cd['er_published']
+            email_pref.new_member = cd['new_members']
+
+            if cd['activity_all']:
+                email_pref.activity_note = True
+                email_pref.activity_rev = True
+                email_pref.activity_openq = True
+                email_pref.activity_comment = True
+
+            if cd['er_all']:
+                email_pref.er_revised = True
+                email_pref.er_updated = True
+                email_pref.er_published = True
+
+            if cd['all_notifications']:
+                email_pref.activity_note = True
+                email_pref.activity_rev = True
+                email_pref.activity_openq = True
+                email_pref.activity_comment = True
+                email_pref.er_revised = True
+                email_pref.er_updated = True
+                email_pref.er_published = True
+                email_pref.new_member = True
+            email_pref.save()
+    else:
+        activity_all = email_pref.activity_note and email_pref.activity_rev and email_pref.activity_openq and email_pref.activity_comment
+        er_all = email_pref.er_revised and email_pref.er_updated and email_pref.er_published
+        all_notifications = activity_all and er_all and email_pref.new_member
+
+        emailpref_data = {
+            'all_notifications' : all_notifications,
+            'activity_all' : activity_all,
+            'activity_note' : email_pref.activity_note,
+            'activity_rev' : email_pref.activity_rev,
+            'activity_openq' : email_pref.activity_openq,
+            'activity_comment' : email_pref.activity_comment,
+            'er_all' : er_all,
+            'er_revised' : email_pref.er_revised,
+            'er_updated' : email_pref.er_updated,
+            'er_published' : email_pref.er_published,
+            'new_members' : email_pref.new_member,
+        }
+
+        profile_data = {
+            "title" : profile.title,
+            "department" : profile.department,
+            "institution" : profile.institution,
+            "email" : user.email,
+        }
+
+        profile_form = UpdateProfileForm(initial=profile_data)
+        email_form = UpdateEmailPreferenceForm(emailpref_data)
+
+
     context = Context({
 	"modal_id" : modal_id,
-        "form" : form,
+        "profile_form" : profile_form,
+        "email_form" : email_form,
         "user" : user,
         "profile" : profile,
         "items" : conv_items,
@@ -171,6 +178,7 @@ def profile_json(request, *args, **kwargs):
         "num_proprev" : conv_count.get('proprev', 0),
         "num_openq" : conv_count.get('openq', 0),
         "num_comment" : conv_count.get('comment', 0),
+        "form_action" : request.get_full_path(),
     })
 
     body_html = render_to_string("myprofile.html", context, context_instance=req_cxt)

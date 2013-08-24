@@ -185,13 +185,19 @@
     font-size: 2.5em;
 }
 
+#profile-details li,
 #profile-details p {
     font-size: 0.9em;
+}
+
+#profile-details p {
+    margin-bottom: 0em;
 }
 
 #profile-details label,
 #profile-details input {
     font-size: 1em;
+    line-height: 1em;
 }
 
 #profile-details label {
@@ -226,4 +232,26 @@
 
 .email-preference-group li:first-child {
     padding-left: 0;
+    font-weight: bold;
+}
+
+#profile-update-form div {
+    display:-moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    *display:inline;
+    vertical-align: top;
+    padding-right: 2em;
+}
+
+#profile-update-form-buttons {
+    display: block;
+    float: right;
+    margin-bottom: 1em;
+}
+
+#profile-details .errorlist {
+    margin: 0;
+    list-style-type: none;
+    color: red;
 }
