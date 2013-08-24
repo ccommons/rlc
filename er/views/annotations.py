@@ -143,6 +143,7 @@ class AnnotationComposeForm(forms.ModelForm):
     # following is for default text widget
     initial_comment_text = forms.CharField(widget=forms.Textarea(), label="")
 
+
 @login_required
 def compose_json(request, *args, **kwargs):
     """annotation compose view"""
@@ -260,6 +261,14 @@ class AnnotationReplyForm(forms.ModelForm):
     # following is for default text widget
     comment_text = forms.CharField(widget=forms.Textarea())
 
+class EditorProposedRevisionReplyForm(AnnotationReplyForm):
+    APPROVAL_CHOICES = [
+        ("accept", "Accept Revision"),
+        ("reject", "Reject Revision"),
+        ("defer", "Leave Under Consideration"),
+    ]
+    approval = forms.ChoiceField(choices=APPROVAL_CHOICES, widget=forms.RadioSelect, label = "")
+
 @login_required
 def reply_compose_json(request, *args, **kwargs):
     """annotation comment reply view"""
@@ -267,6 +276,9 @@ def reply_compose_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
 
     doc = get_doc(**kwargs)
+
+    a = annotation.fetch(id=kwargs["annotation_id"])
+    atype = a.atype
 
     if doc == None:
         # TODO: fix this error handling once and for all
@@ -284,7 +296,15 @@ def reply_compose_json(request, *args, **kwargs):
 
     modal_id = "modal-reply-{0}".format(kwargs["comment_id"])
 
-    form = AnnotationReplyForm(initial=data)
+    group_names = [g["name"] for g in request.user.groups.values()]
+
+    if atype == "proprev" and "Editor" in group_names:
+        data["approval"] = "defer"
+        form = EditorProposedRevisionReplyForm(initial=data)
+        form_type = "editor_reply"
+    else:
+        form = AnnotationReplyForm(initial=data)
+        form_type = "normal_reply"
 
     if this_url_name == "annotation_reply":
         form_action = reverse('annotation_reply_new', kwargs=kwargs)
@@ -300,6 +320,7 @@ def reply_compose_json(request, *args, **kwargs):
 	"modal_id" : modal_id,
         "form" : form,
         "form_action" : form_action,
+        "form_type" : form_type,
         "original_comment" : original_comment,
     })
 
@@ -318,7 +339,17 @@ def reply_add_json(request, *args, **kwargs):
 
     this_url_name = request.resolver_match.url_name
 
-    form = AnnotationReplyForm(request.POST)
+    a = annotation.fetch(id=kwargs["annotation_id"])
+    atype = a.atype
+
+    group_names = [g["name"] for g in request.user.groups.values()]
+
+    if atype == "proprev" and "Editor" in group_names:
+        form = EditorProposedRevisionReplyForm(request.POST)
+        form_type = "editor_reply"
+    else:
+        form = AnnotationReplyForm(request.POST)
+        form_type = "normal_reply"
 
     if form.is_valid():
         pass
@@ -331,6 +362,22 @@ def reply_add_json(request, *args, **kwargs):
     original_comment = comment.fetch(id=original_comment_id)
 
     new_comment = original_comment.reply(text=new_comment_text, user=user)
+
+    if form_type == "editor_reply":
+        approval = form.cleaned_data["approval"]
+        if approval == "accept":
+            # change to accepted revision
+            a.atype = "rev"
+            # TODO: record the change somewhere
+        elif approval == "reject":
+            # what do we do here?
+            pass
+        elif approval == "defer":
+            # do nothing
+            pass
+        else:
+            # TODO: raise something, probably
+            pass
 
     return_kwargs = dict(kwargs)
     del return_kwargs["comment_id"]
