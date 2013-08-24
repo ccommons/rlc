@@ -8,6 +8,9 @@ from django.core.urlresolvers import reverse
 
 from copy import deepcopy
 
+from docutils import get_doc
+from annotations import annotation_summary
+
 @login_required
 def index(request):
     """index page"""
@@ -20,20 +23,6 @@ def index(request):
     })
 
     return(render_to_response("index.html", context, context_instance=req_cxt))
-
-def get_doc(**kwargs):
-    if "doc_id" in kwargs:
-    	doc_id = int(kwargs["doc_id"])
-    else:
-    	doc_id = -1
-
-    try:
-	doc = EvidenceReview.objects.get(id=doc_id)
-    except:
-    	doc = None
-	# XXX should redirect here to something sane
-
-    return(doc)
 
 @login_required
 def fullpage(request, *args, **kwargs):
@@ -51,21 +40,27 @@ def fullpage(request, *args, **kwargs):
 
     sections = doc.papersection_set.order_by('position')
 
+    summary = annotation_summary(doc)
+
+    # get URL reverse kwargs for viewing open questions
     oq_kwargs = deepcopy(kwargs)
     oq_kwargs["atype"] = "openq"
+    openq_url = reverse('annotation', kwargs=oq_kwargs)
 
     # TODO: fix this
     from annotations import AnnotationComposeForm
     dummyform = AnnotationComposeForm()
 
-    context = Context({
+    context = {
 	"doc" : doc,
 	"doctitle" : "Melanoma RLC: " + doc.title,
     	"main_document" : content,
         "widget_media" : dummyform.media,
 	"group_names" : group_names,
 	"sections" : sections,
-        "openq_url" : reverse('annotation', kwargs=oq_kwargs),
-    })
+        "openq_url" : openq_url,
+    }
+    context.update(summary)
+
     return(render_to_response("er.html", context, context_instance=req_cxt))
 

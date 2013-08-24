@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 
 from er.models import EvidenceReview, PaperSection, PaperBlock
 
-from document import get_doc
+from docutils import get_doc
 
 from ckeditor.widgets import CKEditorWidget
 

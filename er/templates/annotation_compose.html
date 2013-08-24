@@ -1,12 +1,26 @@
 {% extends "modal.html" %}
 {% block modal_title %}
+    {# TODO: if url=new outside, this should be new Open Question #}
     <h4 class="modal-title">New Annotation</h4>
 {% endblock %}
 {% block modal_body %}
 <form id="annotation-compose-form">
 {% csrf_token %}
-<h3>New Open Question</h3>
-{{ form.as_p }}
+{% for hidden_field in form.hidden_fields %}
+    {{ hidden_field }}
+{% endfor %}
+<div>
+    {{ form.atype.errors }}
+    {# {{ form.atype.label }} #}
+    <div class="inline-radio">
+    {{ form.atype }}
+    </div>
+</div> 
+<div>
+    {{ form.initial_comment_text.errors }}
+    {{ form.initial_comment_text.label }}
+    {{ form.initial_comment_text }}
+</div>
 <div>
 <button type="button" id="annotation-submit" action="{{form_action}}" class="btn">Submit</button>
 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
