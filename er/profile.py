@@ -28,7 +28,6 @@ class conversationItem(object):
             if self._doc_id and self._atype and self._annotation_id:
                 url_kwargs = dict(
                         doc_id=self._doc_id,
-                        atype=self._atype,
                         annotation_id=self._annotation_id)
                 self._url = reverse('annotation_one_of_all', kwargs=url_kwargs)
         return self._url

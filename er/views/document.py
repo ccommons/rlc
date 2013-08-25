@@ -45,7 +45,7 @@ def fullpage(request, *args, **kwargs):
     # get URL reverse kwargs for viewing open questions
     oq_kwargs = deepcopy(kwargs)
     oq_kwargs["atype"] = "openq"
-    openq_url = reverse('annotation', kwargs=oq_kwargs)
+    # openq_url = reverse('annotation', kwargs=oq_kwargs)
 
     # TODO: fix this
     from annotations import AnnotationComposeForm
@@ -58,7 +58,7 @@ def fullpage(request, *args, **kwargs):
         "widget_media" : dummyform.media,
 	"group_names" : group_names,
 	"sections" : sections,
-        "openq_url" : openq_url,
+        # "openq_url" : openq_url,
     }
     context.update(summary)
 

@@ -54,7 +54,6 @@ def full_json(request, *args, **kwargs):
     else:
         content = "no document"
 
-    atype = kwargs["atype"]
 
     # TODO: should probably error out if annotation can't be found
     selected_annotation = 1
@@ -66,8 +65,19 @@ def full_json(request, *args, **kwargs):
 
     show_compose_button = False
 
+    # get annotation type
+    if this_url_name in ["annotation_all", "annotations_in_block"]:
+        atype = kwargs["atype"]
+    elif this_url_name in ["annotation_one_of_all", "annotation_one_in_block"]:
+        # TODO: error checking?
+        atype = annotation.fetch(kwargs["annotation_id"]).atype
+    else:
+        # should not be reached
+        # TODO: raise proper exception (this will error out some other way)
+        pass
+
     # get annotations
-    if this_url_name in ["annotation", "annotation_one_of_all"]:
+    if this_url_name in ["annotation_all", "annotation_one_of_all"]:
         # TODO: move this into annotation class
         annotations = [a for a in annotation.doc_all(doc) if a.atype == atype]
         if atype == "openq":
@@ -96,8 +106,8 @@ def full_json(request, *args, **kwargs):
 
     context = Context({
 	"doc" : doc,
-        "atype" : kwargs["atype"],
-        "atype_name" : atype_to_name(kwargs["atype"]),
+        "atype" : atype,
+        "atype_name" : atype_to_name(atype),
 	"modal_id" : modal_id,
 	"annotations" : annotations,
 	"num_annotations" : num_annotations,
@@ -169,7 +179,9 @@ def compose_json(request, *args, **kwargs):
         atype = kwargs["atype"]
         data["atype"] = atype
         block_id = None
-        form_action = reverse('annotation_new', kwargs=kwargs)
+        return_kwargs = dict(kwargs)
+        del return_kwargs["atype"]
+        form_action = reverse('annotation_new', kwargs=return_kwargs)
     else:
         # should not reach
         # TODO: raise correct extension
@@ -237,7 +249,6 @@ def add_json(request, *args, **kwargs):
     if this_url_name == "annotation_new":
         return_url = reverse('annotation_one_of_all', kwargs=return_kwargs)
     elif this_url_name == "annotation_new_in_block":
-        return_kwargs["atype"] = atype
         return_url = reverse('annotation_one_in_block', kwargs=return_kwargs)
     else:
         # should not be reached
@@ -277,7 +288,12 @@ def reply_compose_json(request, *args, **kwargs):
 
     doc = get_doc(**kwargs)
 
-    a = annotation.fetch(id=kwargs["annotation_id"])
+    # fetch original comment and its associated annotation
+    # TODO: put this stuff into the comment/annotation class
+    original_comment = comment.fetch(id=kwargs["comment_id"])
+    root = original_comment.root
+    a = annotation.fetch(id=root.model_object.annotation.id)
+
     atype = a.atype
 
     if doc == None:
@@ -339,7 +355,14 @@ def reply_add_json(request, *args, **kwargs):
 
     this_url_name = request.resolver_match.url_name
 
-    a = annotation.fetch(id=kwargs["annotation_id"])
+    # fetch original comment and its associated annotation
+    # TODO: put this stuff into the comment/annotation class
+    original_comment = comment.fetch(id=kwargs["comment_id"])
+    root = original_comment.root
+    a = annotation.fetch(id=root.model_object.annotation.id)
+
+    annotation_id = a.model_object.id
+
     atype = a.atype
 
     group_names = [g["name"] for g in request.user.groups.values()]
@@ -357,9 +380,6 @@ def reply_add_json(request, *args, **kwargs):
     doc = get_doc(**kwargs)
     user = request.user
     new_comment_text = form.cleaned_data["comment_text"]
-
-    original_comment_id = kwargs["comment_id"]
-    original_comment = comment.fetch(id=original_comment_id)
 
     new_comment = original_comment.reply(text=new_comment_text, user=user)
 
@@ -379,7 +399,7 @@ def reply_add_json(request, *args, **kwargs):
             # TODO: raise something, probably
             pass
 
-    return_kwargs = dict(kwargs)
+    return_kwargs = dict(kwargs, annotation_id=annotation_id)
     del return_kwargs["comment_id"]
 
     if this_url_name == "annotation_reply_new":
@@ -392,7 +412,7 @@ def reply_add_json(request, *args, **kwargs):
         return_url = False
 
     json = simplejson.dumps({
-    	"annotation_id" : kwargs["annotation_id"],
+    	"annotation_id" : annotation_id,
         "url" : return_url,
     })
 

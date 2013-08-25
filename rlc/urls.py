@@ -4,50 +4,56 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
+GEN_PREFIX = r'^er'
+DOC_PREFIX = GEN_PREFIX + r'/(?P<doc_id>\d+)'
+ANNO_PREFIX = DOC_PREFIX + r'/annotation'
+
+A_TYPES = r'/(?P<atype>openq|note|proprev|rev)'
+A_ID = r'/(?P<annotation_id>\d+)'
+A_BLOCK = r'/(?P<block_id>[a-z0-9-]+)'
+A_COMMENT = r'/(?P<comment_id>\d+)'
+
 urlpatterns = patterns('',
     # index page
     url(r'^$', 'er.views.document.index', name='root_index'),
-    url(r'^er/$', 'er.views.document.index', name='index'),
+    url(GEN_PREFIX + r'$', 'er.views.document.index', name='index'),
 
     # main view
     #
-    # url(r'^er/$', 'er.views.document.fullpage', name='mainview'),
-    #
-    url(r'^er/(?P<doc_id>\d+)$', 'er.views.document.fullpage', name='document_fullview'),
+    url(DOC_PREFIX + r'$', 'er.views.document.fullpage', name='document_fullview'),
 
     # annotations
 
     # previews
-    url(r'^er/(?P<doc_id>\d+)/annotation/previews/json$', 'er.views.annotations.preview_json', name='annotation_previews'),
+    url(ANNO_PREFIX + r'/previews/json$', 'er.views.annotations.preview_json', name='annotation_previews'),
 
     # general view
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/json$', 'er.views.annotations.full_json', name='annotation'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/(?P<annotation_id>\d+)/json$', 'er.views.annotations.full_json', name='annotation_one_of_all'),
+    url(ANNO_PREFIX + r'/at' +A_TYPES+ '/json$', 'er.views.annotations.full_json', name='annotation_all'),
+    url(ANNO_PREFIX + r'/ai' +A_ID+ '/json$', 'er.views.annotations.full_json', name='annotation_one_of_all'),
 
     # views in blocks
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/json$', 'er.views.annotations.full_json', name='annotations_in_block'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/json$', 'er.views.annotations.full_json', name='annotation_one_in_block'),
+    url(ANNO_PREFIX + r'/bt' +A_BLOCK+A_TYPES + '/json$', 'er.views.annotations.full_json', name='annotations_in_block'),
+    url(ANNO_PREFIX + r'/bi' +A_BLOCK+A_ID + '/json$', 'er.views.annotations.full_json', name='annotation_one_in_block'),
 
-    # annotation compose (no block)
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/compose/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq)/new/json$', 'er.views.annotations.add_json', name='annotation_new'),
+    # annotation compose (no block--for now, manually specify anno type)
+    url(ANNO_PREFIX + r'/ct' +A_TYPES+ '/json$', 'er.views.annotations.compose_json', name='annotation_compose'),
+    url(ANNO_PREFIX + r'/nt/json$', 'er.views.annotations.add_json', name='annotation_new'),
 
     # annotation compose (in block)
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/any/compose/json$', 'er.views.annotations.compose_json', name='annotation_compose_in_block'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/any/new/json$', 'er.views.annotations.add_json', name='annotation_new_in_block'),
+    url(ANNO_PREFIX + r'/cb' +A_BLOCK+ '/json$', 'er.views.annotations.compose_json', name='annotation_compose_in_block'),
+    url(ANNO_PREFIX + r'/nb' +A_BLOCK+'/json$', 'er.views.annotations.add_json', name='annotation_new_in_block'),
 
     # annotation reply to comment (not in block)
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_compose_json', name='annotation_reply'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/new/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new'),
+    url(ANNO_PREFIX + r'/arc' +A_COMMENT+ r'/json$', 'er.views.annotations.reply_compose_json', name='annotation_reply'),
+    url(ANNO_PREFIX + r'/arn' +A_COMMENT+ r'/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new'),
 
     # annotation reply to comment (in block)
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/json$', 'er.views.annotations.reply_compose_json', name='annotation_reply_in_block'),
-    url(r'^er/(?P<doc_id>\d+)/annotation/(?P<block_id>[a-z0-9-]+)/(?P<atype>openq|note|proprev|rev)/(?P<annotation_id>\d+)/(?P<comment_id>\d+)/reply/new/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new_in_block'),
+    url(ANNO_PREFIX + r'/brc' +A_BLOCK+A_COMMENT+ r'/json$', 'er.views.annotations.reply_compose_json', name='annotation_reply_in_block'),
+    url(ANNO_PREFIX + r'/brn' +A_BLOCK+A_COMMENT+ r'/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new_in_block'),
 
     # editor
-    url(r'^er/(?P<doc_id>\d+)/edit$', 'er.views.edit.formview', name='doc_editor'),
-    url(r'^er/(?P<doc_id>\d+)/change$', 'er.views.edit.change', name='doc_change'),
-
+    url(DOC_PREFIX + r'/edit$', 'er.views.edit.formview', name='doc_editor'),
+    url(DOC_PREFIX + r'/change$', 'er.views.edit.change', name='doc_change'),
 
     # notification menu
     url(r'^er/notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),

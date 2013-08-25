@@ -13,7 +13,7 @@ $(document).ready(function() {
     	<li><a href="#{{ section.tag_id }}">{{ section.header_text }}</a></li>
     {% endfor %}
 	<li class="horizontal-separator"></li>
-    	<li><a onclick="annotation_init('{{ openq_url }}')">Open Questions</a></li>
+    	<li><a onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype="openq" %}')">Open Questions</a></li>
     	<li><a href="#">News</a></li>
     	<li><a href="#">Figures and Tables</a></li>
     </ul>
