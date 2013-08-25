@@ -1,4 +1,12 @@
 {% extends "er-containers.html" %}
+{% block head_extras %}
+<script language="javascript">
+$(document).ready(function() {
+    annotation_preview_init('{% url 'annotation_previews' doc_id=doc.id %}');
+    annotation_preview_refresh();
+});
+</script>
+{% endblock %}
 {% block table_of_contents %}
     <ul>
     {% for section in sections %}
@@ -22,7 +30,7 @@
         </div>
     {% endif %}
     <div>
-	<a onclick="annotation_previews('{% url 'annotation_previews' doc_id=doc.id %}')">show annotations</a>
+	<a onclick="annotation_preview_refresh('{% url 'annotation_previews' doc_id=doc.id %}')">refresh annotations</a>
     </div>
     <div class="paper-content-container">
     {{ main_document | safe }}
@@ -30,5 +38,5 @@
 {% endblock %}
 
 {% block right-column %}
-    {% include "summary.html" %}
+    {% include "annotation_summary.html" %}
 {% endblock %}
