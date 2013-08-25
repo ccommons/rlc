@@ -1,5 +1,6 @@
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from django.template.loader import render_to_string
 from django.utils import simplejson
@@ -43,17 +44,37 @@ class UpdateEmailPreferenceForm(forms.Form):
 
 @login_required
 def profile_json(request, *args, **kwargs):
+    modal_id = "modal_profile"
     req_cxt = RequestContext(request)
-    user = request.user
+    this_url_name = request.resolver_match.url_name
+    if this_url_name == 'myprofile':
+        myprofile = True
+    else:
+        myprofile = False
+
+    if myprofile:
+        user = request.user
+    else:
+        try:
+            user = User.objects.get(id=kwargs.get('user_id', 0))
+        except:
+            json = simplejson.dumps({
+                "body_html" : 'User not found',
+                "modal_id" : modal_id,
+            })
+
+            return(HttpResponse(json, mimetype='application/json'))
+
     try:
         profile = user.profile
     except:
         profile = Profile(user=user)
 
-    try:
-        email_pref = user.emailpreferences
-    except:
-        email_pref = EmailPreferences(user=user)
+    if myprofile:
+        try:
+            email_pref = user.emailpreferences
+        except:
+            email_pref = EmailPreferences(user=user)
 
     comments = comment.fetch_by_user(user)
 
@@ -88,89 +109,87 @@ def profile_json(request, *args, **kwargs):
             conv_item.timestamp = c.timestamp
             conv_items.append(conv_item)
 
-    modal_id = "modal_id_myprofile"
+    if myprofile:
+        # handle form submission
+        if request.method == 'POST':
+            profile_form = UpdateProfileForm(request.POST)
+            email_form = UpdateEmailPreferenceForm(request.POST)
+            if profile_form.is_valid() and email_form.is_valid():
+                # save
+                cd = profile_form.cleaned_data
+                profile.title = cd['title']
+                profile.department = cd['department']
+                profile.institution = cd['institution']
+                profile.save()
+                if cd['new_password']:
+                    user.set_password(cd['new_password'])
+                user.email = cd['email']
+                user.save()
+                cd = email_form.cleaned_data
 
-    # handle form submission
-    if request.method == 'POST':
-        profile_form = UpdateProfileForm(request.POST)
-        email_form = UpdateEmailPreferenceForm(request.POST)
-        if profile_form.is_valid() and email_form.is_valid():
-            # save
-            cd = profile_form.cleaned_data
-            profile.title = cd['title']
-            profile.department = cd['department']
-            profile.institution = cd['institution']
-            profile.save()
-            if cd['new_password']:
-                user.set_password(cd['new_password'])
-            user.email = cd['email']
-            user.save()
-            cd = email_form.cleaned_data
+                email_pref.activity_note = cd['activity_note']
+                email_pref.activity_rev = cd['activity_rev']
+                email_pref.activity_openq = cd['activity_openq']
+                email_pref.activity_comment = cd['activity_comment']
+                email_pref.er_revised = cd['er_revised']
+                email_pref.er_updated = cd['er_updated']
+                email_pref.er_published = cd['er_published']
+                email_pref.new_member = cd['new_members']
 
-            email_pref.activity_note = cd['activity_note']
-            email_pref.activity_rev = cd['activity_rev']
-            email_pref.activity_openq = cd['activity_openq']
-            email_pref.activity_comment = cd['activity_comment']
-            email_pref.er_revised = cd['er_revised']
-            email_pref.er_updated = cd['er_updated']
-            email_pref.er_published = cd['er_published']
-            email_pref.new_member = cd['new_members']
+                if cd['activity_all']:
+                    email_pref.activity_note = True
+                    email_pref.activity_rev = True
+                    email_pref.activity_openq = True
+                    email_pref.activity_comment = True
 
-            if cd['activity_all']:
-                email_pref.activity_note = True
-                email_pref.activity_rev = True
-                email_pref.activity_openq = True
-                email_pref.activity_comment = True
+                if cd['er_all']:
+                    email_pref.er_revised = True
+                    email_pref.er_updated = True
+                    email_pref.er_published = True
 
-            if cd['er_all']:
-                email_pref.er_revised = True
-                email_pref.er_updated = True
-                email_pref.er_published = True
+                if cd['all_notifications']:
+                    email_pref.activity_note = True
+                    email_pref.activity_rev = True
+                    email_pref.activity_openq = True
+                    email_pref.activity_comment = True
+                    email_pref.er_revised = True
+                    email_pref.er_updated = True
+                    email_pref.er_published = True
+                    email_pref.new_member = True
+                email_pref.save()
+        else:
+            activity_all = email_pref.activity_note and email_pref.activity_rev and email_pref.activity_openq and email_pref.activity_comment
+            er_all = email_pref.er_revised and email_pref.er_updated and email_pref.er_published
+            all_notifications = activity_all and er_all and email_pref.new_member
 
-            if cd['all_notifications']:
-                email_pref.activity_note = True
-                email_pref.activity_rev = True
-                email_pref.activity_openq = True
-                email_pref.activity_comment = True
-                email_pref.er_revised = True
-                email_pref.er_updated = True
-                email_pref.er_published = True
-                email_pref.new_member = True
-            email_pref.save()
-    else:
-        activity_all = email_pref.activity_note and email_pref.activity_rev and email_pref.activity_openq and email_pref.activity_comment
-        er_all = email_pref.er_revised and email_pref.er_updated and email_pref.er_published
-        all_notifications = activity_all and er_all and email_pref.new_member
+            emailpref_data = {
+                'all_notifications' : all_notifications,
+                'activity_all' : activity_all,
+                'activity_note' : email_pref.activity_note,
+                'activity_rev' : email_pref.activity_rev,
+                'activity_openq' : email_pref.activity_openq,
+                'activity_comment' : email_pref.activity_comment,
+                'er_all' : er_all,
+                'er_revised' : email_pref.er_revised,
+                'er_updated' : email_pref.er_updated,
+                'er_published' : email_pref.er_published,
+                'new_members' : email_pref.new_member,
+            }
 
-        emailpref_data = {
-            'all_notifications' : all_notifications,
-            'activity_all' : activity_all,
-            'activity_note' : email_pref.activity_note,
-            'activity_rev' : email_pref.activity_rev,
-            'activity_openq' : email_pref.activity_openq,
-            'activity_comment' : email_pref.activity_comment,
-            'er_all' : er_all,
-            'er_revised' : email_pref.er_revised,
-            'er_updated' : email_pref.er_updated,
-            'er_published' : email_pref.er_published,
-            'new_members' : email_pref.new_member,
-        }
+            profile_data = {
+                "title" : profile.title,
+                "department" : profile.department,
+                "institution" : profile.institution,
+                "email" : user.email,
+            }
 
-        profile_data = {
-            "title" : profile.title,
-            "department" : profile.department,
-            "institution" : profile.institution,
-            "email" : user.email,
-        }
+            profile_form = UpdateProfileForm(initial=profile_data)
+            email_form = UpdateEmailPreferenceForm(emailpref_data)
 
-        profile_form = UpdateProfileForm(initial=profile_data)
-        email_form = UpdateEmailPreferenceForm(emailpref_data)
 
 
     context = Context({
 	"modal_id" : modal_id,
-        "profile_form" : profile_form,
-        "email_form" : email_form,
         "user" : user,
         "profile" : profile,
         "items" : conv_items,
@@ -178,8 +197,12 @@ def profile_json(request, *args, **kwargs):
         "num_proprev" : conv_count.get('proprev', 0),
         "num_openq" : conv_count.get('openq', 0),
         "num_comment" : conv_count.get('comment', 0),
-        "form_action" : request.get_full_path(),
     })
+
+    if myprofile:
+        context['profile_form'] = profile_form
+        context['email_form'] = email_form
+        context['form_action'] = request.get_full_path()
 
     body_html = render_to_string("myprofile.html", context, context_instance=req_cxt)
     json = simplejson.dumps({

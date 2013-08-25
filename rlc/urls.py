@@ -52,9 +52,10 @@ urlpatterns = patterns('',
     # notification menu
     url(r'^er/notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),
 
-    # profile
+    # my profile
     url(r'^er/myprofile/json$', 'er.views.profile.profile_json', name='myprofile'),
-
+    # member profile
+    url(r'^er/profile/(?P<user_id>\d+)/json$', 'er.views.profile.profile_json', name='profile'),
 
     # framework administration
     url(r'^admin/', include(admin.site.urls)),
