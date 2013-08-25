@@ -56,6 +56,8 @@ urlpatterns = patterns('',
     url(r'^er/myprofile/json$', 'er.views.profile.profile_json', name='myprofile'),
     # member profile
     url(r'^er/profile/(?P<user_id>\d+)/json$', 'er.views.profile.profile_json', name='profile'),
+    # all members
+    url(r'^er/members/json$', 'er.views.profile.members_json', name='all_members'),
 
     # framework administration
     url(r'^admin/', include(admin.site.urls)),

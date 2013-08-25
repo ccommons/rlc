@@ -1,0 +1,44 @@
+{% extends "modal.html" %}
+{% block modal_title %}
+    <h4 class="modal-title">
+        ALL MEMBERS
+        <div class="inline-radio">
+        <form id="members-sort-form" method="post" action="{{ form_action }}">
+        <ul>
+        {% for radio in form.sort_order %}
+        <li>{{ radio }}</li>
+        {% endfor %}
+        </ul>
+        {% csrf_token %}
+        </form>
+        </div>
+    </h4>
+{% endblock %}
+{% block modal_body %}
+    <ul id="member-list">
+    {% for member in members %}
+        <li class="member-list-item">
+        <div class="member-profile">
+            <span id="member-name"><a href="javascript:modal_init('{% url 'profile' user_id=member.user.id %}');">
+            {% if member.user.first_name and member.user.last_name %}
+            {{ member.user.first_name }} {{ member.user.last_name }}
+            {% else %}
+            {{ member.user.username }}
+            {% endif %}
+            </a></span>
+            {% if member.profile.title %}<span class="member-details">{{ member.profile.title }}</span>{% endif %}
+            {% if member.profile.department %}<span class="member-details">{{ member.profile.department }}</span>{% endif %}
+            {% if member.profile.institution %}<span class="member-details">{{ member.profile.institution }}</span>{% endif %}
+        </div>
+        <div class="member-summary">
+            <ul>
+            <li class="member-summary-item"><span class="member-summary-counter">{{ member.count.note }}</span>Note{{ member.count.note|pluralize }}</li>
+            <li class="member-summary-item"><span class="member-summary-counter">{{ member.count.proprev }}</span>Proposed Revision{{ member.count.proprev|pluralize }}</li>
+            <li class="member-summary-item"><span class="member-summary-counter">{{ member.count.openq }}</span>Open Question{{ member.count.openq|pluralize }}</li>
+            <li class="member-summary-item"><span class="member-summary-counter">{{ member.count.comment }}</span>Comment{{ member.count.comment|pluralize }}</li>
+            </ul>
+        </div>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

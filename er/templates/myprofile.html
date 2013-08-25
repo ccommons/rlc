@@ -77,7 +77,7 @@
                     </p>
                 </li>
             {% empty %}
-                <li class="profile-conv-empty">No conversation</li>
+                <li class="profile-conv-empty">No {% if form_action %}conversations{% else %}contributions{% endif %}</li>
             {% endfor %}
             </ul>
         </div>

@@ -123,6 +123,33 @@ function MyProfileModal() {
     });
 }
 
+function MembersModal() {
+    var $super = new Modal();
+
+    var submit_response_handler = function(data, texttype) {
+        this.close();
+        this.content_delete();
+        this.content_set(data["body_html"], data["modal_id"]);
+        this.render();
+    }.bind(this);
+
+    $.extend(this, $super, {
+        'render' : function() {
+            $super.render.bind(this)();
+            $('#member-name a').click(function(event) {
+                this.close();
+            }.bind(this));
+            $('#members-sort-form input:radio').change(function(event) {
+                // can we get this from the event?
+                var action = $('#members-sort-form').attr('action');
+                var postdata = $('#members-sort-form').serialize();
+                $.post(action, postdata, submit_response_handler, 'json');
+            }.bind(this));
+        }
+    });
+}
+
+
 function modal_init(url, modaltype) {
     if (typeof(modaltype) === 'undefined') {
         var modaltype = Modal;
@@ -146,4 +173,8 @@ function annotation_compose_init(url) {
 
 function myprofile_init(url) {
     modal_init(url, MyProfileModal);
+}
+
+function members_init(url) {
+    modal_init(url, MembersModal);
 }

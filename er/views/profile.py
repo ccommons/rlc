@@ -6,12 +6,13 @@ from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.http import HttpResponse
 from django import forms
+from operator import itemgetter
 
 from er.models import Profile, EmailPreferences
 from er.annotation import comment
 from er.profile import conversationItem
 
-class UpdateProfileForm(forms.Form):
+class updateProfileForm(forms.Form):
     title = forms.CharField(required=False, max_length=100)
     department = forms.CharField(required=False, max_length=100)
     institution = forms.CharField(required=False, max_length=100)
@@ -29,7 +30,7 @@ class UpdateProfileForm(forms.Form):
             raise forms.ValidationError("Passwords don't match")
         return self.cleaned_data
 
-class UpdateEmailPreferenceForm(forms.Form):
+class updateEmailPreferenceForm(forms.Form):
     all_notifications = forms.BooleanField(required=False)
     activity_all = forms.BooleanField(required=False)
     activity_note = forms.BooleanField(required=False)
@@ -112,8 +113,8 @@ def profile_json(request, *args, **kwargs):
     if myprofile:
         # handle form submission
         if request.method == 'POST':
-            profile_form = UpdateProfileForm(request.POST)
-            email_form = UpdateEmailPreferenceForm(request.POST)
+            profile_form = updateProfileForm(request.POST)
+            email_form = updateEmailPreferenceForm(request.POST)
             if profile_form.is_valid() and email_form.is_valid():
                 # save
                 cd = profile_form.cleaned_data
@@ -183,8 +184,8 @@ def profile_json(request, *args, **kwargs):
                 "email" : user.email,
             }
 
-            profile_form = UpdateProfileForm(initial=profile_data)
-            email_form = UpdateEmailPreferenceForm(emailpref_data)
+            profile_form = updateProfileForm(initial=profile_data)
+            email_form = updateEmailPreferenceForm(emailpref_data)
 
 
 
@@ -212,3 +213,77 @@ def profile_json(request, *args, **kwargs):
 
     return(HttpResponse(json, mimetype='application/json'))
 
+class membersSortForm(forms.Form):
+    SORT_ORDER_CHOICES = (('contribution', 'Top Contributors',), ('firstname', 'Alphabetical'),)
+    sort_order = forms.ChoiceField(widget=forms.RadioSelect, choices=SORT_ORDER_CHOICES)
+
+@login_required
+def members_json(request, *args, **kwargs):
+    req_cxt = RequestContext(request)
+    modal_id = "modal_members"
+
+    initial_values = {'sort_order':'contribution',}
+    sort_order = initial_values['sort_order']
+
+    if request.method == 'POST':
+        form = membersSortForm(request.POST)
+        form.is_valid()
+        sort_order = form.cleaned_data.get('sort_order', sort_order)
+    else:
+        form = membersSortForm(initial=initial_values)
+
+    users = User.objects.all().order_by('first_name', 'last_name')
+    members = []
+    for user in users:
+        try:
+            profile = user.profile
+        except:
+            profile = Profile(user=user)
+        comments = comment.fetch_by_user(user)
+        m = {
+            'user' : user,
+            'profile' : profile,
+            'count' : {
+                'comment' : 0,
+                'openq' : 0,
+                'note' : 0,
+                'proprev' : 0,
+            },
+            'contribution' : len(comments),
+        }
+
+        for c in comments:
+            try:
+                # TODO: incorporate into comment class
+                a = c.root.model_object.annotation
+                if c.is_root():
+                    # an annotation
+                    if a.atype in m['count']:
+                        m['count'][a.atype] += 1
+                    else:
+                        m['count'][a.atype] = 1
+                else:
+                    # a reply
+                    m['count']['comment'] += 1
+            except:
+                continue
+        
+        members.append(m)
+
+    if sort_order == 'contribution':
+        members = sorted(members, key=itemgetter('contribution'), reverse=True)
+
+    context = Context({
+	"modal_id" : modal_id,
+        "members" : members,
+        "form" : form,
+        "form_action" : request.get_full_path(),
+    })
+
+    body_html = render_to_string("members.html", context, context_instance=req_cxt)
+    json = simplejson.dumps({
+    	"body_html" : body_html,
+        "modal_id" : modal_id,
+    })
+
+    return(HttpResponse(json, mimetype='application/json'))
