@@ -81,6 +81,7 @@ function AnnotationComposeModal() {
     var submit_response_handler = function(data, texttype) {
         this.close();
         annotation_init(data["url"]);
+        annotation_preview_refresh();
     }.bind(this);
 
     $.extend(this, $super, {

@@ -445,6 +445,14 @@ def preview_json(request, *args, **kwargs):
             "html" : html,
         })
 
-    json = simplejson.dumps(previews)
+    summary_context = annotation_summary(doc)
+    summary_html = render_to_string("annotation_summary.html", summary_context)
+
+    return_data = {
+        "status" : "ok",
+        "previews" : previews,
+        "summary_html" : summary_html,
+    }
+    json = simplejson.dumps(return_data)
     return(HttpResponse(json, mimetype='application/json'))
 
