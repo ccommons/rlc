@@ -7,11 +7,13 @@ admin.autodiscover()
 GEN_PREFIX = r'^er'
 DOC_PREFIX = GEN_PREFIX + r'/(?P<doc_id>\d+)'
 ANNO_PREFIX = DOC_PREFIX + r'/annotation'
+PROFILE_PREFIX = r'^profile'
 
 A_TYPES = r'/(?P<atype>openq|note|proprev|rev)'
 A_ID = r'/(?P<annotation_id>\d+)'
 A_BLOCK = r'/(?P<block_id>[a-z0-9-]+)'
 A_COMMENT = r'/(?P<comment_id>\d+)'
+USER_ID = r'/(?P<user_id>\d+)'
 
 urlpatterns = patterns('',
     # index page
@@ -56,14 +58,14 @@ urlpatterns = patterns('',
     url(DOC_PREFIX + r'/change$', 'er.views.edit.change', name='doc_change'),
 
     # notification menu
-    url(r'^er/notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),
+    url(r'^notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),
 
     # my profile
-    url(r'^er/myprofile/json$', 'er.views.profile.profile_json', name='myprofile'),
+    url(PROFILE_PREFIX + r'/json$', 'er.views.profile.profile_json', name='myprofile'),
     # member profile
-    url(r'^er/profile/(?P<user_id>\d+)/json$', 'er.views.profile.profile_json', name='profile'),
+    url(PROFILE_PREFIX + USER_ID + r'/json$', 'er.views.profile.profile_json', name='profile'),
     # all members
-    url(r'^er/members/json$', 'er.views.profile.members_json', name='all_members'),
+    url(PROFILE_PREFIX + r'/all/json$', 'er.views.profile.members_json', name='all_members'),
 
     # framework administration
     url(r'^admin/', include(admin.site.urls)),
