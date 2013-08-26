@@ -19,7 +19,7 @@
     {% for member in members %}
         <li class="member-list-item">
         <div class="member-profile">
-            <span id="member-name"><a href="javascript:modal_init('{% url 'profile' user_id=member.user.id %}');">
+            <span id="member-name"><a href="javascript:myprofile_init('{% url 'profile' user_id=member.user.id %}');">
             {% if member.user.first_name and member.user.last_name %}
             {{ member.user.first_name }} {{ member.user.last_name }}
             {% else %}
