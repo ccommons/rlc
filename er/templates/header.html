@@ -1,28 +1,25 @@
-		<div class="navbar navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container">
-					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="brand visible-desktop" href="{% url 'root_index' %}"><span class="logo"></span></a>
-					<div class="nav-collapse collapse">
-						<ul class="nav">
-							<li
-							class="documents
-							active"><a href="/#documents">Documents</a></li>
-							<li class="news"><a href="/#news">News</a></li>
-							<li class="profile"><a href="javascript:myprofile_init('{% url 'myprofile' %}')">Profile</a></li>
-							<li class="members"><a href="javascript:members_init('{% url 'all_members' %}');">All members</a></li>
-							<!-- <li class="resources"><a href="/#resources">Resources</a></li> -->
-							<li class="hidden-desktop separator"></li>
-							<li class="hidden-desktop user-controls"></li>
-						</ul>
-					</div>
-					<div class="user-controls visible-desktop pull-right relative">
-						<!--User actions like log in and sign out go here -->
-					</div>
-				</div>
-			</div>
-		</div>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand visible-desktop" href="{% url 'root_index' %}"><span class="logo"></span></a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li class="documents{% if tab == "documents" %} active{% endif %}"><a href="{% url 'index' %}">Documents</a></li>
+                    <li class="news{% if tab == "news"%} active{% endif %}"><a href="{% url 'news_index' %}">News</a></li>
+                    <li class="profile"><a href="javascript:myprofile_init('{% url 'myprofile' %}')">Profile</a></li>
+                    <li class="members"><a href="javascript:members_init('{% url 'all_members' %}');">All members</a></li>
+                    <li class="hidden-desktop separator"></li>
+                    <li class="hidden-desktop user-controls"></li>
+                </ul>
+            </div>
+            <div class="user-controls visible-desktop pull-right relative">
+                <!--User actions like log in and sign out go here -->
+            </div>
+        </div>
+    </div>
+</div>

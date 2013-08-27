@@ -20,6 +20,7 @@ def index(request):
     context = Context({
 	"doctitle" : "Melanoma RLC: home",
     	"docs" : docs,
+        "tab" : "documents",
     })
 
     return(render_to_response("index.html", context, context_instance=req_cxt))
@@ -59,6 +60,7 @@ def fullpage(request, *args, **kwargs):
 	"group_names" : group_names,
 	"sections" : sections,
         # "openq_url" : openq_url,
+        "tab" : "documents",
     }
     context.update(summary)
 
