@@ -21,7 +21,7 @@ annotation_preview_refresh = function() {
         var previews = data["previews"];
         for (var i = 0; i < previews.length; i++) {
             var preview_info = previews[i];
-            $el = $('#' + preview_info["block_id"]);
+            var $el = $('#' + preview_info["block_id"]);
             if ($el !== []) {
                 $el.after(preview_info["html"]);
             }
