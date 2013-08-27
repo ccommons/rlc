@@ -157,6 +157,10 @@ class NewsItem(models.Model):
     comments = models.OneToOneField(Comment)
     pubdate = models.DateTimeField(auto_now=False, auto_now_add=True)
 
+    # for use in templates
+    def tag_objects(self):
+        return(self.tags.all())
+
     def __unicode__(self):
     	return(u"News Item: {0}".format(self.title[:30]))
 
