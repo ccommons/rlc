@@ -279,3 +279,19 @@
     list-style-type: none;
     color: red;
 }
+
+ul.news-listing {
+    list-style-type: none;
+    margin-left: 0;
+}
+
+ul.news-listing h1 {
+    font-size: 1.6em;
+    line-height: 1.6em;
+    margin-bottom: 0px;
+}
+
+ul.news-listing .news-tags {
+    margin-bottom: 3px;
+}
+

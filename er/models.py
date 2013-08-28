@@ -39,7 +39,7 @@ class PaperSection(models.Model):
     position = models.IntegerField()
 
     def __unicode__(self):
-    	return("{0} / {1}".format(self.tag_id, self.header_text[:20]))
+    	return(u"{0} / {1}".format(self.tag_id, self.header_text[:20]))
 
 class PaperBlock(models.Model):
     # id = models.CharField(primary_key=True, max_length=100)
@@ -63,7 +63,7 @@ class Comment(models.Model):
     timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
 
     def __unicode__(self):
-    	return('id: {0} / user: {1} / "{2}"'.format(self.id, self.user.username, self.text))
+    	return(u'id: {0} / user: {1} / "{2}"'.format(self.id, self.user.username, self.text[:120]))
 
 # comment rating -- this is relational. possibly split between negative and
 # positive (might speed counts)
@@ -91,7 +91,7 @@ class Annotation(DiscussionPoint):
     doc_block = models.ForeignKey(PaperBlock, blank=True, null=True, on_delete=models.SET_NULL, related_name="annotations")
 
     def __unicode__(self):
-    	return("Annotation id: {0} / ct: {1}".format(self.id, self.context))
+    	return(u"Annotation id: {0} / ct: {1}".format(self.id, self.context))
 
 
 # TODO: investigate if subclassing works with this
@@ -148,6 +148,28 @@ class EmailPreferences(models.Model):
     new_member = models.BooleanField()
 
 # News models
+class NewsItem(models.Model):
+    # For Melanoma RLC, this will always be "melanoma"
+    site = models.CharField(max_length=30, default="melanoma")
+    url = models.CharField(max_length=250)
+    title = models.CharField(max_length=500)
+    preview = models.TextField()
+    comments = models.OneToOneField(Comment)
+    pubdate = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+    # for use in templates
+    def tag_objects(self):
+        return(self.tags.all())
+
+    def __unicode__(self):
+    	return(u"News Item: {0}".format(self.title[:30]))
+
+class NewsTag(models.Model):
+    news_items = models.ManyToManyField(NewsItem, related_name="tags")
+    tag_value = models.CharField(max_length=30)
+
+    def __unicode__(self):
+    	return(u"News tag: {0}".format(self.tag_value))
 
 # Profile models
 

@@ -43,8 +43,9 @@ def formview(request, *args, **kwargs):
     	# "main_document" : content,
 	"doctitle" : "Melanoma RLC: Edit " + doc.title,
 	"widget_media" : form.media,
-	"form" :	form,
-	"id" :		doc.id,
+	"form" : form,
+	"id" : doc.id,
+        "tab" : "documents",
     })
     return(render_to_response("edit.html", context, context_instance=req_cxt))
 

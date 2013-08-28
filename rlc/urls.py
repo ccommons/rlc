@@ -67,6 +67,9 @@ urlpatterns = patterns('',
     # all members
     url(PROFILE_PREFIX + r'/all/json$', 'er.views.profile.members_json', name='all_members'),
 
+    # news
+    url(r'^news$', 'er.views.news.index', name='news_index'),
+
     # framework administration
     url(r'^admin/', include(admin.site.urls)),
 

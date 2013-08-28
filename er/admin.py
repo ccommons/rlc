@@ -3,6 +3,7 @@ from models import Author
 from models import EvidenceReview, PaperAuthorship, PaperSection, PaperBlock
 from models import Profile
 from models import Annotation, Comment
+from models import NewsItem, NewsTag
 
 # ER
 admin.site.register(Author)
@@ -17,4 +18,8 @@ admin.site.register(Profile)
 # annotations
 admin.site.register(Annotation)
 admin.site.register(Comment)
+
+# news
+admin.site.register(NewsItem)
+admin.site.register(NewsTag)
 

@@ -1,0 +1,33 @@
+{% extends "singlecontainer.html" %}
+{% block content_title %}news{% endblock %}
+{% block content %}
+    <ul class="news-listing">
+    {% for news_item in news_items %}
+	<li>
+            <h1>
+            <a target="_blank" href="{{ news_item.url }}">
+                {{ news_item.title }}
+            </a>
+            </h1>
+            <div class="news-summary">
+                <a target="_blank" href="{{ news_item.url }}">
+                <p>{{ news_item.preview|safe }}</p>
+                </a>
+            </div>
+            <div class="news-tags">
+                {% for tag in news_item.tag_objects %}
+                    <span class="label label-info">{{ tag.tag_value }}</span>
+                {% endfor %}
+            </div>
+            <div class="news-actions">
+                Reply | Comments | Etc.
+            </div>
+            <hr / >
+        </li>
+    {% endfor %}
+    </ul>
+    <div>
+        Suggest Article
+    </div>
+{% endblock %}
+
