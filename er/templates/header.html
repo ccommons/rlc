@@ -1,24 +1,20 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="brand visible-desktop" href="{% url 'root_index' %}"><span class="logo"></span></a>
-            <div class="nav-collapse collapse">
-                <ul class="nav">
-                    <li class="documents{% if tab == "documents" %} active{% endif %}"><a href="{% url 'index' %}">Documents</a></li>
-                    <li class="news{% if tab == "news"%} active{% endif %}"><a href="{% url 'news_index' %}">News</a></li>
-                    <li class="profile"><a href="javascript:myprofile_init('{% url 'myprofile' %}')">Profile</a></li>
-                    <li class="members"><a href="javascript:members_init('{% url 'all_members' %}');">All members</a></li>
-                    <li class="hidden-desktop separator"></li>
-                    <li class="hidden-desktop user-controls"></li>
-                </ul>
-            </div>
+            <a class="brand visible-desktop" href="{% url 'root_index' %}">
+                <span class="logo"></span>
+                <span class="vertical-separator"></span>
+                <h1>AMRF</h1>
+            </a>
             <div class="user-controls visible-desktop pull-right relative">
-                <!--User actions like log in and sign out go here -->
+                <div class="btn-group visible-desktop">
+                    <a href="#" class="btn" data-original-title="" title="">
+                        <span aria-hidden="true" data-icon="&#xe047;"></span> 3
+                    </a>
+                    <a class="btn" href="#" data-original-title="" title="">
+                        <span aria-hidden="true" data-icon="&#xe040;"></span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
