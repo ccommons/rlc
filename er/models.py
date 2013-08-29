@@ -123,9 +123,6 @@ class Event(models.Model):
     # pk of resource table depending on etype, not always integer?
     resource_id = models.CharField(max_length=100)
     # remarks stores additional information of the event
-    # e.g. the root of the comment for a comment type event
-    # root of comment stored in format type:pk. E.g. 'annotation:12', 'news:7'.
-    # reason not to use json is that this simple string is easier for grouping
     remarks = models.CharField(max_length=255, default="")
 
 class Notification(models.Model):
