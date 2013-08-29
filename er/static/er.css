@@ -134,12 +134,8 @@
 .profile-summary,
 .document-summary {
     font-size: 0.5em;
-    display:-moz-inline-stack;
     display: inline-block;
-   // zoom: 1;
-    *display:inline;
     position: relative;
-    vertical-align: top;
 }
 
 .member-summary,
@@ -149,6 +145,9 @@
 
 .document-summary {
     zoom: 1.8;
+    background-color: #f4f4f4;
+    border-radius: 3px;
+    border: 1px solid #ccc;
 }
 
 .member-summary ul,
@@ -158,6 +157,9 @@
     padding: 5px;
     padding-left: 0;
     margin: 0;
+}
+.document-summary ul {
+    background-color: transparent;
 }
 
 .member-summary-item,
