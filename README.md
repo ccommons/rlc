@@ -9,11 +9,10 @@ General required packages are:
 * Python development environment (for building Python modules)
 
 The required Python packages are listed in requirements.txt; install with pip.
-However, you probably need only to install these three, in this order:
+However, you probably need only install these two:
 
 * Django
 * beautifulsoup4
-* django-ckeditor
 
 For MySQL-python, you may want to use your distribution's Python MySQLdb
 package. If you want to install that with pip, you'll need the MySQL

@@ -51,12 +51,17 @@ def fullpage(request, *args, **kwargs):
     # TODO: fix this
     from annotations import AnnotationComposeForm
     dummyform = AnnotationComposeForm()
+    widget_media = dummyform.media
+
+    # TODO: formalize this
+    override_ckeditor = True
 
     context = {
 	"doc" : doc,
 	"doctitle" : "Melanoma RLC: " + doc.title,
     	"main_document" : content,
-        "widget_media" : dummyform.media,
+        "widget_media" : widget_media,
+        "override_ckeditor" : override_ckeditor,
 	"group_names" : group_names,
 	"sections" : sections,
         # "openq_url" : openq_url,

@@ -135,7 +135,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
-    'ckeditor',
+    # 'ckeditor',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -187,15 +187,6 @@ LOGGING = {
             'handlers': ['console', 'logfile'],
             'level': 'INFO',
         },
-    }
-}
-
-# XXXX fix and import all of this
-CKEDITOR_UPLOAD_PATH = "/tmp"
-CKEDITOR_CONFIGS = {
-    "default": {
-    	"toolbar": "Full",
-    	"width": "600",
     }
 }
 

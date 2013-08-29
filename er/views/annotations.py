@@ -209,6 +209,8 @@ def compose_json(request, *args, **kwargs):
     json = simplejson.dumps({
     	"body_html" : body_html,
 	"modal_id" : modal_id,
+        "use_ckeditor" : True,
+        "ckeditor_config" : "annotation_compose",
     })
 
     return(HttpResponse(json, mimetype='application/json'))
@@ -344,6 +346,8 @@ def reply_compose_json(request, *args, **kwargs):
     json = simplejson.dumps({
     	"body_html" : body_html,
 	"modal_id" : modal_id,
+        "use_ckeditor" : True,
+        "ckeditor_config" : "annotation_compose",
     })
 
     return(HttpResponse(json, mimetype='application/json'))

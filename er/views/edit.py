@@ -11,7 +11,7 @@ from er.models import EvidenceReview, PaperSection, PaperBlock
 
 from docutils import get_doc
 
-from ckeditor.widgets import CKEditorWidget
+# from ckeditor.widgets import CKEditorWidget
 
 import doctags
 
@@ -19,9 +19,9 @@ class EREditForm(forms.Form):
     id = forms.IntegerField(widget=forms.HiddenInput())
     # XXX add validation stuff
     title = forms.CharField(max_length=100)
-    content = forms.CharField(widget=CKEditorWidget())
+    # content = forms.CharField(widget=CKEditorWidget())
     # following is for default text widget
-    # content = forms.CharField(widget=forms.Textarea())
+    content = forms.CharField(widget=forms.Textarea())
     publication_link = forms.URLField()
     publication_date = forms.DateTimeField() 
 
@@ -46,6 +46,7 @@ def formview(request, *args, **kwargs):
 	"form" : form,
 	"id" : doc.id,
         "tab" : "documents",
+        "override_ckeditor" : True,
     })
     return(render_to_response("edit.html", context, context_instance=req_cxt))
 
