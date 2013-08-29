@@ -1,10 +1,18 @@
+from django.core.urlresolvers import reverse
+
 from er.models import Comment as mComment
-from er.models import Annotation as mAnnotation
+#from er.models import Annotation as mAnnotation
 from er.models import Notification as mNotification
 from er.models import EvidenceReview as mEvidenceReview
 from er.models import Event as mEvent
 
 from django.contrib.auth.models import User
+
+from er.views.annotations import atype_to_name
+from er.annotation import comment
+
+import logging
+logger = logging.getLogger(__name__)
 
 class eventHandler(object):
     """Abstract event handler base class"""
@@ -16,6 +24,7 @@ class eventHandler(object):
     def __init__(self):
         self._etype = ''
         self._resource_model = None
+        #self._event = None
         self.__config__()
 
     @property
@@ -28,6 +37,17 @@ class eventHandler(object):
     @property
     def resource_model(self):
         return self._resource_model
+
+    #@property
+    #def event(self):
+    #    return self._event
+
+    #@event.setter
+    #def event(self, event):
+    #    if not self._event:
+    #        self._event = event
+    #    else:
+    #        logger.error('event attribute can only be set once')
 
     @classmethod
     def cast_pks(cls, pks):
@@ -66,23 +86,105 @@ class eventHandler(object):
                 return None
         return None
 
-class annotationEventHandler(eventHandler):
-    def __config__(self):
-        self._etype = 'annotation'
-        self._resource_model = mAnnotation
+    def construct_url(self, event):
+        return ''
 
-    @classmethod
-    def cast_pks(cls, pks):
-        return map(lambda x: int(x), pks)
+    def get_preview(self, event):
+        return ''
+
+#class annotationEventHandler(eventHandler):
+#    def __config__(self):
+#        self._etype = 'annotation'
+#        self._resource_model = mAnnotation
+#
+#    @classmethod
+#    def cast_pks(cls, pks):
+#        return map(lambda x: int(x), pks)
 
 class commentEventHandler(eventHandler):
     def __config__(self):
-        self._etype = 'comment'
         self._resource_model = mComment
+        
+    def __init__(self):
+        eventHandler.__init__(self)
 
     @classmethod
     def cast_pks(cls, pks):
         return map(lambda x: int(x), pks)
+
+    def create_comment_obj(self, event):
+        if event and event.resource:
+            c = comment()
+            c.model_object = event.resource
+            c.init_from_model()
+            return c
+        return None
+
+class commentAnnotationEventHandler(commentEventHandler):
+    def __config__(self):
+        commentEventHandler.__config__(self)
+        self._etype = 'comment_annotation'
+
+    def construct_url(self, event):
+        c = self.create_comment_obj(event)
+        if not c:
+            return ''
+        try:
+            # an annotation
+            a = c.root.model_object.annotation
+            return reverse('annotation_one_of_all', kwargs={'doc_id':a.er_doc.id,'annotation_id':a.id,})
+        except Exception, e:
+            logger.error(e)
+            pass
+        return ''
+
+    def get_preview(self, event):
+        c = self.create_comment_obj(event)
+        if not c:
+            return ''
+        comment_text = c.text[:100]
+        if c.is_root():
+            try:
+                a = c.annotation
+                if a.doc_block:
+                    return a.doc_block.preview_text
+                else:
+                    return comment_text
+            except:
+                pass
+        return comment_text
+
+class commentNewsEventHandler(commentEventHandler):
+    def __config__(self):
+        commentEventHandler.__config__(self)
+        self._etype = 'comment_news'
+
+    def construct_url(self, event):
+        c = self.create_comment_obj(event)
+        if not c:
+            return ''
+        try:
+            a = c.root.model_object.news
+            # XXX TODO
+            return ''
+        except Exception, e:
+            logger.error(e)
+            pass
+        return ''
+
+    def get_preview(self, event):
+        c = self.create_comment_obj(event)
+        if not c:
+            return ''
+        comment_text = c.text[:100]
+        if c.is_root():
+            try:
+                a = c.news
+                # XXX TODO
+                return comment_text
+            except:
+                pass
+        return comment_text
 
 class EvidenceReviewEventHandler(eventHandler):
     def __config__(self):
@@ -93,11 +195,21 @@ class EvidenceReviewEventHandler(eventHandler):
     def cast_pks(cls, pks):
         return map(lambda x: int(x), pks)
 
+    def construct_url(self, event):
+        if not event or not event.resource:
+            return ''
+        return reverse('doc_full_view', doc_id=event.resource.id)
 
-# XXX make it a subclass of dict, verify key with etype of handler whenever a key/value pair is set
+    def get_preview(self, event):
+        if not event or not event.resource:
+            return ''
+        return event.resource.title
+
+# XXX TODO: make it a subclass of dict, verify key with etype of handler whenever a key/value pair is set
 EVENT_TYPE_HANDLER_MAP = {
-    'annotation' : annotationEventHandler,
-    'comment' : commentEventHandler,
+    #'annotation' : annotationEventHandler,
+    'comment_annotation' : commentAnnotationEventHandler,
+    'comment_news' : commentNewsEventHandler,
     'er' : EvidenceReviewEventHandler,
     #'user' : UserEventHandler,
 }
@@ -217,6 +329,14 @@ class event(object):
             # automatically assign resource_id from obj
             self.resource_id = obj.pk
 
+    @property
+    def url(self):
+        return self.event_handler.construct_url(self)
+
+    @property
+    def preview(self):
+        return self.event_handler.get_preview(self)
+
 class notification(object):
     """Represents a notification"""
     MODEL = mNotification
@@ -248,6 +368,71 @@ class notification(object):
                 self.event = event(model_object=self.model_object.event, event_handler=kwargs.get('event_handler', None))
             else:
                 raise TypeError('model_object must be an instance of %s' % type(self.__class__.MODEL))
+
+        # at this point, user and event mush have been set
+        if not self.user:
+            raise Exception("user not set")
+        if not self.event:
+            raise Exception("event not set")
+
+    @property
+    def subject(self):
+        annotation_subject = {
+            'proprev' : 'proposed a revision.',
+            'note' : 'attached a note.',
+            'openq' : 'asked an open question.',
+        }
+        subject = ''
+        #if self.event.etype == 'annotation':
+        #    if self.event.resource:
+        #        subject = annotation_subject.get(self.event.resource.atype, '')
+        #elif self.event.etype == 'comment':
+        if self.event.etype == 'comment_annotation':
+            c = self.event.event_handler.create_comment_obj(self.event)
+            if not c:
+                return ''
+            subject = 'replied to your comment.'
+            try:
+                # an annotation
+                subject = annotation_subject.get(c.model_object.annotation.atype, '')
+            except:
+                # a reply
+                root = c.root
+                if root.user == self.user:
+                    try:
+                        subject = 'replied to your %s.' % atype_to_name(root.annotation.atype)
+                    except:
+                        pass
+        elif self.event.etype == 'comment_news':
+            # XXX TODO
+            pass
+        elif self.event.etype == 'er':
+            if self.event.action in ['revised', 'updated']:
+                subject = 'The Evidence Review is revised.'
+            elif self.event.action == 'published':
+                subject = "The Evidence Review is published."
+        elif self.event.etype == 'user':
+            subject = "joined the system."
+        return subject
+
+    @property
+    def context(self):
+        return self.event.preview
+
+    @property
+    def url(self):
+        return self.event.url
+
+    @property
+    def subject_user(self):
+        if self.event.etype in ['comment_annotation', 'comment_news']:
+            try:
+                return self.event.resource.user
+            except:
+                return None
+        elif self.event.etype == 'user':
+            return self.event.resource
+        return None
 
     @classmethod
     def count(cls, user):
