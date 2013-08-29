@@ -22,12 +22,14 @@
 }
 
 .document-container, .summary-container {
-    border: 1px solid #ccc;
     padding: 3px 10px;
     background-color: #ffffff;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
     margin-bottom: 20px;
+}
+.summary-container {
+    border: 1px solid #ccc;
 }
 
 .paper-content-container h1 {
@@ -160,8 +162,15 @@
 }
 .document-summary ul {
     background-color: transparent;
+    padding: 0;
 }
-
+.document-summary ul li {
+    border-right: 1px solid #ccc;
+    border-left: none;
+}
+.document-summary ul li:last-child {
+    border-right: none;
+}
 .member-summary-item,
 .profile-summary-item,
 .document-summary-item {
