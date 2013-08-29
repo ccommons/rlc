@@ -1,16 +1,16 @@
-<div id="annotation-summary-container" class="document-summary">
-    <ul>
+<div id="annotation-summary-container" class="document-summary relative">
+    <ul class="inline">
     <li class="document-summary-item">
-        <span class="document-summary-counter">{{ num_note }}</span>
-        Note{{ num_note|pluralize }}
+        <h2 class="document-summary-counter">{{ num_note }}</h2>
+        <strong>Note{{ num_note|pluralize }}</strong>
     </li>
     <li class="document-summary-item">
-        <span class="document-summary-counter">{{ num_proprev }}</span>
-        Proposed Revision{{ num_proprev|pluralize }}
+        <h2 class="document-summary-counter">{{ num_proprev }}</h2>
+        <strong>Proposed Revision{{ num_proprev|pluralize }}</strong>
     </li>
     <li class="document-summary-item">
-        <span class="document-summary-counter">{{ num_openq }}</span>
-        Open Question{{ num_openq|pluralize }}
+        <h2 class="document-summary-counter">{{ num_openq }}</h2>
+        <strong>Open Question{{ num_openq|pluralize }}</strong>
     </li>
     </ul>
 </div>

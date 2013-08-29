@@ -133,8 +133,7 @@
 }
 
 .member-summary,
-.profile-summary,
-.document-summary {
+.profile-summary {
     font-size: 0.5em;
     display: inline-block;
     position: relative;
@@ -146,7 +145,6 @@
 }
 
 .document-summary {
-    zoom: 1.8;
     background-color: #f4f4f4;
     border-radius: 3px;
     border: 1px solid #ccc;
@@ -166,20 +164,25 @@
 }
 .document-summary ul li {
     border-right: 1px solid #ccc;
-    border-left: none;
+    width: 28%;
+    height: 6em;
+    line-height: 1.2em;
+    vertical-align: top;
+    text-align: center;
+    padding: 5px;
 }
 .document-summary ul li:last-child {
     border-right: none;
 }
+
+.document-summary ul li h2 {
+    margin: 0;
+}
+
 .member-summary-item,
-.profile-summary-item,
-.document-summary-item {
+.profile-summary-item {
     width: 4.7em;
     height: 4.5em;
-    display:-moz-inline-stack;
-    display: inline-block;
-    zoom: 1;
-    *display:inline;
     font-size: 0.7em;
     line-height: 1.2em;
     vertical-align: top;
@@ -189,23 +192,17 @@
     margin: 0;
 }
 
-.document-summary-item {
-    font-size: 0.8em;
-}
-
 .member-summary-item {
     font-size: 1.3em;
 }
 
 .member-summary-item:first-child,
-.profile-summary-item:first-child,
-.document-summary-item:first-child {
+.profile-summary-item:first-child {
     border-left: 0;
 }
 
 .member-summary-counter,
-.profile-summary-counter,
-.document-summary-counter {
+.profile-summary-counter {
     line-height: 1.2em;
     font-size: 2.0em;
     font-weight: bold;
