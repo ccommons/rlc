@@ -23,7 +23,7 @@ annotation_preview_refresh = function() {
             var preview_info = previews[i];
             var $el = $('#' + preview_info["block_id"]);
             if ($el !== []) {
-                $el.after(preview_info["html"]);
+                $el.addClass('allow-annotation relative').append(preview_info["html"]);
             }
         }
         /* update summary */
