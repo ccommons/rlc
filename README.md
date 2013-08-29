@@ -9,7 +9,7 @@ General required packages are:
 * Python development environment (for building Python modules)
 
 The required Python packages are listed in requirements.txt; install with pip.
-However, you probably need only to install these three, in this order:
+However, you probably need only install these two:
 
 * Django
 * beautifulsoup4
