@@ -4,3 +4,5 @@
 
 rlc/siteconfig.py
 rlc/secretkey.py
+log
+log.*
