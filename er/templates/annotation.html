@@ -52,11 +52,13 @@
         {% for comment in a.comments %}
             <div>
                 <div style="margin-bottom: 3px; margin-left: {{ comment.level }}0px">
-                    <div class="annotation-comment-text">{{ comment.text }}</div>
+                    <div class="annotation-comment-text">
+                        {{ comment.text|safe }}
+                    </div>
                     <div class="annotation-comment-author">
-                         {{ comment.model_object.user.first_name }}
-                         {{ comment.model_object.user.last_name }} |
-                         {{ comment.timestamp | date }}
+                        {{ comment.model_object.user.first_name }}
+                        {{ comment.model_object.user.last_name }} |
+                        {{ comment.timestamp | date }}
                     </div>
                     <div class="annotation-comment-actions">rating |
                     {% if comment.level == 0 %}

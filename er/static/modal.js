@@ -14,6 +14,9 @@ function Modal() {
                 this.content_element = null;
             }
         },
+        'set_data' : function(data) {
+            this.attached_data = data;
+        },
         'close' : function() {
             this.content_element.modal('hide');
         },
@@ -79,6 +82,7 @@ function AnnotationComposeModal() {
     var $super = new Modal();
 
     var submit_response_handler = function(data, texttype) {
+        this.editors_finalize();
         this.close();
         annotation_init(data["url"]);
         annotation_preview_refresh();
@@ -88,11 +92,54 @@ function AnnotationComposeModal() {
         'render' : function() {
             $super.render.bind(this)();
             $('#annotation-submit').click(function(event) {
+                this.editors_sync();
                 // can we get this from the event?
                 var action = $('#annotation-submit').attr('action');
                 var postdata = $('#annotation-compose-form').serialize();
                 $.post(action, postdata, submit_response_handler, 'json');
             }.bind(this));
+
+            this.editors_init();
+        },
+        /* editor-in-modal window support methods */
+        'editors_init' : function() {
+            if (this.attached_data["use_ckeditor"] === true) {
+                /* look for textareas and replace with ckeditor */
+                this.editors = [];
+                var textareas = this.content_element.find('textarea');
+                $.each(textareas, function(i, value) {
+                    var textarea_id = textareas.attr('id');
+                    var ckconfig = {};
+                    /* set default */
+                    if ('default' in __CKEDITOR_CONFIGS) {
+                        ckconfig = __CKEDITOR_CONFIGS['default'];
+                    }
+                    if ('ckeditor_config' in this.attached_data) {
+                        var ckconfig_name = this.attached_data["ckeditor_config"];
+                        if (ckconfig_name in __CKEDITOR_CONFIGS) {
+                            ckconfig = __CKEDITOR_CONFIGS[ckconfig_name];
+                        }
+                    }
+                    var instance = CKEDITOR.replace(textarea_id, ckconfig);
+                    this.editors.push(instance);
+                }.bind(this));
+            }
+        },
+        'editors_sync' : function() {
+            /* synchronize ckeditors if present */
+            if (this.attached_data["use_ckeditor"] === true) {
+                $.each(this.editors, function(i, ckinstance) {
+                    ckinstance.updateElement();
+                });
+            }
+        },
+        'editors_finalize' : function() {
+            /* tear down ckeditors if present */
+            if (this.attached_data["use_ckeditor"] === true) {
+                $.each(this.editors, function(i, ckinstance) {
+                    ckinstance.destroy();
+                });
+            }
         }
     });
 }
@@ -158,6 +205,7 @@ function modal_init(url, modaltype) {
         // TODO: add protocol error checking
         var modal = new modaltype();
         modal.content_set(data["body_html"], data["modal_id"]);
+        modal.set_data(data);
         modal.render();
     }
     $.get(url, '', display, 'json');
