@@ -69,6 +69,9 @@ urlpatterns = patterns('',
 
     # news
     url(r'^news$', 'er.views.news.index', name='news_index'),
+    url(r'^news/(?P<item_id>\d+)/json$', 'er.views.news.comment_json', name='news_comment'),
+    url(r'^news/reply/(?P<comment_id>\d+)/json$', 'er.views.news.reply_json', name='news_reply'),
+    url(r'^news/reply/(?P<comment_id>\d+)/new/json$', 'er.views.news.reply_new_json', name='news_reply_new'),
 
     # framework administration
     url(r'^admin/', include(admin.site.urls)),

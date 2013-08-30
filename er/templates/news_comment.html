@@ -1,0 +1,46 @@
+{% extends "modal.html" %}
+{% block modal_title %}
+    <h4 class="modal-title">
+        News
+    </h4>
+{% endblock %}
+{% block modal_body %}
+    <div>Discussion for: </div>
+    <div>{{news_item.title}}</div>
+    <div>Hey, well, here are some news comments</div>
+
+    <div>
+        comment header: {{ head_comment.text }}
+    </div>
+
+    {% for comment in comments %}
+    <div id="news-comment-{{ comment.model_object.id }}">
+        <div style="margin-bottom: 3px; margin-left: {{ comment.level|add:-1 }}0px">
+            <div class="annotation-comment-text">
+                {{ comment.text|safe }}
+            </div>
+            <div class="annotation-comment-author">
+                {{ comment.model_object.user.first_name }}
+                {{ comment.model_object.user.last_name }} |
+                {{ comment.timestamp | date }}
+            </div>
+            <div class="annotation-comment-actions">rating |
+            {% if comment.level == 0 %}
+                {% if a.reply_count == 1 %}
+                    One Reply |
+                {% elif a.reply_count > 1 %}
+                    {{ a.reply_count }} Replies |
+                {% endif %}
+            {% endif %}
+            <a class="newsitem-reply"
+               parent_id="news-comment-{{ comment.model_object.id }}"
+               reply_level="{{ comment.level }}"
+               reply_url="{% url 'news_reply' comment_id=comment.model_object.id %}">
+                Reply
+            </a>
+            | Follow | Share</div>
+            <hr />
+        </div>
+    </div>
+    {% endfor %}{# comments #}
+{% endblock %}

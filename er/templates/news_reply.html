@@ -1,0 +1,25 @@
+<h4>Your Reply:</h4>
+<form id="reply-compose-form">
+{% csrf_token %}
+{% for hidden_field in form.hidden_fields %}
+    {{ hidden_field }}
+{% endfor %}
+
+{% if form_type == "editor_reply" %}
+    {{ form.approval.errors }}
+    <div class="inline-radio">
+    {{ form.approval }}
+    </div>
+{% endif %}
+
+<div>
+    {{ form.comment_text.errors }}
+    {# {{ form.comment_text.label }} #}
+    {{ form.comment_text }}
+</div>
+
+<div>
+<button type="button" id="reply-submit" action="{{ form_action }}" class="btn">Submit</button>
+<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+</div>
+</form>

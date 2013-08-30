@@ -20,7 +20,7 @@
                 {% endfor %}
             </div>
             <div class="news-actions">
-                Reply | Comments | Etc.
+                Reply | <a href="javascript:news_comment_init('{% url 'news_comment' item_id=news_item.id %}')">Comments</a> | Etc.
             </div>
             <hr / >
         </li>
