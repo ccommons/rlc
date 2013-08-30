@@ -3,6 +3,9 @@ from er.models import EvidenceReview as mEvidenceReview
 from er.annotation import comment
 from django.core.urlresolvers import reverse
 
+import logging
+logger = logging.getLogger(__name__)
+
 class eventHandler(object):
     """Abstract event handler base class"""
 
