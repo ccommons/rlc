@@ -20,7 +20,6 @@ def parse_notifications(raw):
             etypes[n.event.etype].append(n)
         else:
             etypes[n.event.etype] = [n]
-    print etypes
 
     for etype in etypes:
         if etype in EVENT_TYPE_HANDLER_MAP:
@@ -38,10 +37,8 @@ def parse_notifications(raw):
 def get_notifications(request):
     # load all notifications of the user
     notifications = Notification.objects.filter(user=request.user)
-    print notifications
 
     all_items = parse_notifications(notifications)
-    print all_items
 
     # group items by unread/read
     unread_items = []
@@ -68,7 +65,6 @@ def notifications_menu(request):
     """notification menu shows each notification item"""
     context = get_notifications(request)
     req_cxt = RequestContext(request)
-    print context
     return(render_to_response("notification_menu.html", context, context_instance=req_cxt))
 
 @login_required
