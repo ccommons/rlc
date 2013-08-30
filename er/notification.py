@@ -57,13 +57,12 @@ class eventHandler(object):
         """
         raise NotImplementedError()
 
-    def parse_notifications(self, raw_model_objs):
-        """Take a list of raw notification model objects,
+    def parse_notifications(self, notifications):
+        """Take a list of notification objects,
         return a list of notification objects with respective resource"""
         items = []
         pks = []
-        for o in raw_model_objs:
-            n = notification(model_object=o, event_handler=self)
+        for n in notifications:
             if n.event.resource_id:
                 pks.append(n.event.resource_id)
             items.append(n)
