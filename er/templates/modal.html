@@ -2,13 +2,11 @@
 <div class="modal-dialog">
     {% block modal_full_content %}
     <div class="modal-header clearfix">
-	<div class="btn-group pull-right">
-        <a class="btn js-prev" href="#" aria-hidden="true" data-icon="&#xe01d;"></a>
-        <span>1 | 7</span>
-        <a class="btn js-next" href="#" aria-hidden="true" data-icon="&#xe019;"></a>
-    </div>
-        
-	<h3 class="modal-title all-caps"><em>{% block modal_title %}{% endblock %}</em></h3>
+
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        {% block modal_header %}
+            <h3 class="modal-title all-caps"><em>{% block modal_title %}{% endblock %}</em></h3>
+        {% endblock %}{# modal_header #}
         
     </div>
     <div class="modal-body">

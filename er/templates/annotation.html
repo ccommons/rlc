@@ -1,24 +1,30 @@
 {% extends "modal.html" %}
-{% block modal_title %}
-    <h4 class="modal-title">
-        {{ atype_name }}{{ num_annotations|pluralize}}
-        {% if num_annotations > 1 %}
-        <div class="pull-right annotation_pager">
-            <a class="annotation-page" incr="-1" target_el="current_annotation">&lt;</a>
+{% block modal_header %}
+
+    {% if num_annotations > 1 %}{# pager #}
+    <div class="btn-group pull-right annotation_pager">
+        <a class="btn js-prev annotation-page" incr="-1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe01d;"></a>
+        <span>
             <span id="current_annotation" num_annotations="{{ num_annotations }}" current_pos="{{ selected_annotation }}">
                 {{ selected_annotation }}
             </span>
-            of {{ num_annotations }}
-            <a class="annotation-page" incr="1" target_el="current_annotation">&gt;</a>
-        </div>
-        {% endif %}
-        {% if show_compose_button %}{# this can be moved here, but it's long #}
-        <div class="pull-right">
-            <button type="button" id="annotation-compose" url="{% url 'annotation_compose' doc_id=doc.id atype='openq' %}" class="btn">New Open Question</button>
-        </div>
-        {% endif %}
-    </h4>
-{% endblock %}
+            | {{ num_annotations }}
+        </span>
+        <a class="btn js-next annotation-page" incr="1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe019;"></a>
+    </div>
+    {% endif %}{# num_annotations > 1 (pager) #}
+
+    {% if show_compose_button %}
+    <div class="pull-right">
+        <button type="button" id="annotation-compose" url="{% url 'annotation_compose' doc_id=doc.id atype='openq' %}" class="btn">New Open Question</button>
+    </div>
+    {% endif %}{# show_compose_button #}
+
+    <h3 class="modal-title all-caps">
+        <em>{{ atype_name }}{{ num_annotations|pluralize}}</em>
+    </h3>
+
+{% endblock %}{# modal_header #}
 {% block modal_body %}
     {% if num_annotations == 0 %}
         <div>No Open Questions <br />(insert link here to create one)</div>
@@ -80,8 +86,8 @@
                     <hr />
                 </div>
             </div>
-        {% endfor %}{# comments #}
+        {% endfor %}{# comment in a.comments #}
         </div>{# annotation pane #}
-    {% endfor %}{# annotations #}
+    {% endfor %}{# a in annotations #}
     </div>{# tabbed content #}
-{% endblock %}
+{% endblock %}{# modal_body #}
