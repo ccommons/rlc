@@ -107,19 +107,20 @@ class Annotation(DiscussionPoint):
 class Event(models.Model):
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     EVENT_TYPES = {
-        ('annotation', 'Annotation'),
-        ('comment', 'Comment'),
+        #('annotation', 'Annotation'),
+        ('comment_annotation', 'Comment'),
+        ('comment_news', 'Comment'),
         ('er', 'EvidenceReview'),
         ('user', 'User'),
     }
-    etype = models.CharField(max_length=15, choices=EVENT_TYPES)
+    etype = models.CharField(max_length=30, choices=EVENT_TYPES)
     ACTIONS = {
         ('new', 'New'),
         ('revised', 'Revised'),
         ('updated', 'Updated'),
         ('published', 'Published'),
     }
-    action = models.CharField(max_length=10, choices=ACTIONS, null=True)
+    action = models.CharField(max_length=20, choices=ACTIONS, null=True)
     # pk of resource table depending on etype, not always integer?
     resource_id = models.CharField(max_length=100)
     # remarks stores additional information of the event

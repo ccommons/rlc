@@ -1,18 +1,17 @@
-{% extends "singlecontainer.html" %}
-{% block content_title %}Notifications{% endblock %}
-{% block content %}
-    <ul>
+{% extends 'base.html' %}
+{% block maincontent %}
+<div id="notifications">
+    Unread:
+    <ul id="notifications-unread">
     {% for item in unread %}
-        {% ifequal item.event.etype "er" %}
-            {% if item.event.resource %}
-                <li>{{item.event.resource.title}}</li>
-            {% endif %}
-        {% else %}{% ifequal item.event.etype "annotation" %}
-            {% if item.event.resource %}
-                <li>{{item.event.resource.atype}}</li>
-            {% endif %}
-        {% endifequal %}{% endifequal %}
+        {% include 'notification_item.html' %}
     {% endfor %}
     </ul>
+    Read:
+    <ul id="notifications-read">
+    {% for item in read %}
+        {% include 'notification_item.html' %}
+    {% endfor %}
+    </ul>
+</div>
 {% endblock %}
-

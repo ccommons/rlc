@@ -6,7 +6,7 @@ from django.utils import simplejson
 from django.http import HttpResponse
 
 from er.models import Notification
-from er.notification import EVENT_TYPE_HANDLER_MAP
+from er.eventhandler import EVENT_TYPE_HANDLER_MAP
 from er.notification import notification
 
 import logging
