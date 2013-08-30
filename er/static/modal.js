@@ -43,6 +43,12 @@ function AnnotationModal() {
                 var url = $(event.currentTarget).attr('reply_url');
                 annotation_compose_init(url);
             }.bind(this));
+            $('a.newsitem-reply').click(function(event) {
+                // start inline editor
+                var event_element = $(event.currentTarget);
+                // var url = $(event.currentTarget).attr('reply_url');
+                inline_reply_start(event_element);
+            }.bind(this));
             $('a.annotation-page').click(function(event) {
                 var source = $(event.currentTarget);
                 var el = $('#' + source.attr("target_el"));
@@ -104,41 +110,24 @@ function AnnotationComposeModal() {
         /* editor-in-modal window support methods */
         'editors_init' : function() {
             if (this.attached_data["use_ckeditor"] === true) {
-                /* look for textareas and replace with ckeditor */
-                this.editors = [];
-                var textareas = this.content_element.find('textarea');
-                $.each(textareas, function(i, value) {
-                    var textarea_id = textareas.attr('id');
-                    var ckconfig = {};
-                    /* set default */
-                    if ('default' in __CKEDITOR_CONFIGS) {
-                        ckconfig = __CKEDITOR_CONFIGS['default'];
-                    }
-                    if ('ckeditor_config' in this.attached_data) {
-                        var ckconfig_name = this.attached_data["ckeditor_config"];
-                        if (ckconfig_name in __CKEDITOR_CONFIGS) {
-                            ckconfig = __CKEDITOR_CONFIGS[ckconfig_name];
-                        }
-                    }
-                    var instance = CKEDITOR.replace(textarea_id, ckconfig);
-                    this.editors.push(instance);
-                }.bind(this));
+
+                var ckconfig_name = "";
+                if ('ckeditor_config' in this.attached_data) {
+                    ckconfig_name = this.attached_data["ckeditor_config"];
+                }
+                this.ckeditor = new CKEditorsInModal(this.content_element, ckconfig_name);
             }
         },
         'editors_sync' : function() {
             /* synchronize ckeditors if present */
             if (this.attached_data["use_ckeditor"] === true) {
-                $.each(this.editors, function(i, ckinstance) {
-                    ckinstance.updateElement();
-                });
+                this.ckeditor.sync();
             }
         },
         'editors_finalize' : function() {
             /* tear down ckeditors if present */
             if (this.attached_data["use_ckeditor"] === true) {
-                $.each(this.editors, function(i, ckinstance) {
-                    ckinstance.destroy();
-                });
+                this.ckeditor.finalize();
             }
         }
     });
@@ -196,6 +185,52 @@ function MembersModal() {
     });
 }
 
+// TODO: make this into object
+function inline_reply_start(initiating_element) {
+    var $parent = $('#' + initiating_element.attr('parent_id'));
+
+    var ckeditor = undefined;
+    var use_ckeditor = false;
+
+    var $new;
+
+    var show_reply_form = function(data, status, jqxhr) {
+        // alert(data["body_html"]);
+        $new = $("<div/>").html(data["body_html"]);
+        $parent.after($new);
+        if (data["use_ckeditor"] === true) {
+            use_ckeditor = true;
+            var ckconfig_name = "";
+            if ('ckeditor_config' in data) {
+                ckconfig_name = data["ckeditor_config"];
+            }
+            ckeditor = new CKEditorsInModal($new, ckconfig_name);
+        }
+        $('#reply-submit').click(function(event) {
+            submit_reply_form(event);
+        }.bind(this));
+    }
+    var submit_reply_form = function(event) {
+        if (use_ckeditor === true) {
+            ckeditor.sync();
+        }
+        var action = $(event.currentTarget).attr('action');
+        // TODO: get this from the event
+        var postdata = $('#reply-compose-form').serialize();
+        // alert(postdata);
+        $.post(action, postdata, reply_form_response, 'json');
+    }
+    var reply_form_response = function(data, status, jqxhr) {
+        /* close inline commenter and replace with new comment */
+        if (use_ckeditor === true) {
+            ckeditor.finalize();
+        }
+        $new.html(data["html"]);
+    }
+
+    var url = initiating_element.attr('reply_url');
+    $.get(url, '', show_reply_form, 'json');
+}
 
 function modal_init(url, modaltype) {
     if (typeof(modaltype) === 'undefined') {
@@ -225,4 +260,46 @@ function myprofile_init(url) {
 
 function members_init(url) {
     modal_init(url, MembersModal);
+}
+
+function news_comment_init(url) {
+    /* very similar to the annotation modal */
+    modal_init(url, AnnotationModal);
+}
+
+/* dynamic ckeditor setup/sync/teardown */
+function CKEditorsInModal(element, config_name) {
+    this.element = element;
+    this.editors = [];
+
+    /* init: look for textareas and replace with ckeditor */
+    var textareas = this.element.find('textarea');
+    $.each(textareas, function(i, value) {
+        var textarea_id = textareas.attr('id');
+        var ckconfig = {};
+        /* set default */
+        if ('default' in __CKEDITOR_CONFIGS) {
+            ckconfig = __CKEDITOR_CONFIGS['default'];
+        }
+        if (config_name in __CKEDITOR_CONFIGS) {
+            ckconfig = __CKEDITOR_CONFIGS[config_name];
+        }
+        var instance = CKEDITOR.replace(textarea_id, ckconfig);
+        this.editors.push(instance);
+    }.bind(this));
+
+    $.extend(this, {
+        'sync' : function() {
+            /* synchronize ckeditors if present */
+            $.each(this.editors, function(i, ckinstance) {
+                ckinstance.updateElement();
+            });
+        },
+        'finalize' : function() {
+            /* tear down ckeditors if present */
+            $.each(this.editors, function(i, ckinstance) {
+                ckinstance.destroy();
+            });
+        }
+    });
 }

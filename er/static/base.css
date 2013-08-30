@@ -1115,7 +1115,9 @@ a:hover {
 /**
  * Utility classes.
 */
-
+.all-caps {
+	text-transform: uppercase;
+}
 .ellipsis {
 	/* must have a fixed width! */
 	white-space: nowrap;

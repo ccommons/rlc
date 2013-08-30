@@ -45,10 +45,6 @@
     bottom:70px;
 }
 
-.modal {
-    cursor: default;
-}
-
 .annotation_pager {
     margin-right: 20px;
     margin-left: 20px;
@@ -104,6 +100,9 @@
 .annotation-content,
 .annotation-content a {
     color: #fff;
+}
+.annotation-content a~span.pull-right {
+    font-weight: 400;
 }
 
 /**
@@ -378,3 +377,41 @@ ul.news-listing .news-tags {
     margin-bottom: 3px;
 }
 
+/**
+ * Modal window classes
+*/
+.modal {
+    cursor: default;
+}
+.modal.fade.in {
+    top: 0;
+    left: 37%;
+    width: 50%;
+}
+
+.modal .btn-group {
+    padding: 5px 0;
+}
+
+.modal .btn-group a.btn {
+    font-size: 20px;
+}
+
+.modal .btn-group > span {
+    position: relative;
+    margin-left: -1px;
+    display: inline-block;
+    height: 30px;
+    background-color: #fff;
+    box-sizing: border-box;
+    border: 1px solid #d3d3d3;
+    padding: 4px 12px;
+    line-height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+/**
+ * END of modal window classes
+*/
