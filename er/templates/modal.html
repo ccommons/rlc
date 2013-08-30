@@ -1,16 +1,20 @@
 <div id="{{ modal_id }}" class="modal hide fade" tabindex="-1" role="dialog">
 <div class="modal-dialog">
     {% block modal_full_content %}
-    <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        {% block modal_title %}
-	<h4 class="modal-title">Modal Header Here</h4>
-        {% endblock %}
+    <div class="modal-header clearfix">
+	<div class="btn-group pull-right">
+        <a class="btn js-prev" href="#" aria-hidden="true" data-icon="&#xe01d;"></a>
+        <span>1 | 7</span>
+        <a class="btn js-next" href="#" aria-hidden="true" data-icon="&#xe019;"></a>
+    </div>
+        
+	<h3 class="modal-title all-caps"><em>{% block modal_title %}{% endblock %}</em></h3>
+        
     </div>
     <div class="modal-body">
         {% block modal_body %}
         Modal Body Here
-    {% endblock %}
+        {% endblock %}
     </div>
     {% endblock %}
     {% comment %}

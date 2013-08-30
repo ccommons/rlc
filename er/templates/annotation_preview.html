@@ -7,7 +7,7 @@
             <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='note' %}')">
                 {{ note_count }} Note{{ note_count|pluralize }}
             </a>
-            <span class="all-caps pull-right"><small>Last: Jul 10, 2013</small></span>
+            <span class="all-caps pull-right"><small>Last: <!--TODO Date template data goes here.-->Jul 10, 2013</small></span>
         </div>
     </div>    
 {% endif %}
