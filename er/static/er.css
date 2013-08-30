@@ -22,12 +22,14 @@
 }
 
 .document-container, .summary-container {
-    border: 1px solid #ccc;
     padding: 3px 10px;
     background-color: #ffffff;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
     margin-bottom: 20px;
+}
+.summary-container {
+    border: 1px solid #ccc;
 }
 
 .paper-content-container h1 {
@@ -59,9 +61,84 @@
 }
 
 .annotation-preview {
-    cursor: default;
-    margin-bottom: 13px;
+    cursor: pointer;
+    position: absolute;
+    right: -355px;
+    top: 0;
+    width: 65%;
 }
+.allow-annotation .annotation-preview .add-annotation {
+    display: none;
+}
+.allow-annotation:hover .annotation-preview .add-annotation,
+.allow-annotation .annotation-preview:hover .add-annotation {
+    display: block;
+}
+.add-annotation .annotation-content {
+    width: auto;
+}
+.annotation-pointer {
+    display: inline-block;
+    width: 0;
+    border: 15px solid transparent;
+    border-top-width: 20px;
+    border-bottom-width: 20px;
+}
+.annotation-pointer.pointer-left {
+    border-left-color: transparent;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+}
+.annotation-content {
+    display: inline-block;
+    position: relative;
+    left: -4px;
+    top: -14px;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-bottom-right-radius: 3px;
+    border-top-right-radius: 3px;
+    width: 70%;
+}
+.annotation-content,
+.annotation-content a {
+    color: #fff;
+}
+
+/**
+ * Color definitions.
+*/
+.bg-blue1 {
+    background-color: #0069A0;
+}
+.border-blue1 {
+    border-color: #0069A0;
+}
+.text-blue1 {
+    color: #0069A0;
+}
+.bg-blue2 {
+    background-color: #3588B3;
+}
+.border-blue2 {
+    border-color: #3588B3;
+}
+.text-blue2 {
+    color: #3588B3;
+}
+.bg-red1 {
+    background-color: #E35959;
+}
+.border-red1 {
+    border-color: #E35959;
+}
+.text-red1 {
+    color: #E35959;
+}
+/**
+ * END of color definitions.
+*/
 
 .annotation-context {
     font-size: 1.5em;
@@ -131,8 +208,7 @@
 }
 
 .member-summary,
-.profile-summary,
-.document-summary {
+.profile-summary {
     font-size: 0.5em;
     display: inline-block;
     position: relative;
@@ -144,7 +220,6 @@
 }
 
 .document-summary {
-    zoom: 1.8;
     background-color: #f4f4f4;
     border-radius: 3px;
     border: 1px solid #ccc;
@@ -160,17 +235,29 @@
 }
 .document-summary ul {
     background-color: transparent;
+    padding: 0;
+}
+.document-summary ul li {
+    border-right: 1px solid #ccc;
+    width: 28%;
+    height: 6em;
+    line-height: 1.2em;
+    vertical-align: top;
+    text-align: center;
+    padding: 5px;
+}
+.document-summary ul li:last-child {
+    border-right: none;
+}
+
+.document-summary ul li h2 {
+    margin: 0;
 }
 
 .member-summary-item,
-.profile-summary-item,
-.document-summary-item {
+.profile-summary-item {
     width: 4.7em;
     height: 4.5em;
-    display:-moz-inline-stack;
-    display: inline-block;
-    zoom: 1;
-    *display:inline;
     font-size: 0.7em;
     line-height: 1.2em;
     vertical-align: top;
@@ -180,23 +267,17 @@
     margin: 0;
 }
 
-.document-summary-item {
-    font-size: 0.8em;
-}
-
 .member-summary-item {
     font-size: 1.3em;
 }
 
 .member-summary-item:first-child,
-.profile-summary-item:first-child,
-.document-summary-item:first-child {
+.profile-summary-item:first-child {
     border-left: 0;
 }
 
 .member-summary-counter,
-.profile-summary-counter,
-.document-summary-counter {
+.profile-summary-counter {
     line-height: 1.2em;
     font-size: 2.0em;
     font-weight: bold;

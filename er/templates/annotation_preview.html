@@ -23,7 +23,12 @@
         [{{ rev_count }} Revision{{ rev_count|pluralize }}]
     </a>
 {% endif %}
-<br />
-<a onclick="annotation_compose_init('{{ compose_url }}')">[Add&nbsp;Annotation]</a>
-
+    <div class="add-annotation">
+        <div class="annotation-pointer pointer-left border-blue1"></div>
+        <div class="annotation-content bg-blue1">
+            <a onclick="annotation_compose_init('{{ compose_url }}')">
+                <span aria-hidden="true" data-icon="&#xe01b;"></span>
+            </a>
+        </div>
+    </div>
 </div>
