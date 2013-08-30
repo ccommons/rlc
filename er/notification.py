@@ -1,3 +1,5 @@
+from django.core.urlresolvers import resolve
+
 from er.models import Notification as mNotification
 from er.event import event
 
@@ -48,6 +50,7 @@ class notification(object):
     def subject(self):
         annotation_subject = {
             'proprev' : 'proposed a revision.',
+            'rev' : 'proposed a revision.',
             'note' : 'attached a note.',
             'openq' : 'asked an open question.',
         }
@@ -60,7 +63,7 @@ class notification(object):
             c = self.event.event_handler.create_comment_obj(self.event)
             if not c:
                 return ''
-            subject = 'replied to your comment.'
+            subject = 'replied to a thread of your interest.'
             try:
                 # an annotation
                 subject = annotation_subject.get(c.model_object.annotation.atype, '')
@@ -74,6 +77,16 @@ class notification(object):
                     except Exception, ex:
                         logger.error(ex)
                         pass
+        elif self.event.etype == 'proprev_approved':
+            c = self.event.event_handler.create_comment_obj(self.event)
+            if not c:
+                return ""
+            root = c.root
+            if root.user == self.user:
+                subject = 'Your proposed revision is approved.'
+            else:
+                subject = 'The propesed revision is approved.'
+            
         elif self.event.etype == 'comment_news':
             # XXX TODO
             pass
@@ -88,24 +101,77 @@ class notification(object):
 
     @property
     def context(self):
-        html_parser = HTMLParser.HTMLParser()
-        return html_parser.unescape(self.event.preview)
+        try:
+            html_parser = HTMLParser.HTMLParser()
+            return html_parser.unescape(self.event.preview)
+        except Exception,ex:
+            logger.error(ex)
+            return ''
 
     @property
     def url(self):
-        return self.event.url
+        try:
+            return self.event.url
+        except Exception,ex:
+            logger.error(ex)
+            return ''
 
     @property
     def subject_user(self):
-        if self.event.etype in ['comment_annotation', 'comment_news']:
-            try:
+        try:
+            if self.event.etype in ['comment_annotation', 'comment_news']:
                 return self.event.resource.user
-            except:
-                return None
-        elif self.event.etype == 'user':
-            return self.event.resource
+            elif self.event.etype == 'user':
+                return self.event.resource
+        except Exception, ex:
+            logger.error(ex)
         return None
+
+    @property
+    def timestamp(self):
+        try:
+            return self.event.timestamp
+        except Exception, ex:
+            logger.error(ex)
+            return None
+
+    @property
+    def etype(self):
+        try:
+            return self.event.etype
+        except Exception, ex:
+            logger.error(ex)
+            return ''
 
     @classmethod
     def count(cls, user):
-        return cls.MODEL.objects.filter(user, shown=False, read=False).count()
+        try:
+            return cls.MODEL.objects.filter(user, shown=False, read=False).count()
+        except Exception, ex:
+            logger.error(ex)
+            return 0
+
+    # XXX TODO
+    @classmethod
+    def mark_read(cls, request):
+        """ notification API """
+        try:
+            from er.eventhandler import EVENT_TYPE_HANDLER_MAP as handlers
+            if not request.user.is_authenticated():
+                return
+            # look up notifications for the user
+            model_objs = mNotification.objects.filter(user=request.user, read=False)
+            # match each event to the request, mark read if match
+            for n in model_objs:
+                try:
+                    handler_cls = handlers.get(n.event.etype, None)
+                    if handler_cls:
+                        if handler_cls.match_request(n.event, request):
+                            n.read = True
+                            n.save()
+                except Exception, ex:
+                    logger.error(ex)
+                    continue
+        except Exception, ex:
+            logger.error(ex)
+        return
