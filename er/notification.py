@@ -1,6 +1,7 @@
 from er.models import Notification as mNotification
 from er.event import event
-from er.views.annotations import atype_to_name
+
+import HTMLParser
 
 import logging
 logger = logging.getLogger(__name__)
@@ -68,8 +69,10 @@ class notification(object):
                 root = c.root
                 if root.user == self.user:
                     try:
-                        subject = 'replied to your %s.' % atype_to_name(root.annotation.atype)
-                    except:
+                        from er.views.annotations import atype_to_name
+                        subject = 'replied to your %s.' % atype_to_name(root.model_object.annotation.atype).lower()
+                    except Exception, ex:
+                        logger.error(ex)
                         pass
         elif self.event.etype == 'comment_news':
             # XXX TODO
@@ -85,7 +88,8 @@ class notification(object):
 
     @property
     def context(self):
-        return self.event.preview
+        html_parser = HTMLParser.HTMLParser()
+        return html_parser.unescape(self.event.preview)
 
     @property
     def url(self):
