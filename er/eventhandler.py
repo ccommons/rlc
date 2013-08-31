@@ -160,16 +160,16 @@ class commentAnnotationEventHandler(commentEventHandler):
         takes an Event model object and a HttpRequest object
         returns True if they match, False otherwise
         """
-        doc_id = int(request.resolver_match.kwargs.get('doc_id', ''))
-        annotation_id = int(request.resolver_match.kwargs.get('annotation_id', ''))
-        url_name = request.resolver_match.url_name
+        #doc_id = int(request.resolver_match.kwargs.get('doc_id', '-1'))
+        annotation_id = int(request.resolver_match.kwargs.get('annotation_id', '-1'))
+        #url_name = request.resolver_match.url_name
         from er.event import event
         handler = cls()
         e = event(model_object=event_model, event_handler=handler)
         try:
             c = handler.create_comment_obj(e)
             a = c.root.model_object.annotation
-            if doc_id == a.er_doc.id and annotation_id == a.id and url_name == 'annotation_one_of_all':
+            if annotation_id == a.id:# and doc_id == a.er_doc.id and url_name == 'annotation_one_of_all':
                 return True
         except:
             pass
