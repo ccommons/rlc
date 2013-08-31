@@ -38,17 +38,15 @@ function AnnotationModal() {
                 annotation_compose_init(url);
             }.bind(this));
             $('a.annotation-reply').click(function(event) {
-                // TODO: replace generic compose with inline editor
-                // this.close();
-                // var url = $(event.currentTarget).attr('reply_url');
-                // annotation_compose_init(url);
+                // start inline editor, attach modal
                 var event_element = $(event.currentTarget);
-                var reply = new inline_reply(event_element);
+                var reply = new InlineReply(event_element);
+                reply.$calling_modal = this;
             }.bind(this));
             $('a.newsitem-reply').click(function(event) {
                 // start inline editor
                 var event_element = $(event.currentTarget);
-                var reply = new inline_reply(event_element);
+                var reply = new InlineReply(event_element);
             }.bind(this));
             $('a.annotation-page').click(function(event) {
                 var source = $(event.currentTarget);
@@ -187,13 +185,15 @@ function MembersModal() {
 }
 
 /* inline reply object, for use in comment replies */
-function inline_reply(initiating_element) {
+function InlineReply(initiating_element) {
     this.$parent = $('#' + initiating_element.attr('parent_id'));
 
     this.ckeditor = undefined;
     this.use_ckeditor = false;
 
     this.$new = undefined;
+
+    this.$calling_modal = undefined;
 
     $.extend(this, {
         'show_reply_form' : function(data, status, jqxhr) {
@@ -220,12 +220,12 @@ function inline_reply(initiating_element) {
             if (els.length > 0) {
                 els[0].scrollIntoView();
             }
-        }.bind(this),
+        },
 
         'cancel_form' : function(event) {
             this.ckeditor.finalize();
             this.$new.remove();
-        }.bind(this),
+        },
 
         'submit_reply_form' : function(event) {
             if (this.use_ckeditor === true) {
@@ -235,8 +235,8 @@ function inline_reply(initiating_element) {
             // TODO: get this from the event
             var postdata = $('#reply-compose-form').serialize();
             // alert(postdata);
-            $.post(action, postdata, this.reply_form_response, 'json');
-        }.bind(this),
+            $.post(action, postdata, this.reply_form_response.bind(this), 'json');
+        },
 
         'reply_form_response' : function(data, status, jqxhr) {
             /* close inline commenter and replace with new comment */
@@ -250,11 +250,24 @@ function inline_reply(initiating_element) {
             if (els.length > 0) {
                 els[0].scrollIntoView();
             }
-        }.bind(this)
+
+            // switch the calling modal to new URL if present
+            // (for example, if a proposed revision is approved)
+            if (data.hasOwnProperty("change_modal") &&
+                data.hasOwnProperty("url") &&
+                this.$calling_modal !== undefined) {
+                if (data["change_modal"] === true) {
+                    this.$calling_modal.close();
+                    annotation_preview_refresh();
+                    annotation_init(data["url"]);
+                }
+            }
+
+        }
     });
 
     var url = initiating_element.attr('reply_url');
-    $.get(url, '', this.show_reply_form, 'json');
+    $.get(url, '', this.show_reply_form.bind(this), 'json');
 }
 
 function modal_init(url, modaltype) {

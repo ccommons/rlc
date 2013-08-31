@@ -20,6 +20,8 @@ from ckeditor.widgets import CKEditorWidget
 
 from docutils import get_doc
 
+import uuid
+
 def atype_to_name(atype):
     for t in Annotation.ANNOTATION_TYPES:
         if t[0] == atype:
@@ -102,7 +104,7 @@ def full_json(request, *args, **kwargs):
             if a.model_object.id == requested_id:
                 selected_annotation = index
 
-    modal_id = "modal-{0}".format(doc.id)
+    modal_id = "modal-{0}-{1}".format(doc.id, str(uuid.uuid4()))
 
     context = Context({
 	"doc" : doc,
@@ -387,11 +389,13 @@ def reply_add_json(request, *args, **kwargs):
 
     new_comment = original_comment.reply(text=new_comment_text, user=user)
 
+    change_modal = False
     if form_type == "editor_reply":
         approval = form.cleaned_data["approval"]
         if approval == "accept":
             # change to accepted revision
             a.atype = "rev"
+            change_modal = True
             # TODO: record the change somewhere
         elif approval == "reject":
             # what do we do here?
@@ -421,17 +425,16 @@ def reply_add_json(request, *args, **kwargs):
 
     new_comment_html = render_to_string("reply_comment.html", context)
 
-    json = simplejson.dumps({
+    json_source = {
         "html" : new_comment_html,
+        "change_modal" : change_modal,
+    }
 
-        # TODO: should return URL only when it's a revision approval,
-        # and modal.js has to know how to update the current modal body.
-        #
-    	# "annotation_id" : annotation_id,
-        # "url" : return_url,
-    })
+    if change_modal == True:
+        json_source["url"] = return_url
 
-    # TODO: fill in the rest of this
+    json = simplejson.dumps(json_source)
+
     return(HttpResponse(json, mimetype='application/json'))
 
 
