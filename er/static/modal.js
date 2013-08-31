@@ -39,14 +39,15 @@ function AnnotationModal() {
             }.bind(this));
             $('a.annotation-reply').click(function(event) {
                 // TODO: replace generic compose with inline editor
-                this.close();
-                var url = $(event.currentTarget).attr('reply_url');
-                annotation_compose_init(url);
+                // this.close();
+                // var url = $(event.currentTarget).attr('reply_url');
+                // annotation_compose_init(url);
+                var event_element = $(event.currentTarget);
+                var reply = inline_reply(event_element);
             }.bind(this));
             $('a.newsitem-reply').click(function(event) {
                 // start inline editor
                 var event_element = $(event.currentTarget);
-                // var url = $(event.currentTarget).attr('reply_url');
                 var reply = inline_reply(event_element);
             }.bind(this));
             $('a.annotation-page').click(function(event) {
@@ -189,6 +190,7 @@ function MembersModal() {
 function inline_reply(initiating_element) {
     this.$parent = $('#' + initiating_element.attr('parent_id'));
 
+
     this.ckeditor = undefined;
     this.use_ckeditor = false;
 
@@ -196,7 +198,6 @@ function inline_reply(initiating_element) {
 
     $.extend(this, {
         'show_reply_form' : function(data, status, jqxhr) {
-            // alert(data["body_html"]);
             this.$new = $("<div/>").html(data["body_html"]);
             this.$parent.after(this.$new);
             if (data["use_ckeditor"] === true) {
@@ -214,6 +215,12 @@ function inline_reply(initiating_element) {
             $('.reply-close').click(function(event) {
                 cancel_form(event);
             }.bind(this));
+
+            // TODO: this seems to also scroll the base window
+            var els = this.$new.get();
+            if (els.length > 0) {
+                els[0].scrollIntoView();
+            }
         }.bind(this),
 
         'cancel_form' : function(event) {
@@ -238,6 +245,12 @@ function inline_reply(initiating_element) {
                 this.ckeditor.finalize();
             }
             this.$new.html(data["html"]);
+
+            // TODO: this seems to also scroll the base window
+            var els = this.$new.get();
+            if (els.length > 0) {
+                els[0].scrollIntoView();
+            }
         }.bind(this)
     });
 

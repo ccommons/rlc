@@ -56,7 +56,7 @@
         </div>
         {% endif %}
         {% for comment in a.comments %}
-            <div>
+            <div id="annotation-comment-{{ comment.model_object.id }}">
                 <div class="reply-comment" style="margin-left: {{ comment.level }}0px">
                     <div class="annotation-comment-text">
                         {{ comment.text|safe }}
@@ -75,10 +75,16 @@
                         {% endif %}
                     {% endif %}
                     {% if reply_url_name == "annotation_reply" %}
-                    <a class="annotation-reply" reply_url="{% url reply_url_name doc_id=doc.id comment_id=comment.model_object.id %}">
+                    <a class="annotation-reply"
+                       parent_id="annotation-comment-{{ comment.model_object.id }}"
+                       reply_level="{{ comment.level }}"
+                       reply_url="{% url reply_url_name doc_id=doc.id comment_id=comment.model_object.id %}">
                     {% else %}
                     {# reply_url_name == "annotation_reply_in_block" #}
-                    <a class="annotation-reply" reply_url="{% url reply_url_name doc_id=doc.id comment_id=comment.model_object.id block_id=block_id%}">
+                    <a class="annotation-reply"
+                       parent_id="annotation-comment-{{ comment.model_object.id }}"
+                       reply_level="{{ comment.level }}"
+                       reply_url="{% url reply_url_name doc_id=doc.id comment_id=comment.model_object.id block_id=block_id%}">
                     {% endif %}
                         Reply
                     </a>

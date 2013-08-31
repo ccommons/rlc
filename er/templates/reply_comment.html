@@ -1,0 +1,15 @@
+<div>
+    <div class="reply-comment" style="margin-left: {{ comment.level }}0px">
+        <div class="reply-comment-inline">
+            <div class="annotation-comment-text">
+                {{ comment.text|safe }}
+            </div>
+            <div class="annotation-comment-author">
+                {{ comment.model_object.user.first_name }}
+                {{ comment.model_object.user.last_name }} |
+                {{ comment.timestamp | date }}
+            </div>
+        </div>
+        <hr />
+    </div>
+</div>

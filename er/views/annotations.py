@@ -342,7 +342,7 @@ def reply_compose_json(request, *args, **kwargs):
         "original_comment" : original_comment,
     })
 
-    body_html = render_to_string("annotation_reply.html", context, context_instance=req_cxt)
+    body_html = render_to_string("reply_compose_inline.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
     	"body_html" : body_html,
 	"modal_id" : modal_id,
@@ -415,9 +415,20 @@ def reply_add_json(request, *args, **kwargs):
         # TODO: raise correct exception
         return_url = False
 
+    context = Context({
+        "comment" : new_comment,
+    })
+
+    new_comment_html = render_to_string("reply_comment.html", context)
+
     json = simplejson.dumps({
-    	"annotation_id" : annotation_id,
-        "url" : return_url,
+        "html" : new_comment_html,
+
+        # TODO: should return URL only when it's a revision approval,
+        # and modal.js has to know how to update the current modal body.
+        #
+    	# "annotation_id" : annotation_id,
+        # "url" : return_url,
     })
 
     # TODO: fill in the rest of this
