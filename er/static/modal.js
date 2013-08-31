@@ -43,12 +43,12 @@ function AnnotationModal() {
                 // var url = $(event.currentTarget).attr('reply_url');
                 // annotation_compose_init(url);
                 var event_element = $(event.currentTarget);
-                var reply = inline_reply(event_element);
+                var reply = new inline_reply(event_element);
             }.bind(this));
             $('a.newsitem-reply').click(function(event) {
                 // start inline editor
                 var event_element = $(event.currentTarget);
-                var reply = inline_reply(event_element);
+                var reply = new inline_reply(event_element);
             }.bind(this));
             $('a.annotation-page').click(function(event) {
                 var source = $(event.currentTarget);
@@ -190,7 +190,6 @@ function MembersModal() {
 function inline_reply(initiating_element) {
     this.$parent = $('#' + initiating_element.attr('parent_id'));
 
-
     this.ckeditor = undefined;
     this.use_ckeditor = false;
 
@@ -210,10 +209,10 @@ function inline_reply(initiating_element) {
             }
 
             $('#reply-submit').click(function(event) {
-                submit_reply_form(event);
+                this.submit_reply_form(event);
             }.bind(this));
             $('.reply-close').click(function(event) {
-                cancel_form(event);
+                this.cancel_form(event);
             }.bind(this));
 
             // TODO: this seems to also scroll the base window
@@ -236,7 +235,7 @@ function inline_reply(initiating_element) {
             // TODO: get this from the event
             var postdata = $('#reply-compose-form').serialize();
             // alert(postdata);
-            $.post(action, postdata, reply_form_response, 'json');
+            $.post(action, postdata, this.reply_form_response, 'json');
         }.bind(this),
 
         'reply_form_response' : function(data, status, jqxhr) {
