@@ -5,17 +5,22 @@
     </h4>
 {% endblock %}
 {% block modal_body %}
-    <div>Discussion for: </div>
-    <div>{{news_item.title}}</div>
-    <div>Hey, well, here are some news comments</div>
+    <h4>{{ news_item.title }}</h4>
+    <div>{{ news_item.preview|safe }}</div>
 
-    <div>
-        comment header: {{ head_comment.text }}
+    <div class="head-news-comment" id="news-comment-{{ head_comment.model_object.id }}">
+        <a class="newsitem-reply"
+           parent_id="news-comment-{{ head_comment.model_object.id }}"
+           reply_level="{{ head_comment.level }}"
+           reply_url="{% url 'news_reply' comment_id=head_comment.model_object.id %}">
+           Comment
+        </a>
+        <hr />
     </div>
 
     {% for comment in comments %}
     <div id="news-comment-{{ comment.model_object.id }}">
-        <div style="margin-bottom: 3px; margin-left: {{ comment.level|add:-1 }}0px">
+        <div class="reply-comment" style="margin-left: {{ comment.level|add:-1 }}0px">
             <div class="annotation-comment-text">
                 {{ comment.text|safe }}
             </div>

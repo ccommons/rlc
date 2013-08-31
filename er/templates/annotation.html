@@ -57,7 +57,7 @@
         {% endif %}
         {% for comment in a.comments %}
             <div>
-                <div style="margin-bottom: 3px; margin-left: {{ comment.level }}0px">
+                <div class="reply-comment" style="margin-left: {{ comment.level }}0px">
                     <div class="annotation-comment-text">
                         {{ comment.text|safe }}
                     </div>
