@@ -105,6 +105,28 @@
     font-weight: 400;
 }
 
+.compose-reply-inline {
+    margin-bottom: 10px;
+}
+
+.compose-reply-inline .reply-buttons {
+    margin-top: 5px;
+}
+
+.head-news-comment {
+    margin-bottom: 10px;
+}
+
+.reply-comment {
+    margin-bottom: 3px;
+}
+
+.reply-comment-inline {
+    border: 1px solid #303030;
+    padding: 3px;
+    background-color: #d0d0d0;
+}
+
 /**
  * Color definitions.
 */
@@ -415,3 +437,4 @@ ul.news-listing .news-tags {
 /**
  * END of modal window classes
 */
+
