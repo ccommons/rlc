@@ -87,7 +87,7 @@ def reply_json(request, *args, **kwargs):
         "form_action" : action,
     })
 
-    body_html = render_to_string("news_reply.html", context, context_instance=req_cxt)
+    body_html = render_to_string("reply_compose_inline.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
         "body_html" : body_html,
         "use_ckeditor" : True,
@@ -112,8 +112,18 @@ def reply_new_json(request, *args, **kwargs):
     
     new_comment = original_comment.reply(text=new_comment_text, user=user)
 
+    # manually manipulate the comment level one down (because it's news)
+    # (will not harm underlying object)
+    new_comment.level = new_comment.level - 1
+
+    context = Context({
+        "comment" : new_comment,
+    })
+
+    new_comment_html = render_to_string("reply_comment.html", context)
+
     json = simplejson.dumps({
-        "html" : new_comment_text,
+        "html" : new_comment_html,
     })
 
     return(HttpResponse(json, mimetype='application/json'))

@@ -14,6 +14,7 @@ class comment(object):
 	self.user = None
 	self.timestamp = None
 	self.model_object = None
+        self._level = None
 	# self.parent: property
 	# self.replies: property
 
@@ -77,6 +78,28 @@ class comment(object):
     def root(self, root_comment):
 	self.model_object.root = root_comment.model_object
 	self.model_object.save()
+
+    @property
+    def level(self):
+	"""get comment level"""
+	if self._level == None:
+            # if not already set, figure it out
+	    self._level = 0
+            current_comment = self
+            # trace back to parent
+            # TODO: probably ought to have loop detector
+            # (although loops are not supposed to occur)
+            while not current_comment.is_root():
+                current_comment = current_comment.parent
+                self._level += 1
+
+        return self._level
+
+    @level.setter
+    def level(self, level):
+        """set comment level manually
+           (useful for batch output, like .thread_as_list()"""
+	self._level = level
 
     @classmethod
     def fetch(comment, id):

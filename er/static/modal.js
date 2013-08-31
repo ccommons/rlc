@@ -47,7 +47,7 @@ function AnnotationModal() {
                 // start inline editor
                 var event_element = $(event.currentTarget);
                 // var url = $(event.currentTarget).attr('reply_url');
-                inline_reply_start(event_element);
+                var reply = inline_reply(event_element);
             }.bind(this));
             $('a.annotation-page').click(function(event) {
                 var source = $(event.currentTarget);
@@ -185,51 +185,64 @@ function MembersModal() {
     });
 }
 
-// TODO: make this into object
-function inline_reply_start(initiating_element) {
-    var $parent = $('#' + initiating_element.attr('parent_id'));
+/* inline reply object, for use in comment replies */
+function inline_reply(initiating_element) {
+    this.$parent = $('#' + initiating_element.attr('parent_id'));
 
-    var ckeditor = undefined;
-    var use_ckeditor = false;
+    this.ckeditor = undefined;
+    this.use_ckeditor = false;
 
-    var $new;
+    this.$new = undefined;
 
-    var show_reply_form = function(data, status, jqxhr) {
-        // alert(data["body_html"]);
-        $new = $("<div/>").html(data["body_html"]);
-        $parent.after($new);
-        if (data["use_ckeditor"] === true) {
-            use_ckeditor = true;
-            var ckconfig_name = "";
-            if ('ckeditor_config' in data) {
-                ckconfig_name = data["ckeditor_config"];
+    $.extend(this, {
+        'show_reply_form' : function(data, status, jqxhr) {
+            // alert(data["body_html"]);
+            this.$new = $("<div/>").html(data["body_html"]);
+            this.$parent.after(this.$new);
+            if (data["use_ckeditor"] === true) {
+                this.use_ckeditor = true;
+                var ckconfig_name = "";
+                if ('ckeditor_config' in data) {
+                    ckconfig_name = data["ckeditor_config"];
+                }
+                this.ckeditor = new CKEditorsInModal(this.$new, ckconfig_name);
             }
-            ckeditor = new CKEditorsInModal($new, ckconfig_name);
-        }
-        $('#reply-submit').click(function(event) {
-            submit_reply_form(event);
-        }.bind(this));
-    }
-    var submit_reply_form = function(event) {
-        if (use_ckeditor === true) {
-            ckeditor.sync();
-        }
-        var action = $(event.currentTarget).attr('action');
-        // TODO: get this from the event
-        var postdata = $('#reply-compose-form').serialize();
-        // alert(postdata);
-        $.post(action, postdata, reply_form_response, 'json');
-    }
-    var reply_form_response = function(data, status, jqxhr) {
-        /* close inline commenter and replace with new comment */
-        if (use_ckeditor === true) {
-            ckeditor.finalize();
-        }
-        $new.html(data["html"]);
-    }
+
+            $('#reply-submit').click(function(event) {
+                submit_reply_form(event);
+            }.bind(this));
+            $('.reply-close').click(function(event) {
+                cancel_form(event);
+            }.bind(this));
+        }.bind(this),
+
+        'cancel_form' : function(event) {
+            this.ckeditor.finalize();
+            this.$new.remove();
+        }.bind(this),
+
+        'submit_reply_form' : function(event) {
+            if (this.use_ckeditor === true) {
+                this.ckeditor.sync();
+            }
+            var action = $(event.currentTarget).attr('action');
+            // TODO: get this from the event
+            var postdata = $('#reply-compose-form').serialize();
+            // alert(postdata);
+            $.post(action, postdata, reply_form_response, 'json');
+        }.bind(this),
+
+        'reply_form_response' : function(data, status, jqxhr) {
+            /* close inline commenter and replace with new comment */
+            if (this.use_ckeditor === true) {
+                this.ckeditor.finalize();
+            }
+            this.$new.html(data["html"]);
+        }.bind(this)
+    });
 
     var url = initiating_element.attr('reply_url');
-    $.get(url, '', show_reply_form, 'json');
+    $.get(url, '', this.show_reply_form, 'json');
 }
 
 function modal_init(url, modaltype) {
