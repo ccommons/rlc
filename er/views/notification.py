@@ -39,6 +39,7 @@ def get_notifications(request):
     notifications = Notification.objects.filter(user=request.user)
 
     all_items = parse_notifications(notifications)
+    all_items = sorted(all_items, key=lambda n:n.timestamp, reverse=True)
 
     # group items by unread/read
     unread_items = []
