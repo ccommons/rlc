@@ -15,6 +15,7 @@ class comment(object):
 	self.timestamp = None
 	self.model_object = None
         self._level = None
+        self._ancestors = None
 	# self.parent: property
 	# self.replies: property
 
@@ -100,6 +101,18 @@ class comment(object):
         """set comment level manually
            (useful for batch output, like .thread_as_list()"""
 	self._level = level
+
+    @property
+    def ancestors(self):
+	"""get comment ancestors (order: newest to oldest)"""
+        if self._ancestors == None:
+            self._ancestors = []
+            current_comment = self
+            while not current_comment.is_root():
+                current_comment = current_comment.parent
+                self._ancestors.append(current_comment)
+
+        return self._ancestors
 
     @classmethod
     def fetch(comment, id):
