@@ -39,8 +39,14 @@ function Modal() {
         'rendered' : false,
         'render' : function() {
             if (this.rendered === false) {
+                this.content_element.on('show', function () {
+                    $('body').css('overflow', 'hidden');
+                }.bind(this));
                 this.content_element.modal();
                 this.content_element.on('hidden', this.content_delete.bind(this));
+                this.content_element.on('hidden', function () {
+                    $('body').css('overflow', 'visible');
+                }.bind(this));
             }
             this.rendered = true;
         }
