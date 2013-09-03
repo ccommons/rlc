@@ -17,7 +17,6 @@ import doctags
 
 class EREditForm(forms.Form):
     id = forms.IntegerField(widget=forms.HiddenInput())
-    # XXX add validation stuff
     title = forms.CharField(max_length=100)
     # content = forms.CharField(widget=CKEditorWidget())
     # following is for default text widget
@@ -25,7 +24,7 @@ class EREditForm(forms.Form):
     publication_link = forms.URLField()
     publication_date = forms.DateTimeField() 
 
-# XXX add editor permission
+# TODO: add editor permission
 @login_required
 def formview(request, *args, **kwargs):
     """ER editor view"""
@@ -51,7 +50,7 @@ def formview(request, *args, **kwargs):
     return(render_to_response("edit.html", context, context_instance=req_cxt))
 
 
-# XXX add editor permission
+# TODO: add editor permission
 @login_required
 @require_POST
 def change(request, *args, **kwargs):
@@ -75,36 +74,100 @@ def change(request, *args, **kwargs):
     parsed_doc = doctags.parse(form.cleaned_data["content"])
     doctags.add_ids(parsed_doc)
 
-    # TODO: deleting and adding section info is currently very slow
-    # due to the relations, use deltas to speed it up
+    # update sections
 
-    # delete previous section info
-    for section in doc.papersection_set.all():
-    	section.delete()
+    # get old section info
+    old_section_values = doc.papersection_set.values("id", "tag_id", "position", "header_text")
+    old_ids = set([old_section["tag_id"] for old_section in old_section_values])
+    old_section_info = {}
+    for s in old_section_values:
+        old_section_info[s["tag_id"]] = s
 
-    # create new section info
-    section_info = doctags.section_info(parsed_doc)
-    for section in section_info:
-    	doc.papersection_set.create(
-	    tag_id=section["id"],
-	    header_text=section["text"],
-	    position=section["position"],
-	)
+    # extract new section info
+    new_section_info = doctags.section_info(parsed_doc)
+    new_ids = set([section["id"] for section in new_section_info])
 
-    # delete previous block info
-    for block in doc.paperblock_set.all():
-    	block.delete()
+    unchanged_ids = old_ids.intersection(new_ids)
+    added_ids = new_ids.difference(old_ids)
+    deleted_ids = old_ids.difference(new_ids)
 
-    # create new block info
-    block_info = doctags.block_info(parsed_doc)
-    for block in block_info:
-        o = PaperBlock(
-            tag_id = block["id"],
-            preview_text = block["text"][:100],
-            position = block["position"],
-            paper = doc,
-        )
-        o.save()
+    for section in new_section_info:
+        id = section["id"]
+        if id in added_ids:
+            doc.papersection_set.create(
+                tag_id=id,
+                header_text=section["text"],
+                position=0,
+                # position=section["position"],
+            )
+        else:
+            # update if necessary
+            old_section = old_section_info[id]
+            if (old_section["header_text"] != section["text"]):
+                # positions are too slow
+                # or old_section["position"] != section["position"]:
+                # TODO: possibly get all of the changed sections at once,
+                # update them all at once
+                try:
+                    s = doc.papersection_set.get(tag_id=id)
+                    s.header_text = section["text"]
+                    # s.position = section["position"]
+                    s.save()
+                except:
+                    # TODO: get rid of all, create new section
+                    pass
+
+    # delete removed sections
+    for section in doc.papersection_set.filter(tag_id__in=deleted_ids):
+        section.delete()
+
+    # update blocks
+
+    # get old block info
+    old_block_values = doc.paperblock_set.values("id", "tag_id", "position", "preview_text")
+    old_ids = set([old_block["tag_id"] for old_block in old_block_values])
+    old_block_info = {}
+    for b in old_block_values:
+        old_block_info[b["tag_id"]] = b
+
+    # extract new block info
+    new_block_info = doctags.block_info(parsed_doc)
+    new_ids = set([block["id"] for block in new_block_info])
+
+    unchanged_ids = old_ids.intersection(new_ids)
+    added_ids = new_ids.difference(old_ids)
+    deleted_ids = old_ids.difference(new_ids)
+
+    # add / update blocks
+    for block in new_block_info:
+        id = block["id"]
+        preview_text = block["text"][:100]
+        if id in added_ids: # new block
+            doc.paperblock_set.create(
+                tag_id=id,
+                preview_text=preview_text,
+                position=0,
+                # positions are too slow
+                # position=block["position"],
+            )
+        else: # existing block; update if necessary
+            old_block = old_block_info[id]
+            if old_block["preview_text"] != preview_text:
+                # updating positions causes slow chain-reactions
+                # or old_block["position"] != block["position"]):
+                try:
+                    b = doc.paperblock_set.get(tag_id=id)
+                    b.preview_text = preview_text
+                    # b.position = block["position"]
+                    # positions are too slow
+                    b.save()
+                except:
+                    # TODO: multiple blocks: get rid of all, create new block
+                    pass
+
+    # delete removed blocks
+    for block in doc.paperblock_set.filter(tag_id__in=deleted_ids):
+        block.delete()
 
     doc.content = str(parsed_doc)
     doc.title = form.cleaned_data["title"]
