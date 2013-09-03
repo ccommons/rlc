@@ -41,6 +41,8 @@ def fullpage(request, *args, **kwargs):
 
     sections = doc.papersection_set.order_by('position')
 
+    authors = doc.authors.order_by('paperauthorship__position')
+
     summary = annotation_summary(doc)
 
     # get URL reverse kwargs for viewing open questions
@@ -58,6 +60,7 @@ def fullpage(request, *args, **kwargs):
 
     context = {
 	"doc" : doc,
+        "authors" : authors,
 	"doctitle" : "Melanoma RLC: " + doc.title,
     	"main_document" : content,
         "widget_media" : widget_media,
