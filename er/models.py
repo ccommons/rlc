@@ -146,6 +146,10 @@ class EmailPreferences(models.Model):
     er_published = models.BooleanField()
     new_member = models.BooleanField()
 
+class CommentFollower(models.Model):
+    user = models.ForeignKey(User)
+    comment = models.ForeignKey(Comment)
+
 # News models
 class NewsItem(models.Model):
     # For Melanoma RLC, this will always be "melanoma"
