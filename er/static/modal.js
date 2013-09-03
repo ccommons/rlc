@@ -221,8 +221,7 @@ function NewsModal() {
 
             $('.tag-filter').click(function(event) {
                 var url = $(event.currentTarget).attr('url');
-                this.close();
-                news_index_init(url);
+                this.load(url);
             }.bind(this));
         }
     });
