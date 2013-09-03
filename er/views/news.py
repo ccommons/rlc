@@ -14,6 +14,8 @@ from er.annotation import comment
 from django import forms
 from django.core.urlresolvers import reverse
 
+import uuid
+
 @login_required
 def index(request, *args, **kwargs):
     """index page"""
@@ -30,6 +32,32 @@ def index(request, *args, **kwargs):
     })
 
     return(render_to_response("news.html", context, context_instance=req_cxt))
+
+@login_required
+def index_json(request, *args, **kwargs):
+    req_cxt = RequestContext(request)
+
+    news_objects = NewsItem.objects
+
+    if "tag" in kwargs:
+        news_items = news_objects.filter(tags__tag_value=kwargs["tag"])
+    else:
+        news_items = news_objects.all()
+
+    modal_id = "modal-news-index-{0}".format(str(uuid.uuid4()))
+
+    context = Context({
+        "modal_id" : modal_id,
+    	"news_items" : news_items,
+    })
+
+    body_html = render_to_string("news_index.html", context, context_instance=req_cxt)
+    json = simplejson.dumps({
+        "body_html" : body_html,
+        "modal_id" : modal_id,
+    })
+
+    return(HttpResponse(json, mimetype='application/json'))
 
 @login_required
 def comment_json(request, *args, **kwargs):

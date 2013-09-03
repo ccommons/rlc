@@ -8,6 +8,22 @@ function Modal() {
             var content_id = "#" + id;
             this.content_element = $(content_id);
         },
+
+        'load' : function (url) {
+            var display = function(data, status, jqxhr) {
+                // TODO: add protocol error checking
+                this.content_set(data["body_html"], data["modal_id"]);
+                this.set_data(data);
+                this.render();
+            };
+            $.get(url, '', display.bind(this), 'json');
+        },
+        // XXX this doesn't work
+        'reload' : function (url) {
+            this.content_delete();
+            this.load(url);
+        },
+
         'content_delete' : function() {
             if (this.content_element !== null) {
                 this.content_element.remove();
@@ -184,6 +200,28 @@ function MembersModal() {
     });
 }
 
+function NewsModal() {
+    var $super = new Modal();
+
+    $.extend(this, $super, {
+        'render' : function() {
+            $super.render.bind(this)();
+
+            $('a.news-comments-link').click(function(event) {
+                this.close();
+                var url = $(event.currentTarget).attr('url');
+                news_comment_init(url);
+            }.bind(this));
+
+            $('.tag-filter').click(function(event) {
+                var url = $(event.currentTarget).attr('url');
+                this.close();
+                news_index_init(url);
+            }.bind(this));
+        }
+    });
+}
+
 /* inline reply object, for use in comment replies */
 function InlineReply(initiating_element) {
     this.$parent = $('#' + initiating_element.attr('parent_id'));
@@ -274,14 +312,8 @@ function modal_init(url, modaltype) {
     if (typeof(modaltype) === 'undefined') {
         var modaltype = Modal;
     }
-    var display = function(data, status, jqxhr) {
-        // TODO: add protocol error checking
-        var modal = new modaltype();
-        modal.content_set(data["body_html"], data["modal_id"]);
-        modal.set_data(data);
-        modal.render();
-    }
-    $.get(url, '', display, 'json');
+    var modal = new modaltype();
+    modal.load(url);
 }
 
 function annotation_init(url) {
@@ -298,6 +330,10 @@ function myprofile_init(url) {
 
 function members_init(url) {
     modal_init(url, MembersModal);
+}
+
+function news_index_init(url) {
+    modal_init(url, NewsModal);
 }
 
 function news_comment_init(url) {
