@@ -3,25 +3,25 @@
 function Modal() {
     $.extend(this, {
         'content_element' : null,
-        'content_set' : function(content_html, id) {
-            $('body').append(content_html);
-            var content_id = "#" + id;
-            this.content_element = $(content_id);
+        'container_html' : '<div class="modal hide fade" tabindex="-1" role="dialog"></div>',
+        'content_set' : function(content_html) {
+            if (this.content_element === null) {
+                this.content_element = $(this.container_html).appendTo('body');
+            }
+            this.content_element.html(content_html);
+            // $('body').append(content_html);
+            // var content_id = "#" + id;
+            // this.content_element = $(content_id);
         },
 
         'load' : function (url) {
             var display = function(data, status, jqxhr) {
                 // TODO: add protocol error checking
-                this.content_set(data["body_html"], data["modal_id"]);
+                this.content_set(data["body_html"]);
                 this.set_data(data);
                 this.render();
             };
             $.get(url, '', display.bind(this), 'json');
-        },
-        // XXX this doesn't work
-        'reload' : function (url) {
-            this.content_delete();
-            this.load(url);
         },
 
         'content_delete' : function() {
@@ -36,9 +36,13 @@ function Modal() {
         'close' : function() {
             this.content_element.modal('hide');
         },
+        'rendered' : false,
         'render' : function() {
-            this.content_element.modal();
-            this.content_element.on('hidden', this.content_delete.bind(this));
+            if (this.rendered === false) {
+                this.content_element.modal();
+                this.content_element.on('hidden', this.content_delete.bind(this));
+            }
+            this.rendered = true;
         }
     });
 }
@@ -152,9 +156,11 @@ function MyProfileModal() {
     var $super = new Modal();
 
     var submit_response_handler = function(data, texttype) {
-        this.close();
-        this.content_delete();
-        this.content_set(data["body_html"], data["modal_id"]);
+        // this.close();
+        // this.content_delete();
+        /* TODO: make this into some better sort of handler */
+        this.content_set(data["body_html"]);
+        this.set_data(data);
         this.render();
     }.bind(this);
 
@@ -180,7 +186,7 @@ function MembersModal() {
     var submit_response_handler = function(data, texttype) {
         this.close();
         this.content_delete();
-        this.content_set(data["body_html"], data["modal_id"]);
+        this.content_set(data["body_html"]);
         this.render();
     }.bind(this);
 
