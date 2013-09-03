@@ -9,7 +9,16 @@
 </form>
 {% if override_ckeditor == True %}
 <script language="javascript">
-CKEDITOR.replace('{{ form.content.auto_id }}');
+(function () {
+var ckconfig = {};
+if ('default' in __CKEDITOR_CONFIGS) {
+    ckconfig = __CKEDITOR_CONFIGS['default'];
+}
+if ('doceditor' in __CKEDITOR_CONFIGS) {
+    ckconfig = __CKEDITOR_CONFIGS['doceditor'];
+}
+CKEDITOR.replace('{{ form.content.auto_id }}', ckconfig);
+})();
 </script>
 {% endif %}
 {% endblock %}
