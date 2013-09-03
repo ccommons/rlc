@@ -1,0 +1,26 @@
+{% load humanize %}
+        <li>
+            <div class="notification-subject">
+                {{ item.subject_user.first_name }} {{ item.subject_user.last_name }} {{ item.subject }}
+            </div>
+            <div class="notification-context">
+                {% ifequal item.etype 'comment_annotation' %}
+                    <a onclick="annotation_init('{{ item.url }}')">
+                {% else %}
+                    {% ifequal item.etype 'proprev_accepted' %}
+                        <a onclick="annotation_init('{{ item.url }}')">
+                    {% else %}
+                        {% ifequal item.etype 'user' %}
+                            <a onclick="myprofile_init('{{ item.url }}')">
+                        {% else %}
+                            <a href="{{ item.url }}">
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endifequal %}
+                {{ item.context|striptags }}
+                </a>
+            </div>
+            <div class="notification-timestamp">
+                {{ item.timestamp|naturaltime }}
+            </div>
+        </li>
