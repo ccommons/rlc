@@ -1,0 +1,36 @@
+{% extends "modal.html" %}
+{% block modal_title %}
+    News
+{% endblock %}
+{% block modal_body %}
+    <ul class="news-listing">
+    {% for news_item in news_items %}
+	<li>
+            <h1>
+            <a target="_blank" href="{{ news_item.url }}">
+                {{ news_item.title }}
+            </a>
+            </h1>
+            <div class="news-summary">
+                <a target="_blank" href="{{ news_item.url }}">
+                <p>{{ news_item.preview|safe }}</p>
+                </a>
+            </div>
+            <div class="news-tags">
+                {% for tag in news_item.tag_objects %}
+                    <span class="label label-info tag-filter" url="{% url 'news_index_tag_modal' tag=tag.tag_value %}">
+                        {{ tag.tag_value }}
+                    </span>
+                {% endfor %}
+            </div>
+            <div class="news-actions">
+                Reply | <a class='news-comments-link' url="{% url 'news_comment' item_id=news_item.id %}">Comments</a> | Etc.
+            </div>
+            <hr / >
+        </li>
+    {% endfor %}
+    </ul>
+    <div>
+        Suggest Article
+    </div>
+{% endblock %}
