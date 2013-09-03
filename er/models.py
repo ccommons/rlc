@@ -110,7 +110,7 @@ class Event(models.Model):
         #('annotation', 'Annotation'),
         ('comment_annotation', 'Comment'),
         ('comment_news', 'Comment'),
-        ('proprev_approved', 'Proposed Revision Approved'),
+        ('proprev_accepted', 'Proposed Revision Accepted'),
         ('er', 'EvidenceReview'),
         ('user', 'User'),
     }
