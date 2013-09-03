@@ -14,7 +14,7 @@ $(document).ready(function() {
     {% endfor %}
 	<li class="horizontal-separator"></li>
     	<li><a onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype="openq" %}')">Open Questions</a></li>
-    	<li><a href="#">News</a></li>
+    	<li><a onclick="news_index_init('{% url 'news_index_modal' %}')">News</a></li>
     	<li><a href="#">Figures and Tables</a></li>
     </ul>
 {% endblock %}
