@@ -475,3 +475,26 @@ ul.news-listing .news-tags {
  * END of modal window classes
 */
 
+/**
+ * Media queruies
+*/
+@media (max-width: 1199px) {
+    .section-header {
+        font-size: 1.2em;
+    }
+
+    .document-summary ul li {
+        width: 27%;
+        font-size: 0.8em;
+    }
+    
+    .annotation-preview {
+        width: 59%;
+        right: -257px;
+    }
+
+    .annotation-content {
+        font-size: 1em;
+        top: -15px;
+    }
+}
