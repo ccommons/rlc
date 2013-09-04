@@ -45,6 +45,8 @@ def annotation_summary(doc):
 @login_required
 def full_json(request, *args, **kwargs):
     """annotation view"""
+    from er.notification import notification
+    notification.mark_read(request)
     req_cxt = RequestContext(request)
 
     this_url_name = request.resolver_match.url_name
@@ -248,6 +250,9 @@ def add_json(request, *args, **kwargs):
         a.model_object.doc_block = block
         a.model_object.save()
 
+    from er.eventhandler import commentAnnotationEventHandler as caeh
+    caeh.notify(init_comment.model_object, action='new')
+
     return_kwargs = dict(kwargs, annotation_id=a.model_object.id)
 
     if this_url_name == "annotation_new":
@@ -397,6 +402,8 @@ def reply_add_json(request, *args, **kwargs):
             a.atype = "rev"
             change_modal = True
             # TODO: record the change somewhere
+            from er.eventhandler import proprevAcceptedEventHandler as paeh
+            paeh.notify(new_comment.model_object, action='new')
         elif approval == "reject":
             # what do we do here?
             pass
@@ -406,6 +413,9 @@ def reply_add_json(request, *args, **kwargs):
         else:
             # TODO: raise something, probably
             pass
+    else:
+        from er.eventhandler import commentAnnotationEventHandler as caeh
+        caeh.notify(new_comment.model_object, action='new')
 
     return_kwargs = dict(kwargs, annotation_id=annotation_id)
     del return_kwargs["comment_id"]

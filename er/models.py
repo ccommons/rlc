@@ -132,7 +132,7 @@ class Event(models.Model):
         #('annotation', 'Annotation'),
         ('comment_annotation', 'Comment'),
         ('comment_news', 'Comment'),
-        ('proprev_approved', 'Proposed Revision Approved'),
+        ('proprev_accepted', 'Proposed Revision Accepted'),
         ('er', 'EvidenceReview'),
         ('user', 'User'),
     }
@@ -167,6 +167,10 @@ class EmailPreferences(models.Model):
     er_updated = models.BooleanField()
     er_published = models.BooleanField()
     new_member = models.BooleanField()
+
+class CommentFollower(models.Model):
+    user = models.ForeignKey(User)
+    comment = models.ForeignKey(Comment)
 
 # News models
 class NewsItem(models.Model):

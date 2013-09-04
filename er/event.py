@@ -106,7 +106,7 @@ class event(object):
             self._resource = None
             return
         if not isinstance(obj, self.event_handler.resource_model):
-            raise TypeError("%s is not an instance of %s" %(obj, type(EVENT_TYPE[self.etype].resource_model)))
+            raise TypeError("%s is not an instance of %s" %(obj, type(self.event_handler.resource_model)))
         self._resource = obj
         # check broken link
         if self.resource_id:
