@@ -448,6 +448,8 @@ def preview_json(request, *args, **kwargs):
 
     preview_template = template_loader.get_template("annotation_preview.html")
 
+    # TODO: replace all of this with one big aggregation
+
     for block in doc.paperblock_set.all():
         block_id = block.tag_id
         context = {
@@ -455,7 +457,6 @@ def preview_json(request, *args, **kwargs):
             "block_id" : block_id,
         }
 
-        # XXX pull these from model
         preview_data = {
             "openq" : [],
             "note" : [],
@@ -464,12 +465,29 @@ def preview_json(request, *args, **kwargs):
         }
 
         # TODO: make this use the annotation class
+        # (for now, leave as-is because it can be very slow otherwise)
         for a in block.annotations.all():
             preview_data[a.atype].append(a)
         
+        # get latest annotations
+
+        # print max
+
         for t in preview_data:
             context[t + "_list"] = preview_data[t]
             context[t + "_count"] = len(preview_data[t])
+
+        # only look up the latest note date if there are any notes
+        # (this is a workaround for performance; this should be worked into
+        # the general aggregation stuff that needs to be done)
+        if context["note_count"] > 0:
+            from django.db.models import Max
+            latest_date = block.annotations.filter(atype='note').aggregate(Max('initial_comment__timestamp'))
+            print latest_date
+            context["note_date"] = latest_date["initial_comment__timestamp__max"]
+            # context["note_date"] = None
+        else:
+            context["note_date"] = None
 
         context["compose_url"] = reverse("annotation_compose_in_block", kwargs={
             "doc_id" : kwargs["doc_id"],

@@ -4,7 +4,9 @@
         <div class="annotation-pointer pointer-left border-blue1"></div>
         <div class="annotation-content bg-blue1 clearfix">
             {{ note_count }} Note{{ note_count|pluralize }}
-            <span class="all-caps pull-right"><small>Last: <!--TODO Date template data goes here.-->Jul 10, 2013</small></span>
+            {% if note_date != None %}
+                <span class="all-caps pull-right"><small>Last: {{ note_date|date }}</small></span>
+            {% endif %}
         </div>
     </div>    
 {% endif %}{% if openq_count > 0 %}
