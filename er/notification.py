@@ -146,7 +146,7 @@ class notification(object):
     @classmethod
     def count(cls, user):
         try:
-            return cls.MODEL.objects.filter(user, shown=False, read=False).count()
+            return cls.MODEL.objects.filter(user=user, shown=False, read=False).count()
         except Exception, ex:
             logger.error(ex)
             return 0
