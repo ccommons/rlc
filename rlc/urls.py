@@ -8,6 +8,7 @@ GEN_PREFIX = r'^er'
 DOC_PREFIX = GEN_PREFIX + r'/(?P<doc_id>\d+)'
 ANNO_PREFIX = DOC_PREFIX + r'/annotation'
 PROFILE_PREFIX = r'^profile'
+NOTIFICATION_PREFIX = r'^notifications'
 
 A_TYPES = r'/(?P<atype>openq|note|proprev|rev)'
 A_ID = r'/(?P<annotation_id>\d+)'
@@ -57,9 +58,10 @@ urlpatterns = patterns('',
     url(DOC_PREFIX + r'/edit$', 'er.views.edit.formview', name='doc_editor'),
     url(DOC_PREFIX + r'/change$', 'er.views.edit.change', name='doc_change'),
 
-    # notification menu
-    url(r'^notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),
-    url(r'^notifications/json$', 'er.views.notification.notifications_json', name='notification_json'),
+    # notification
+    url(NOTIFICATION_PREFIX + r'$', 'er.views.notification.notifications_menu', name='notification_menu'),
+    url(NOTIFICATION_PREFIX + r'/json$', 'er.views.notification.notifications_json', name='notification_json'),
+    url(NOTIFICATION_PREFIX + r'/count/json$', 'er.views.notification.notifications_count_json', name='notification_count_json'),
 
     # my profile
     url(PROFILE_PREFIX + r'/json$', 'er.views.profile.profile_json', name='myprofile'),
