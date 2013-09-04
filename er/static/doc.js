@@ -3,6 +3,7 @@ var __CKEDITOR_CONFIGS = {
     },
     doceditor : {
         allowedContent: true,
+        height: '500px'
     },
     annotation_compose : {
         toolbar: [ [ 'Source', '-', 'Bold', 'Italic' ]]
