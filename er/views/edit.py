@@ -98,21 +98,19 @@ def change(request, *args, **kwargs):
             doc.papersection_set.create(
                 tag_id=id,
                 header_text=section["text"],
-                position=0,
-                # position=section["position"],
+                position=section["position"],
             )
         else:
             # update if necessary
             old_section = old_section_info[id]
-            if (old_section["header_text"] != section["text"]):
-                # positions are too slow
-                # or old_section["position"] != section["position"]:
-                # TODO: possibly get all of the changed sections at once,
-                # update them all at once
+            if (old_section["header_text"] != section["text"] or
+                old_section["position"] != section["position"]):
+                # it's necessary to update the positions
+                # because their order determines the lineup in the TOC
                 try:
                     s = doc.papersection_set.get(tag_id=id)
                     s.header_text = section["text"]
-                    # s.position = section["position"]
+                    s.position = section["position"]
                     s.save()
                 except:
                     # TODO: get rid of all, create new section
@@ -171,10 +169,10 @@ def change(request, *args, **kwargs):
         block.delete()
 
     old_content = doc.content
-    new_content = unicode(str(parsed_doc))
+    new_content = str(parsed_doc)
 
     old_title = doc.title
-    new_title = unicode(form.cleaned_data["title"])
+    new_title = form.cleaned_data["title"]
 
     document_changed = False
 
