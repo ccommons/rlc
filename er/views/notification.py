@@ -51,6 +51,7 @@ def get_notifications(request):
             unread_items.append(item)
 
     context = Context({
+        "override_ckeditor" : True,
         "unread" : unread_items,
         "read" : read_items,
     })
