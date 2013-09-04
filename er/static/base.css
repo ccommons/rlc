@@ -1280,6 +1280,9 @@ textarea.hidden {
 /**
  * notifications popover
  */
+.navbar .btn-group {
+	position: static;
+}
 
 .popover {
 	background: #444;
@@ -1289,66 +1292,26 @@ textarea.hidden {
 	   -moz-box-sizing: border-box;
 			box-sizing: border-box;
 	color: white;
+	min-width: 117px;
+	max-width: 350px;
 }
-
+.popover a,
+.popover a:hover {
+	color: #fff;
+}
 .popover.alert-popover {
 	width: auto !important; /* Important since popover with is set inline in js */
 }
-
 .popover p {
 	width: 100%;
 }
-
-.popover .btn {
-	margin-left: 7px;
-	width: 70px;
-}
-
-.popover .btn:first-child {
-	margin-left: 0;
-}
-
-.popover .loading-text {
-	line-height: 31px;
-}
-
-.popover .loading-message-container {
-	height: 31px;
-	margin-top: 10px;
-	float: left;
-	margin-bottom: 10px;
-	margin-left: 10px;
-}
-
-.popover .btn-calendar {
-	width: 20%;
-	-webkit-box-sizing: border-box;
-	   -moz-box-sizing: border-box;
-			box-sizing: border-box;
-}
-
-.popover .calendar-input {
-	width: 80%;
-	-webkit-box-sizing: border-box;
-	   -moz-box-sizing: border-box;
-			box-sizing: border-box;
-	height: 30px;
-	margin-bottom: 10px;
-}
-
-.popover .btn-save {
-	margin-bottom: 10px;
-}
-
-.popover .input-append {
-	width: 200px;
-}
-
 .popover.bottom .arrow:after {
 	border-bottom-color: transparent;
 }
 .popover.bottom .arrow {
 	position: absolute;
+	left: initial;
+	right: 2%;
 	top: -10px;
 	width: 0; 
 	height: 0;

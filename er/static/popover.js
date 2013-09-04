@@ -5,7 +5,7 @@ var POPOVER = {
 		options = options || {
 				'animation': false,
 				'placement': 'bottom',
-				'content': 'Sample content' //Should be replaced with actual content
+				'content': 'The revolutionary discovery of a striking, if temporary, effect that targeted inhibition of BRAF has on the clinical course of metastatic melanoma has spiked a new wave of research into molecular targets. In addition, it has raised a number of new questions: what are the mechanisms of both inherent and acquired resistance to BRAF inhibitors and the possible ways to overcome this resistance; how is the activating effect of BRAF inhibition on the MAPK pathway in cells with nonmutated BRAF avoided; how should melanoma tumors that have no activating mutations in BRAF, such as tumors with mutated NRAS or tumors that are wild type for both BRAF and NRAS, be targeted; which targeted or nontargeted drug combinations should be pursued as determined by the molecular profile of each and every tumor; what is the future of combination targeted therapy and immunotherapy; and many more.' //Should be replaced with actual content
 			};
 		this.$el.popover(options);
 		this.$el.addClass('js-initialize');
@@ -14,6 +14,9 @@ var POPOVER = {
 		this.closeAllPopovers();
 		this.$el.popover('show');
 		this.$el.addClass('has-popover');
+
+		this.calculatePosition();
+		
 		$('body').on('click', function (evt) {
 			var target = $(evt.target), //We use target to identify where exactly the event occurred.
 				popover = target.parents('.popover');
@@ -61,6 +64,20 @@ var POPOVER = {
 		});
 		$('body').off();
 	},
+	'calculatePosition': function () {
+		var elPosition = null,
+			popover = null,
+			position = null,
+			left = 0,
+			top = 0;
+
+		popover = this.$el.siblings('.popover');
+		elPosition = this.$el.offset();
+		position = popover.offset();
+		left = position.left - (elPosition.left - position.left);
+		top = position.top;
+		popover.offset({'left': left, 'top': top});
+	},
 	'toggleNotifications': function () {
 		this.$el = $('#lnk-notifications');
 		!this.isInitialized() && this.initPopover();
@@ -77,9 +94,11 @@ var POPOVER = {
 				'<li><a href="javascript:myprofile_init(\'',
 				myProfileUrl,
 				'\')">My Profile</a></li>',
+				'<li class="horizontal-separator"></li>',
 				'<li><a href="javascript:members_init(\'',
 				allMembersUrl,
 				'\')">All Members</a></li>',
+				'<li class="horizontal-separator"></li>',
 				'<li><a href="#">Sign out</a></li>',
 				'</ul>'
 			],
