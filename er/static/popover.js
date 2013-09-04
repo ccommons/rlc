@@ -7,6 +7,16 @@ var POPOVER = {
 				'placement': 'bottom',
 				'content': 'The revolutionary discovery of a striking, if temporary, effect that targeted inhibition of BRAF has on the clinical course of metastatic melanoma has spiked a new wave of research into molecular targets. In addition, it has raised a number of new questions: what are the mechanisms of both inherent and acquired resistance to BRAF inhibitors and the possible ways to overcome this resistance; how is the activating effect of BRAF inhibition on the MAPK pathway in cells with nonmutated BRAF avoided; how should melanoma tumors that have no activating mutations in BRAF, such as tumors with mutated NRAS or tumors that are wild type for both BRAF and NRAS, be targeted; which targeted or nontargeted drug combinations should be pursued as determined by the molecular profile of each and every tumor; what is the future of combination targeted therapy and immunotherapy; and many more.' //Should be replaced with actual content
 			};
+                // attempt to get content from an attached data element
+                if (this.$el.attr("data-element") !== undefined) {
+                    // TODO: check to see if that data element actually
+                    // exists and there is actually something in it
+                    options["html"] = true;
+                    var $content_element = $('#'+this.$el.attr("data-element"));
+                    options["content"] = $content_element.html();
+                } else {
+                    options["html"] = false;
+                }
 		this.$el.popover(options);
 		this.$el.addClass('js-initialize');
 	},
@@ -27,7 +37,7 @@ var POPOVER = {
 			//If there are no popovers identified as parents
 			//to the target element, it means the event
 			//occurred elsewhere on the page, therefore,
-			//we may proseed with closing the opened popovers.
+			//we may proceed with closing the opened popovers.
 			if (!popover.length) {
 				this.closeAllPopovers();
 			}
@@ -89,24 +99,11 @@ var POPOVER = {
 	},
 	'toggleProfileMenu': function (myProfileUrl, allMembersUrl) {
 		this.$el = $('#lnk-profile-menu');
-		var template = [
-				'<ul class="unstyled">',
-				'<li><a href="javascript:myprofile_init(\'',
-				myProfileUrl,
-				'\')">My Profile</a></li>',
-				'<li class="horizontal-separator"></li>',
-				'<li><a href="javascript:members_init(\'',
-				allMembersUrl,
-				'\')">All Members</a></li>',
-				'<li class="horizontal-separator"></li>',
-				'<li><a href="#">Sign out</a></li>',
-				'</ul>'
-			],
 			options = {
 				'animation': false,
-				'placement': 'bottom',
-				'html': 'text',
-				'content':  template.join('')
+				'placement': 'bottom'
+				// 'html': 'text',
+				// 'content':  template.join('')
 			};
 		!this.isInitialized() && this.initPopover(options);
 		if (this.hasPopover()) {

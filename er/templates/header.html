@@ -13,9 +13,18 @@
                     <a id="lnk-notifications" href="javascript:POPOVER.toggleNotifications();" class="btn" data-original-title="" title="">
                         <span aria-hidden="true" data-icon="&#xe047;"></span> 3
                     </a>
-                    <a id="lnk-profile-menu" class="btn" href="javascript:POPOVER.toggleProfileMenu('{% url 'myprofile' %}', '{% url 'all_members' %}');" data-original-title="" title="">
+                    <a id="lnk-profile-menu" class="btn" href="javascript:POPOVER.toggleProfileMenu('{% url 'myprofile' %}', '{% url 'all_members' %}');" data-original-title="" title="" data-element="profile-menu-content">
                         <span aria-hidden="true" data-icon="&#xe040;"></span>
                     </a>
+                    <div id="profile-menu-content" class="hide">
+                        <ul class="unstyled">
+                            <li><a href="javascript:myprofile_init('{% url 'myprofile' %}')">My Profile</a></li>
+                            <li class="horizontal-separator"></li>
+                            <li><a href="javascript:members_init('{% url 'all_members' %}')">All Members</a></li>
+                            <li class="horizontal-separator"></li>
+                            <li><a href="#">Sign out</a></li>
+                        </ul>
+                    </div>
                     <!--
                     <a class="btn" href="javascript:members_init('{% url 'all_members' %}');" data-original-title="" title="">
                         <span aria-hidden="true" data-icon="&#xe040;"></span>
