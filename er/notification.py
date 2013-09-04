@@ -77,15 +77,15 @@ class notification(object):
                     except Exception, ex:
                         logger.error(ex)
                         pass
-        elif self.event.etype == 'proprev_approved':
+        elif self.event.etype == 'proprev_accepted':
             c = self.event.event_handler.create_comment_obj(self.event)
             if not c:
                 return ""
             root = c.root
             if root.user == self.user:
-                subject = 'Your proposed revision is approved.'
+                subject = 'Your proposed revision is accepted.'
             else:
-                subject = 'The propesed revision is approved.'
+                subject = 'The propesed revision is accepted.'
             
         elif self.event.etype == 'comment_news':
             # XXX TODO
