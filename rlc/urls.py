@@ -59,6 +59,7 @@ urlpatterns = patterns('',
 
     # notification menu
     url(r'^notifications$', 'er.views.notification.notifications_menu', name='notification_menu'),
+    url(r'^notifications/json$', 'er.views.notification.notifications_json', name='notification_json'),
 
     # my profile
     url(PROFILE_PREFIX + r'/json$', 'er.views.profile.profile_json', name='myprofile'),
