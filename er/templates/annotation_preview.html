@@ -1,48 +1,38 @@
 <div class="annotation-preview">
 <div class="marker-container relative">{% if note_count > 0 %}
-    <div class="stack-marker">
+    <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='note' %}">
         <div class="annotation-pointer pointer-left border-blue1"></div>
         <div class="annotation-content bg-blue1 clearfix">
-            <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='note' %}')">
-                {{ note_count }} Note{{ note_count|pluralize }}
-            </a>
+            {{ note_count }} Note{{ note_count|pluralize }}
             <span class="all-caps pull-right"><small>Last: <!--TODO Date template data goes here.-->Jul 10, 2013</small></span>
         </div>
     </div>    
 {% endif %}{% if openq_count > 0 %}
-    <div class="stack-marker">
+    <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='openq' %}">
         <div class="annotation-pointer pointer-left border-blue2"></div>
         <div class="annotation-content bg-blue2">
-            <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='openq' %}')">
-                {{ openq_count }} Open Question{{ openq_count|pluralize }}
-            </a>
+            {{ openq_count }} Open Question{{ openq_count|pluralize }}
         </div>
     </div>
 {% endif %}{% if proprev_count > 0 %}
-    <div class="stack-marker">
+    <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='proprev' %}">
         <div class="annotation-pointer pointer-left border-red1"></div>
         <div class="annotation-content bg-red1">
-            <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='proprev' %}')">
-                {{ proprev_count }} Proposed Revision{{ proprev_count|pluralize }}
-            </a>
+            {{ proprev_count }} Proposed Revision{{ proprev_count|pluralize }}
         </div>
     </div>
 {% endif %}{% if rev_count > 0 %}
-    <div class="stack-marker">
+    <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='rev' %}">
         <div class="annotation-pointer pointer-left border-green1"></div>
         <div class="annotation-content bg-green1">
-            <a onclick="annotation_init('{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='rev' %}')">
-                {{ rev_count }} Revision{{ rev_count|pluralize }}
-            </a>
+            {{ rev_count }} Revision{{ rev_count|pluralize }}
         </div>
     </div>
 {% endif %}</div>
-    <div class="add-annotation">
+    <div class="add-annotation" url="{{ compose_url }}">
         <div class="annotation-pointer pointer-left border-blue1"></div>
         <div class="annotation-content bg-blue1">
-            <a onclick="annotation_compose_init('{{ compose_url }}')">
-                <span aria-hidden="true" data-icon="&#xe01b;"></span>
-            </a>
+            <span aria-hidden="true" data-icon="&#xe01b;"></span>
         </div>
     </div>
 </div>
