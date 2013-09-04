@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
@@ -75,9 +75,7 @@ def notifications_json(request):
     context = get_notifications(request)
     req_cxt = RequestContext(request)
     body_html = render_to_string("notification_menu.html", context, context_instance=req_cxt)
-    popover_id = 'popover-notification'
     json = simplejson.dumps({
     	"body_html" : body_html,
-        "popover_id" : popover_id,
     })
     return (HttpResponse(json, mimetype='application/json'))
