@@ -251,7 +251,7 @@ def add_json(request, *args, **kwargs):
         a.model_object.save()
 
     from er.eventhandler import commentAnnotationEventHandler as caeh
-    caeh.notify(init_comment.model_object, action='new')
+    caeh.notify(a.comment.model_object, action='new')
 
     return_kwargs = dict(kwargs, annotation_id=a.model_object.id)
 
