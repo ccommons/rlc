@@ -5,9 +5,27 @@ from django.contrib.auth.models import User
 
 # ER models
 class Author(models.Model):
-    author = models.OneToOneField(User, null=True)
-    author_without_user = models.CharField(max_length=100, null=True)
+    author = models.OneToOneField(User, blank=True, null=True)
+    author_without_user = models.CharField(max_length=100, blank=True, null=True)
 
+    def name(self):
+        if self.author != None:
+            return(u"{0} {1}".format(self.author.first_name, self.author.last_name))
+        elif self.author_without_user != None:
+            return(u"{0}".format(self.author_without_user))
+        else:
+            return(u"invalid author")
+
+    def __unicode__(self):
+        base = self.name()
+        if self.author != None:
+            base += u" (username: {0})".format(self.author.username)
+        elif self.author_without_user != None:
+            base += u" (not a user)"
+        else:
+            base += u" (both fields null)"
+
+        return base
 
 class EvidenceReview(models.Model):
     # TODO(?): explicitly specify primary key (as string)?
@@ -29,6 +47,10 @@ class PaperAuthorship(models.Model):
     paper = models.ForeignKey(EvidenceReview)
     position = models.IntegerField()
 
+    def __unicode__(self):
+    	return(u"{0}: {1} / author num: {2}".format(self.paper.__unicode__(),
+                                                    self.author.__unicode__(),
+                                                    self.position))
 
 class PaperSection(models.Model):
     # id = models.CharField(primary_key=True, max_length=100)

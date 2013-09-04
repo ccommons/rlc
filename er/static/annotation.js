@@ -26,6 +26,17 @@ annotation_preview_refresh = function() {
                 $el.addClass('allow-annotation relative').append(preview_info["html"]);
             }
         }
+
+        /* add click-to-activate-modal handlers */
+        $('.annotation-modal-activate').click(function(event) {
+            var url = $(event.currentTarget).attr('url');
+            annotation_init(url);
+        });
+        $('.add-annotation').click(function(event) {
+            var url = $(event.currentTarget).attr('url');
+            annotation_compose_init(url);
+        });
+
         /* update summary */
         $('#annotation-summary-container').replaceWith(data["summary_html"]);
     }

@@ -132,7 +132,7 @@
     margin-bottom: 10px;
 }
 
-.compose-reply-inline .reply-buttons {
+.compose-reply-inline .reply-buttons, .compose-buttons {
     margin-top: 5px;
 }
 

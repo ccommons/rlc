@@ -20,7 +20,11 @@ $(document).ready(function() {
 {% endblock %}
 {% block middlecontent %}
     <h1>{{ doc.title }}</h1>
-    <div>Authors Here</div>
+    <div class="author-names">
+    {% for author in authors %}
+        <span class="author-name">{{ author.name }}</span>{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    </div>
     <div>Last Revision: {{ doc.revision_date|date:"F j, Y" }} | <a href="#">Download</a></div>
     <div>Last Published: {{ doc.publication_date|date:"F j, Y" }} | <a href="{{ doc.publication_link }}">Download</a></div>
 
