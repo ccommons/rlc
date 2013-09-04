@@ -1,5 +1,6 @@
 from er.models import Comment as mComment
 from er.models import EvidenceReview as mEvidenceReview
+from er.models import CommentFollower as mCommentFollower
 from django.core.urlresolvers import reverse
 
 import logging
@@ -97,6 +98,54 @@ class eventHandler(object):
         """
         return False
 
+    @classmethod
+    def make_notifications(cls, event, **kwargs):
+        """
+        notification API
+        takes an event object
+        optional users kwarg
+        if users kwarg is present, make notification for the users specified,
+        otherewise, it determines who should get the notification and make them
+        """
+        try:
+            if 'users' in kwargs:
+                users = kwargs['users']
+            else:
+                users = cls.collect_notification_recipients(event)
+            if not users:
+                return
+            from er.notification import notification
+            for user in set(users):
+                try:
+                    notification(event=event, user=user)
+                except Exception, ex:
+                    logger.error(ex)
+                    continue
+        except Exception, ex:
+            logger.error(ex)
+
+    @classmethod
+    def collect_notification_recipients(cls, event):
+        """
+        subclass should implement
+        determines who should get the notification depending on the event
+        returns an iterable of users
+        """
+        return []
+
+    @classmethod
+    def notify(cls, *args, **kwargs):
+        """
+        notification API
+        shorthand for create_event() and make_notifications()
+        the kwargs are shared between the two methods
+        """
+        try:
+            event = cls.create_event(*args, **kwargs)
+            cls.make_notifications(event, **kwargs)
+        except Exception, ex:
+            logger.error(ex)
+
 class commentEventHandler(eventHandler):
     def __config__(self):
         self._resource_model = mComment
@@ -108,13 +157,14 @@ class commentEventHandler(eventHandler):
     def cast_pks(cls, pks):
         return map(lambda x: int(x), pks)
 
-    def create_comment_obj(self, event):
-        from er.annotation import comment
-        if event and event.resource:
-            c = comment()
-            c.model_object = event.resource
-            c.init_from_model()
-            return c
+    @classmethod
+    def create_comment_obj(cls, event):
+        try:
+            from er.annotation import comment
+            if event and event.resource:
+                return comment.fetch(event.resource.id)
+        except Exception, ex:
+            logger.error(ex)
         return None
 
     @classmethod
@@ -134,18 +184,43 @@ class commentEventHandler(eventHandler):
         e = event(**event_kwargs)
         return e
 
+    @classmethod
+    def collect_notification_recipients(cls, event):
+        """
+        determines who should get the notification depending on the comment
+        returns a list of users minus the comment owner
+        """
+        output = set()
+
+        comment = cls.create_comment_obj(event)
+        ancestors = comment.ancestors or []
+
+        # get each one back up the thread
+        for c in ancestors:
+            output.add(c.user)
+
+        # add followers
+        for c in ancestors:
+            followers = mCommentFollower.objects.filter(comment=c.model_object)
+            for f in followers:
+                output.add(f.user)
+                
+        if comment.user in output:
+            output.remove(comment.user)
+        return output
+
 class commentAnnotationEventHandler(commentEventHandler):
     def __config__(self):
         commentEventHandler.__config__(self)
         self._etype = 'comment_annotation'
 
     def construct_url(self, event):
-        c = self.create_comment_obj(event)
+        c = self.__class__.create_comment_obj(event)
         a = c.root.model_object.annotation
         return reverse('annotation_one_of_all', kwargs={'doc_id':a.er_doc.id,'annotation_id':a.id,})
 
     def get_preview(self, event):
-        c = self.create_comment_obj(event)
+        c = self.__class__.create_comment_obj(event)
         comment_text = c.text[:100]
         if c.is_root():
             a = c.model_object.annotation
@@ -167,7 +242,7 @@ class commentAnnotationEventHandler(commentEventHandler):
         handler = cls()
         e = event(model_object=event_model, event_handler=handler)
         try:
-            c = handler.create_comment_obj(e)
+            c = handler.__class__.create_comment_obj(e)
             a = c.root.model_object.annotation
             if annotation_id == a.id:# and doc_id == a.er_doc.id and url_name == 'annotation_one_of_all':
                 return True
@@ -175,14 +250,17 @@ class commentAnnotationEventHandler(commentEventHandler):
             pass
         return False
 
-class proprevApprovedEventHandler(commentAnnotationEventHandler):
+class proprevAcceptedEventHandler(commentAnnotationEventHandler):
     def __config__(self):
         commentAnnotationEventHandler.__config__(self)
-        self._etype = 'proprev_approved'
+        self._etype = 'proprev_accepted'
 
     def get_preview(self, event):
-        c = self.create_comment_obj(event)
-        return c.root.model_object.annotation.doc_block.preview_text
+        c = self.__class__.create_comment_obj(event)
+        try:
+            return c.root.model_object.annotation.doc_block.preview_text
+        except:
+            return c.root.model_object.text[:100]
 
 class commentNewsEventHandler(commentEventHandler):
     def __config__(self):
@@ -190,13 +268,13 @@ class commentNewsEventHandler(commentEventHandler):
         self._etype = 'comment_news'
 
     def construct_url(self, event):
-        c = self.create_comment_obj(event)
+        c = self.__class__.create_comment_obj(event)
         a = c.root.model_object.news
         # XXX TODO
         return ''
 
     def get_preview(self, event):
-        c = self.create_comment_obj(event)
+        c = self.__class__.create_comment_obj(event)
         comment_text = c.text[:100]
         if c.is_root():
             a = c.news
@@ -214,7 +292,7 @@ class EvidenceReviewEventHandler(eventHandler):
         return map(lambda x: int(x), pks)
 
     def construct_url(self, event):
-        return reverse('doc_full_view', doc_id=event.resource.id)
+        return reverse('document_fullview', kwargs=dict(doc_id=event.resource.id))
 
     def get_preview(self, event):
         return event.resource.title
@@ -237,6 +315,20 @@ class EvidenceReviewEventHandler(eventHandler):
         return e
 
     @classmethod
+    def collect_notification_recipients(cls, event):
+        """
+        all users get notification 
+        """
+        output = set()
+
+        from django.contrib.auth.models import User as mUser
+        users = mUser.objects.all()
+        for u in users:
+            output.add(u)
+
+        return output
+
+    @classmethod
     def match_request(cls, event_model, request):
         """
         subclasses should implement
@@ -246,7 +338,7 @@ class EvidenceReviewEventHandler(eventHandler):
         doc_id = request.resolver_match.kwargs.get('doc_id', '')
         url_name = request.resolver_match.url_name
         try:
-            if doc_id == event_model.resource_id and url_name == 'doc_full_view':
+            if doc_id == event_model.resource_id and url_name == 'document_fullview':
                 return True
         except:
             pass
@@ -256,7 +348,7 @@ class EvidenceReviewEventHandler(eventHandler):
 EVENT_TYPE_HANDLER_MAP = {
     'comment_annotation' : commentAnnotationEventHandler,
     #'comment_news' : commentNewsEventHandler,
-    'proprev_approved' : proprevApprovedEventHandler,
+    'proprev_accepted' : proprevAcceptedEventHandler,
     'er' : EvidenceReviewEventHandler,
     #'user' : UserEventHandler,
 }
