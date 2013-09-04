@@ -471,8 +471,6 @@ def preview_json(request, *args, **kwargs):
         
         # get latest annotations
 
-        # print max
-
         for t in preview_data:
             context[t + "_list"] = preview_data[t]
             context[t + "_count"] = len(preview_data[t])
@@ -483,7 +481,6 @@ def preview_json(request, *args, **kwargs):
         if context["note_count"] > 0:
             from django.db.models import Max
             latest_date = block.annotations.filter(atype='note').aggregate(Max('initial_comment__timestamp'))
-            print latest_date
             context["note_date"] = latest_date["initial_comment__timestamp__max"]
             # context["note_date"] = None
         else:
