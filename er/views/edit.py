@@ -112,5 +112,8 @@ def change(request, *args, **kwargs):
     doc.publication_date = form.cleaned_data["publication_date"]
     doc.save()
 
+    from er.eventhandler import EvidenceReviewEventHandler as ereh
+    ereh.notify(doc, action='revised')
+
     return HttpResponseRedirect(reverse('document_fullview', kwargs=kwargs))
 
