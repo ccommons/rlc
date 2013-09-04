@@ -7,7 +7,8 @@ from django.views.decorators.http import require_POST
 
 from django.core.urlresolvers import reverse
 
-from er.models import EvidenceReview, PaperSection, PaperBlock
+from er.models import EvidenceReview, DocumentRevision
+from er.models import PaperSection, PaperBlock
 
 from docutils import get_doc
 
@@ -169,14 +170,31 @@ def change(request, *args, **kwargs):
     for block in doc.paperblock_set.filter(tag_id__in=deleted_ids):
         block.delete()
 
-    doc.content = str(parsed_doc)
-    doc.title = form.cleaned_data["title"]
+    old_content = doc.content
+    new_content = unicode(str(parsed_doc))
+
+    old_title = doc.title
+    new_title = unicode(form.cleaned_data["title"])
+
+    document_changed = False
+
+    # did anything change?
+    if (old_content != new_content or old_title != new_title):
+        document_changed = True
+        doc.content = new_content
+        doc.title = new_title
+
+    # doc.title = form.cleaned_data["title"]
     doc.publication_link = form.cleaned_data["publication_link"]
     doc.publication_date = form.cleaned_data["publication_date"]
     doc.save()
 
-    from er.eventhandler import EvidenceReviewEventHandler as ereh
-    ereh.notify(doc, action='revised')
+    if document_changed:
+        from er.eventhandler import EvidenceReviewEventHandler as ereh
+        ereh.notify(doc, action='revised')
+
+        revision = DocumentRevision(paper=doc, title=new_title, content=new_content)
+        revision.save()
 
     return HttpResponseRedirect(reverse('document_fullview', kwargs=kwargs))
 

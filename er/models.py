@@ -28,8 +28,6 @@ class Author(models.Model):
         return base
 
 class EvidenceReview(models.Model):
-    # TODO(?): explicitly specify primary key (as string)?
-
     content = models.TextField()
     title = models.CharField(max_length=100)
     publication_link = models.URLField()
@@ -41,6 +39,14 @@ class EvidenceReview(models.Model):
     def __unicode__(self):
     	return(self.title)
 
+class DocumentRevision(models.Model):
+    paper = models.ForeignKey(EvidenceReview)
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    revision_date = models.DateTimeField(auto_now=True, auto_now_add=True)
+
+    def __unicode__(self):
+    	return(u"{0}: {1}".format(self.title, self.revision_date.ctime()))
 
 class PaperAuthorship(models.Model):
     author = models.ForeignKey(Author)
