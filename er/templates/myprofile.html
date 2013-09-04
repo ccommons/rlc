@@ -70,7 +70,8 @@
             {% for item in items %}
                 <li class="profile-conv-item" id="profile-conv-{{ item.id }}">
                     <p class="profile-conv-line1">{{ item.ctype|upper }} | {{ item.age|upper }}</p>
-                    <p class="profile-conv-context"><a href="javascript:annotation_init('{{ item.url }}');">{{ item.context }}</a></p>
+                    <p class="profile-conv-context"><a
+                    href="javascript:annotation_init('{{ item.url }}');">{{ item.context|safe }}</a></p>
                     <p class="profile-conv-line3">
                         rating 
                         {% if item.comments %}| {{ item.comments }} Comment{{ item.comments|pluralize }} {% endif %}
