@@ -28,6 +28,8 @@ def index(request):
 @login_required
 def fullpage(request, *args, **kwargs):
     """main page view"""
+    from er.notification import notification
+    notification.mark_read(request)
     req_cxt = RequestContext(request)
 
     doc = get_doc(**kwargs)
