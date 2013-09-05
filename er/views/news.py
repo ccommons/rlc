@@ -62,6 +62,9 @@ def index_json(request, *args, **kwargs):
 @login_required
 def comment_json(request, *args, **kwargs):
     """news item comments"""
+    from er.notification import notification
+    notification.mark_read(request)
+
     req_cxt = RequestContext(request)
 
     item_id = kwargs["item_id"]
@@ -139,6 +142,9 @@ def reply_new_json(request, *args, **kwargs):
     new_comment_text = form.cleaned_data["comment_text"]
     
     new_comment = original_comment.reply(text=new_comment_text, user=user)
+    
+    from er.eventhandler import commentNewsEventHandler as cneh
+    cneh.notify(new_comment.model_object, action='new')
 
     # manually manipulate the comment level one down (because it's news)
     # (will not harm underlying object)
