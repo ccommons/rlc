@@ -431,6 +431,11 @@ ul.news-listing .news-tags {
     margin-bottom: 3px;
 }
 
+/* notification classes */
+.notification-content {
+    width: 200px;
+}
+
 /**
  * Modal window classes
 */

@@ -1,6 +1,4 @@
-{% extends 'base.html' %}
-{% block maincontent %}
-<div id="notifications">
+<div class="notification-content" id="notifications">
     Unread:
     <ul id="notifications-unread">
     {% for item in unread %}
@@ -14,4 +12,3 @@
     {% endfor %}
     </ul>
 </div>
-{% endblock %}

@@ -14,8 +14,6 @@ var POPOVER = {
                     options["html"] = true;
                     var $content_element = $('#'+this.$el.attr("data-element"));
                     options["content"] = $content_element.html();
-                } else {
-                    options["html"] = false;
                 }
 		this.$el.popover(options);
 		this.$el.addClass('js-initialize');
@@ -90,22 +88,42 @@ var POPOVER = {
 	},
 	'toggleNotifications': function () {
 		this.$el = $('#lnk-notifications');
-		!this.isInitialized() && this.initPopover();
-		if (this.hasPopover()) {
-			this.hide();
-		} else {
-			this.show();
-		}
+                if (!this.isInitialized()) {
+                    var options = {
+                        'animation': false,
+                        'html' : true,
+                        'placement': 'bottom'
+                    }
+                    this.initPopover(options);
+                }
+
+                if (this.hasPopover()) {
+                    this.hide();
+                } else {
+                    this.show();
+                    var url = this.$el.attr('data-url');
+                    if (url !== undefined) {
+                        $.get(url, '', function(data, status, jqxhr) {
+                            var $popover_content = this.$el.siblings('.popover').children(".popover-content");
+                            $popover_content.html(data["body_html"]);
+                        }.bind(this));
+                    } else {
+                        // TODO: fill in this error
+                        // (no URL defined)
+                    }
+                }
 	},
-	'toggleProfileMenu': function (myProfileUrl, allMembersUrl) {
+	'toggleProfileMenu': function () {
 		this.$el = $('#lnk-profile-menu');
-			options = {
-				'animation': false,
-				'placement': 'bottom'
-				// 'html': 'text',
-				// 'content':  template.join('')
-			};
-		!this.isInitialized() && this.initPopover(options);
+                var options = {
+                    'animation': false,
+                    'placement': 'bottom'
+                    // 'html': 'text',
+                    // 'content':  template.join('')
+                };
+		if (!this.isInitialized()) {
+                    this.initPopover(options);
+                }
 		if (this.hasPopover()) {
 			this.hide();
 		} else {

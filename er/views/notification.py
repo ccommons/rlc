@@ -67,7 +67,7 @@ def notifications_menu(request):
     """notification menu shows each notification item"""
     context = get_notifications(request)
     req_cxt = RequestContext(request)
-    return(render_to_response("notification_menu.html", context, context_instance=req_cxt))
+    return(render_to_response("notification_page.html", context, context_instance=req_cxt))
 
 @login_required
 def notifications_json(request):
