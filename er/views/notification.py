@@ -79,3 +79,15 @@ def notifications_json(request):
     	"body_html" : body_html,
     })
     return (HttpResponse(json, mimetype='application/json'))
+
+@login_required
+def notifications_count_json(request):
+    """notification count for the user"""
+    req_cxt = RequestContext(request)
+    user = request.user
+
+    count = notification.count(user)
+    json = simplejson.dumps({
+    	"count" : count,
+    })
+    return (HttpResponse(json, mimetype='application/json'))

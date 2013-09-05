@@ -55,10 +55,6 @@ class notification(object):
             'openq' : 'asked an open question.',
         }
         subject = ''
-        #if self.event.etype == 'annotation':
-        #    if self.event.resource:
-        #        subject = annotation_subject.get(self.event.resource.atype, '')
-        #elif self.event.etype == 'comment':
         if self.event.etype == 'comment_annotation':
             c = self.event.event_handler.create_comment_obj(self.event)
             if not c:
@@ -88,8 +84,7 @@ class notification(object):
                 subject = 'The propesed revision is accepted.'
             
         elif self.event.etype == 'comment_news':
-            # XXX TODO
-            pass
+            return 'replied to a thread of your interest.'
         elif self.event.etype == 'er':
             if self.event.action in ['revised', 'updated']:
                 subject = 'The Evidence Review is revised.'
@@ -146,7 +141,7 @@ class notification(object):
     @classmethod
     def count(cls, user):
         try:
-            return cls.MODEL.objects.filter(user, shown=False, read=False).count()
+            return cls.MODEL.objects.filter(user=user, shown=False, read=False).count()
         except Exception, ex:
             logger.error(ex)
             return 0

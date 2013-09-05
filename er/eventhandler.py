@@ -193,18 +193,25 @@ class commentEventHandler(eventHandler):
         output = set()
 
         comment = cls.create_comment_obj(event)
-        ancestors = comment.ancestors or []
+        # everybody gets notification on new annotation
+        if comment.is_root():
+            from django.contrib.auth.models import User as mUser
+            users = mUser.objects.all()
+            for u in users:
+                output.add(u)
+        else:
+            ancestors = comment.ancestors or []
 
-        # get each one back up the thread
-        for c in ancestors:
-            output.add(c.user)
+            # get each one back up the thread
+            for c in ancestors:
+                output.add(c.user)
 
-        # add followers
-        for c in ancestors:
-            followers = mCommentFollower.objects.filter(comment=c.model_object)
-            for f in followers:
-                output.add(f.user)
-                
+            # add followers
+            for c in ancestors:
+                followers = mCommentFollower.objects.filter(comment=c.model_object)
+                for f in followers:
+                    output.add(f.user)
+                    
         if comment.user in output:
             output.remove(comment.user)
         return output
@@ -269,18 +276,34 @@ class commentNewsEventHandler(commentEventHandler):
 
     def construct_url(self, event):
         c = self.__class__.create_comment_obj(event)
-        a = c.root.model_object.news
-        # XXX TODO
-        return ''
+        n = c.root.model_object.newsitem
+        return reverse('news_comment', kwargs={'item_id':n.id,})
 
     def get_preview(self, event):
         c = self.__class__.create_comment_obj(event)
         comment_text = c.text[:100]
-        if c.is_root():
-            a = c.news
-            # XXX TODO
-            return comment_text
         return comment_text
+
+    @classmethod
+    def match_request(cls, event_model, request):
+        """
+        subclasses should implement
+        takes an Event model object and a HttpRequest object
+        returns True if they match, False otherwise
+        """
+        item_id = int(request.resolver_match.kwargs.get('item_id', '-1'))
+        #url_name = request.resolver_match.url_name
+        from er.event import event
+        handler = cls()
+        e = event(model_object=event_model, event_handler=handler)
+        try:
+            c = handler.__class__.create_comment_obj(e)
+            n = c.root.model_object.newsitem
+            if item_id == n.id:# and url_name == 'news_comment':
+                return True
+        except:
+            pass
+        return False
 
 class EvidenceReviewEventHandler(eventHandler):
     def __config__(self):
@@ -347,7 +370,7 @@ class EvidenceReviewEventHandler(eventHandler):
 # XXX TODO: make it a subclass of dict, verify key with etype of handler whenever a key/value pair is set
 EVENT_TYPE_HANDLER_MAP = {
     'comment_annotation' : commentAnnotationEventHandler,
-    #'comment_news' : commentNewsEventHandler,
+    'comment_news' : commentNewsEventHandler,
     'proprev_accepted' : proprevAcceptedEventHandler,
     'er' : EvidenceReviewEventHandler,
     #'user' : UserEventHandler,

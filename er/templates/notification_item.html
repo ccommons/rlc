@@ -13,7 +13,11 @@
                         {% ifequal item.etype 'user' %}
                             <a onclick="myprofile_init('{{ item.url }}')">
                         {% else %}
-                            <a href="{{ item.url }}">
+                            {% ifequal item.etype 'comment_news' %}
+                                <a onclick="news_comment_init('{{ item.url }}')">
+                            {% else %}
+                                <a href="{{ item.url }}">
+                            {% endifequal %}
                         {% endifequal %}
                     {% endifequal %}
                 {% endifequal %}
