@@ -6,6 +6,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         {% block modal_header %}
             <h3 class="modal-title all-caps"><em>{% block modal_title %}{% endblock %}</em></h3>
+            {% block modal_summary %}{% endblock %}
         {% endblock %}{# modal_header #}
         
     </div>

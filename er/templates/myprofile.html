@@ -7,14 +7,16 @@
             {% if profile.department %}<span class="profile-dept">{{ profile.department }}</span>{% endif %}
             {% if profile.institution %}<span class="profile-institution">{{ profile.institution }}</span>{% endif %}
         </div>
-        <div class="profile-summary">
-            <ul>
-            <li class="profile-summary-item"><span class="profile-summary-counter">{{ num_note }}</span>Note{{ num_note|pluralize }}</li>
-            <li class="profile-summary-item"><span class="profile-summary-counter">{{ num_proprev }}</span>Proposed Revision{{ num_proprev|pluralize }}</li>
-            <li class="profile-summary-item"><span class="profile-summary-counter">{{ num_openq }}</span>Open Question{{ num_openq|pluralize }}</li>
-            <li class="profile-summary-item"><span class="profile-summary-counter">{{ num_comment }}</span>Comment{{ num_comment|pluralize }}</li>
-            </ul>
-        </div>
+    </div>
+{% endblock %}
+{% block modal_summary %}
+    <div class="profile-summary">
+        <ul class="inline">
+        <li class="profile-summary-item"><h2 class="profile-summary-counter text-blue1"><em>{{ num_note }}</em></h2><strong>Note{{ num_note|pluralize }}</strong></li>
+        <li class="profile-summary-item"><h2 class="profile-summary-counter text-red1"><em>{{ num_proprev }}</em></h2><strong>Proposed Revision{{ num_proprev|pluralize }}</strong></li>
+        <li class="profile-summary-item"><h2 class="profile-summary-counter text-blue2"><em>{{ num_openq }}</em></h2><strong>Open Question{{ num_openq|pluralize }}</strong></li>
+        <li class="profile-summary-item"><h2 class="profile-summary-counter"><em>{{ num_comment }}</em></h2><strong>Comment{{ num_comment|pluralize }}</strong></li>
+        </ul>
     </div>
 {% endblock %}
 {% block modal_body %}
