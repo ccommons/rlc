@@ -146,6 +146,14 @@ class eventHandler(object):
         except Exception, ex:
             logger.error(ex)
 
+    @classmethod
+    def match_email_preference(cls, preferences, event):
+        """
+        subclass should implement
+        match the event with email preferences
+        """
+        return False
+
 class commentEventHandler(eventHandler):
     def __config__(self):
         self._resource_model = mComment
@@ -257,6 +265,36 @@ class commentAnnotationEventHandler(commentEventHandler):
             pass
         return False
 
+    @classmethod
+    def match_email_preference(cls, preferences, event):
+        """
+        match the event with email preferences
+        """
+        if event and event.resource:
+            try:
+                c = cls.create_comment_obj(event)
+                if c.is_root():
+                    """nobody gets email for new annotation"""
+                    return False
+                if c.root.user == preferences.user:
+                    """ activity on my note/rev/oq """
+                    atype = c.root.model_object.annotation.atype
+                    if atype in ['proprev', 'rev'] and preferences.activity_rev:
+                        return True
+                    elif atype == 'note' and preferences.activity_note:
+                        return True
+                    elif atype == 'openq' and preferences.activity_openq:
+                        return True
+                else:
+                    """ check if the preferences' user one of the ancestor of the event """
+                    if preferences.user in [a.user for a in c.ancestors]:
+                        """ activity on my comment """
+                        if preferences.activity_comment:
+                            return True
+            except Exception, ex:
+                logger.error(ex)
+        return False
+
 class proprevAcceptedEventHandler(commentAnnotationEventHandler):
     def __config__(self):
         commentAnnotationEventHandler.__config__(self)
@@ -303,6 +341,23 @@ class commentNewsEventHandler(commentEventHandler):
                 return True
         except:
             pass
+        return False
+
+    @classmethod
+    def match_email_preference(cls, preferences, event):
+        """
+        match the event with email preferences
+        """
+        if event and event.resource:
+            try:
+                c = cls.create_comment_obj(event)
+                """ check if the preferences' user one of the ancestor of the event """
+                if not c.is_root() and preferences.user in [a.user for a in c.ancestors]:
+                    """ activity on my comment """
+                    if preferences.activity_comment:
+                        return True
+            except Exception, ex:
+                logger.error(ex)
         return False
 
 class EvidenceReviewEventHandler(eventHandler):
@@ -365,6 +420,25 @@ class EvidenceReviewEventHandler(eventHandler):
                 return True
         except:
             pass
+        return False
+
+    @classmethod
+    def match_email_preference(cls, preferences, event):
+        """
+        match the event with email preferences
+        """
+        if event and event.resource:
+            try:
+                print event.action
+                print preferences
+                if event.action == 'updated' and preferences.er_updated:
+                    return True
+                elif event.action == 'revised' and preferences.er_revised:
+                    return True
+                elif event.action == 'published' and preferences.er_published:
+                    return True
+            except Exception, ex:
+                logger.error(ex)
         return False
 
 # XXX TODO: make it a subclass of dict, verify key with etype of handler whenever a key/value pair is set

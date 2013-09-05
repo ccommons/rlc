@@ -161,18 +161,22 @@ class Notification(models.Model):
     shown = models.BooleanField(default=False)
     read = models.BooleanField(default=False)
 
+class EmailNotification(models.Model):
+    user = models.ForeignKey(User)
+    event = models.ForeignKey(Event)
+
 # notification preferences here
 class EmailPreferences(models.Model):
     user = models.OneToOneField(User)
 
-    activity_note = models.BooleanField()
-    activity_rev = models.BooleanField()
-    activity_openq = models.BooleanField()
-    activity_comment = models.BooleanField()
-    er_revised = models.BooleanField()
-    er_updated = models.BooleanField()
-    er_published = models.BooleanField()
-    new_member = models.BooleanField()
+    activity_note = models.BooleanField(default=True)
+    activity_rev = models.BooleanField(default=True)
+    activity_openq = models.BooleanField(default=True)
+    activity_comment = models.BooleanField(default=True)
+    er_revised = models.BooleanField(default=True)
+    er_updated = models.BooleanField(default=True)
+    er_published = models.BooleanField(default=True)
+    new_member = models.BooleanField(default=True)
 
 class CommentFollower(models.Model):
     user = models.ForeignKey(User)
