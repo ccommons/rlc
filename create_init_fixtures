@@ -1,0 +1,11 @@
+# these are examples for dumping the fixtures in the RLC.
+
+# dump er fixtures--
+python manage.py dumpdata er
+
+# dump er author fixtures--
+python manage.py dumpdata er.author er.paperauthorship --natural --indent 4
+
+# dump user fixtures--
+python manage.py dumpdata auth.group --natural --indent 4
+
