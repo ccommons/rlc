@@ -3,3 +3,8 @@
 python manage.py loaddata ./er/fixtures/initial_groups.json
 python manage.py loaddata ./er/fixtures/initial_documents.json
 
+AUTHOR_FIXTURE_FILE=./er/fixtures/initial_authors.json
+if [ -f $AUTHOR_FIXTURE_FILE ]; then
+    python manage.py loaddata $AUTHOR_FIXTURE_FILE
+fi
+

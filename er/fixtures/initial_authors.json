@@ -1,0 +1,53 @@
+[
+{
+    "pk": 1, 
+    "model": "er.author", 
+    "fields": {
+        "author_without_user": "E. Shtivelman", 
+        "author": null
+    }
+},
+{
+    "pk": 2, 
+    "model": "er.author", 
+    "fields": {
+        "author_without_user": "K.T. Flaherty", 
+        "author": null
+    }
+},
+{
+    "pk": 3, 
+    "model": "er.author", 
+    "fields": {
+        "author_without_user": "D.E. Fisher", 
+        "author": null
+    }
+},
+{
+    "pk": 1, 
+    "model": "er.paperauthorship", 
+    "fields": {
+        "position": 1, 
+        "paper": 3, 
+        "author": 1
+    }
+},
+{
+    "pk": 2, 
+    "model": "er.paperauthorship", 
+    "fields": {
+        "position": 2, 
+        "paper": 3, 
+        "author": 2
+    }
+},
+{
+    "pk": 3, 
+    "model": "er.paperauthorship", 
+    "fields": {
+        "position": 3, 
+        "paper": 3, 
+        "author": 3
+    }
+}
+]
