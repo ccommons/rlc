@@ -105,6 +105,13 @@
 /**
  * Override Bootstrap styles.
 */
+.btn-group :not(.btn) {
+	border: none;
+}
+.btn-group .btn:last-of-type {
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
 
 .tooltip.bottom .tooltip-arrow {
 	border-bottom-color: #444;
