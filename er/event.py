@@ -7,9 +7,6 @@ class event(object):
 
     def __init__(self, *args, **kwargs):
         self._event_handler = None
-        self.timestamp = None
-        self.action = ''
-        self.remarks = ''
         self._resource_id = ''
 
         self._resource = None
@@ -29,11 +26,7 @@ class event(object):
                     # create event handler
                     self._event_handler = EVENT_TYPE_HANDLER_MAP[kwargs['model_object']]()
                 self._model_object = kwargs['model_object']
-                # init from model
-                self.timestamp = self._model_object.timestamp
-                self.action = self._model_object.action
                 self.resource_id = self._model_object.resource_id
-                self.remarks = self._model_object.remarks
             else:
                 raise TypeError('model_object must be an instance of %s' % type(self.__class.__MODEL))
 
@@ -61,6 +54,18 @@ class event(object):
             self._model_object.save()
 
         #at this point, model_object must have been created
+
+    @property
+    def timestamp(self):
+        return self._model_object.timestamp
+
+    @property
+    def action(self):
+        return self._model_object.action
+
+    @property
+    def remarks(self):
+        return self._model_object.remarks
 
     @property
     def model_object(self):
