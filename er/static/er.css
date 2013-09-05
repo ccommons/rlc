@@ -124,7 +124,7 @@
 .annotation-content a {
     color: #fff;
 }
-.annotation-content a~span.pull-right {
+.annotation-content a + span.pull-right {
     font-weight: 400;
 }
 
