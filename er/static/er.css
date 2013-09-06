@@ -276,9 +276,6 @@
     border-radius: 3px;
     border: 1px solid #ccc;
 }
-.profile-summary {
-    width: 90%;
-}
 .member-summary {
     margin-bottom: 20px;
     margin-top: 15px;
@@ -464,18 +461,23 @@ ul.news-listing .news-tags {
     top: 0;
     left: 37%;
     width: 50%;
-    height: 100%;
+    height: auto;
 }
 
 .modal-dialog {
     height: 100%;
 }
 .modal-dialog .modal-body {
-    max-height: 72%;
+    max-height: none;
 }
 
 .modal .btn-group {
     padding: 5px 0;
+}
+
+.modal .modal-header h3 {
+    font-weight: 600;
+    margin-top: 5px;
 }
 
 .modal .btn-group a.btn {

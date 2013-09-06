@@ -30,6 +30,8 @@ function Modal() {
             if (this.content_element !== null) {
                 this.content_element.remove();
                 this.content_element = null;
+                window.removeEventListener('resize', this.assignHeight, false);
+                this.contentHeight = 0;
             }
         },
         'set_data' : function(data) {
@@ -49,6 +51,8 @@ function Modal() {
                 this.content_element.on('show', function () {
                     $('body').css('overflow', 'hidden');
                 }.bind(this));
+                this.content_element.on('shown', this.assignHeight.bind(this));
+                window.addEventListener('resize', this.assignHeight, false);
                 this.content_element.modal();
                 this.content_element.on('hidden', this.content_delete.bind(this));
                 this.content_element.on('hidden', function () {
@@ -60,6 +64,28 @@ function Modal() {
                 }.bind(this));
             }
             this.rendered = true;
+        },
+        'contentHeight': 0,
+        'assignHeight': function () {
+            //Calculate and assign height to modal.
+            var modalBody = this.content_element.find('.modal-body'),
+                totalHeight = window.innerHeight,
+                headerHeight = this.content_element.find('.modal-header').outerHeight(),
+                availableHeight = (totalHeight - headerHeight) - 30; //30px padding for content.
+
+            if (!this.contentHeight) {
+                modalBody.children().each(function (index, el) {
+                    this.contentHeight = this.contentHeight + $(el).outerHeight();
+                }.bind(this));
+                this.contentHeight = this.contentHeight + 30;
+            }
+            if (availableHeight <= this.contentHeight) {
+                modalBody.css({'height': availableHeight});
+                this.content_element.css({'height': totalHeight});
+            } else {
+                modalBody.css({'height': 'auto'});
+                this.content_element.css({'height': 'auto'}); //30px padding for content.
+            }
         }
     });
 }
