@@ -107,6 +107,7 @@ var POPOVER = {
                 $.get(url, '', function(data, status, jqxhr) {
                     var $popover_content = this.$el.siblings('.popover').children(".popover-content");
                     $popover_content.html(data["body_html"]);
+                    notification_icon_refresh();
                 }.bind(this));
             } else {
                 // TODO: fill in this error
