@@ -11,7 +11,7 @@
             <div class="user-controls visible-desktop pull-right">
                 <div class="btn-group visible-desktop">
                     <a id="lnk-notifications" href="javascript:POPOVER.toggleNotifications();" class="btn" data-original-title="" data-url="{% url 'notification_json' %}" data-element="notification-content-container" title="">
-                        <span aria-hidden="true" data-icon="&#xe047;"></span> 3
+                        <span aria-hidden="true" data-icon="&#xe047;"></span><span id="notifications-count"></span>
                     </a>
                     <a id="lnk-profile-menu" class="btn" href="javascript:POPOVER.toggleProfileMenu();" data-original-title="" title="" data-element="profile-menu-content">
                         <span aria-hidden="true" data-icon="&#xe040;"></span>
@@ -44,3 +44,9 @@
         </div>
     </div>
 </div>
+<script language="javascript">
+$(document).ready(function(){
+    notification_icon_init('{% url 'notification_count_json' %}');
+    notification_icon_refresh();
+});
+</script>
