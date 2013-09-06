@@ -6,6 +6,9 @@
             {% if profile.title %}<span class="profile-title">{{ profile.title }}</span>{% endif %}
             {% if profile.department %}<span class="profile-dept">{{ profile.department }}</span>{% endif %}
             {% if profile.institution %}<span class="profile-institution">{{ profile.institution }}</span>{% endif %}
+            {% if not form_action %}
+                {% if user.email %}<span class="profile-mailto"><a href="mailto:{{user.email}}">{{ user.email }}</a></span>{% endif %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}
