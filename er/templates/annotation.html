@@ -1,4 +1,6 @@
 {% extends "modal.html" %}
+{% load humanize %}
+{% block modal_header_classes %}{{ atype }}-header{% endblock %}
 {% block modal_header %}
 
     {% if num_annotations > 1 %}{# pager #}
@@ -64,7 +66,7 @@
                     <div class="annotation-comment-author">
                         {{ comment.model_object.user.first_name }}
                         {{ comment.model_object.user.last_name }} |
-                        {{ comment.timestamp | date }}
+                        {{ comment.timestamp | naturaltime }}
                     </div>
                     <div class="annotation-comment-actions">rating |
                     {% if comment.level == 0 %}
