@@ -1340,9 +1340,20 @@ textarea.hidden {
 }
 
 .modal-header .close {
+	float: none;
+	position: absolute;
+	top: 15px;
+	right: -36px;
 	color: #0069A0;
 	opacity: 1;
 	font-size: 0.8em;
+	margin-top: 0;
+}
+.modal-close-icon {
+	display: inline-block;
+	width: 27px;
+	height: 27px;
+	background: url('img/btn-close.png') no-repeat 0 0;
 }
 
 .modal-header .close:hover {
