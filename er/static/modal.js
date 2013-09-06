@@ -213,10 +213,9 @@ function MembersModal() {
     var $super = new Modal();
 
     var submit_response_handler = function(data, texttype) {
-        // no actions needed for MODAL_STACK
-        this.close();
-        this.content_delete();
+        // no actions needed for MODAL_STACK; changes are in-place
         this.content_set(data["body_html"]);
+        this.set_data(data);
         this.render();
     }.bind(this);
 
