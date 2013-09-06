@@ -408,6 +408,8 @@ def reply_add_json(request, *args, **kwargs):
             # what do we do here?
             pass
         elif approval == "defer":
+            from er.eventhandler import commentAnnotationEventHandler as caeh
+            caeh.notify(new_comment.model_object, action='new')
             # do nothing
             pass
         else:
