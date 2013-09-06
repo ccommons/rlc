@@ -14,6 +14,8 @@ function Modal() {
             // this.content_element = $(content_id);
         },
 
+        'backtrack_after_close' : true,
+
         'load' : function (url) {
             var display = function(data, status, jqxhr) {
                 // TODO: add protocol error checking
@@ -36,6 +38,11 @@ function Modal() {
         'close' : function() {
             this.content_element.modal('hide');
         },
+        'close_for_new' : function() {
+            /* as above, but do not backtrack */
+            this.backtrack_after_close = false;
+            this.close();
+        },
         'rendered' : false,
         'render' : function() {
             if (this.rendered === false) {
@@ -46,6 +53,10 @@ function Modal() {
                 this.content_element.on('hidden', this.content_delete.bind(this));
                 this.content_element.on('hidden', function () {
                     $('body').css('overflow', 'visible');
+
+                    if (this.backtrack_after_close === true) {
+                        MODAL_STACK.backtrack();
+                    }
                 }.bind(this));
             }
             this.rendered = true;
@@ -59,7 +70,7 @@ function AnnotationModal() {
         'render' : function() {
             $super.render.bind(this)();
             $('#annotation-compose').click(function(event) {
-                this.close();
+                this.close_for_new();
                 var url = $(event.currentTarget).attr('url');
                 annotation_compose_init(url);
             }.bind(this));
@@ -95,9 +106,11 @@ function AnnotationModal() {
                 /* TODO: show/hide links */
             }.bind(this));
             $('.annotation-context a').click(function(event) {
-                // TODO: replace generic compose with inline editor
                 var block_id = $(event.currentTarget).attr('block_id');
+
+                // TODO: what to do here with the stack?
                 this.close();
+
                 var els = $('#' + block_id).get();
                 if (els.length > 0) {
                     els[0].scrollIntoView(true);
@@ -114,7 +127,16 @@ function AnnotationComposeModal() {
 
     var submit_response_handler = function(data, texttype) {
         this.editors_finalize();
-        this.close();
+
+        this.close_for_new(); /* "do not backtrack" */
+        // modal stack: Compose, [OQ dialog if called from New OQ button]
+
+        MODAL_STACK.pop(); // = Compose
+        // modal stack: [OQ dialog if called from New OQ button]
+
+        MODAL_STACK.pop(); // = OQ dialog or undefined
+        // modal stack: [anything remaining]
+
         annotation_init(data["url"]);
         annotation_preview_refresh();
     }.bind(this);
@@ -174,7 +196,8 @@ function MyProfileModal() {
         'render' : function() {
             $super.render.bind(this)();
             $('#profile-conversations a').click(function(event) {
-                this.close();
+                // opening a new conversation modal; do not backtrack
+                this.close_for_new();
             }.bind(this));
             $('#profile-update-submit').click(function(event) {
                 // can we get this from the event?
@@ -190,6 +213,7 @@ function MembersModal() {
     var $super = new Modal();
 
     var submit_response_handler = function(data, texttype) {
+        // no actions needed for MODAL_STACK
         this.close();
         this.content_delete();
         this.content_set(data["body_html"]);
@@ -200,7 +224,8 @@ function MembersModal() {
         'render' : function() {
             $super.render.bind(this)();
             $('#member-name a').click(function(event) {
-                this.close();
+                /* open new window, keep existing for backtrack */
+                this.close_for_new();
             }.bind(this));
             $('#members-sort-form input:radio').change(function(event) {
                 // can we get this from the event?
@@ -220,7 +245,7 @@ function NewsModal() {
             $super.render.bind(this)();
 
             $('a.news-comments-link').click(function(event) {
-                this.close();
+                this.close_for_new();
                 var url = $(event.currentTarget).attr('url');
                 news_comment_init(url);
             }.bind(this));
@@ -306,7 +331,19 @@ function InlineReply(initiating_element) {
                 data.hasOwnProperty("url") &&
                 this.$calling_modal !== undefined) {
                 if (data["change_modal"] === true) {
-                    this.$calling_modal.close();
+
+                    /* do not backtrack */
+                    this.$calling_modal.close_for_new();
+                    // modal stack = compose, proprev-display, [ .. ]
+                    // need to pop the compose and proprev display from
+                    // the modal stack
+
+                    MODAL_STACK.pop();
+                    // modal stack = proprev-display, [ .. ]
+
+                    MODAL_STACK.pop();
+                    // modal stack = [ .. ]
+
                     annotation_preview_refresh();
                     annotation_init(data["url"]);
                 }
@@ -319,12 +356,37 @@ function InlineReply(initiating_element) {
     $.get(url, '', this.show_reply_form.bind(this), 'json');
 }
 
+/* we could this whole file in a closure */
+var MODAL_STACK = {
+    'stack' : new Array(),
+    'push' : function(url, modaltype) {
+        this.stack.push({
+            'url' : url,
+            'modaltype' : modaltype,
+        })
+    },
+    'pop' : function() {
+        return(this.stack.pop());
+    },
+    'is_empty' : function() {
+        return(this.stack.length === 0);
+    },
+    'backtrack' : function() {
+        this.pop();
+        var modal = this.pop();
+        if (modal !== undefined) {
+            modal_init(modal["url"], modal["modaltype"]);
+        }
+    }
+};
+
 function modal_init(url, modaltype) {
     if (typeof(modaltype) === 'undefined') {
         var modaltype = Modal;
     }
     var modal = new modaltype();
     modal.load(url);
+    MODAL_STACK.push(url, modaltype);
 }
 
 function annotation_init(url) {
