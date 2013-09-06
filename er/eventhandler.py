@@ -429,8 +429,6 @@ class EvidenceReviewEventHandler(eventHandler):
         """
         if event and event.resource:
             try:
-                print event.action
-                print preferences
                 if event.action == 'updated' and preferences.er_updated:
                     return True
                 elif event.action == 'revised' and preferences.er_revised:
