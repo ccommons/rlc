@@ -395,6 +395,7 @@ def reply_add_json(request, *args, **kwargs):
     new_comment = original_comment.reply(text=new_comment_text, user=user)
 
     change_modal = False
+    from er.eventhandler import commentAnnotationEventHandler as caeh
     if form_type == "editor_reply":
         approval = form.cleaned_data["approval"]
         if approval == "accept":
@@ -402,13 +403,12 @@ def reply_add_json(request, *args, **kwargs):
             a.atype = "rev"
             change_modal = True
             # TODO: record the change somewhere
-            from er.eventhandler import proprevAcceptedEventHandler as paeh
-            paeh.notify(new_comment.model_object, action='new')
+            caeh.notify(new_comment.model_object, action='proprev_accepted')
         elif approval == "reject":
             # what do we do here?
+            caeh.notify(new_comment.model_object, action='proprev_rejected')
             pass
         elif approval == "defer":
-            from er.eventhandler import commentAnnotationEventHandler as caeh
             caeh.notify(new_comment.model_object, action='new')
             # do nothing
             pass
@@ -416,7 +416,6 @@ def reply_add_json(request, *args, **kwargs):
             # TODO: raise something, probably
             pass
     else:
-        from er.eventhandler import commentAnnotationEventHandler as caeh
         caeh.notify(new_comment.model_object, action='new')
 
     return_kwargs = dict(kwargs, annotation_id=annotation_id)

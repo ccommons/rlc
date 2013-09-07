@@ -89,23 +89,25 @@ class notification(object):
             except:
                 # a reply
                 root = c.root
-                if root.user == self.user:
-                    try:
-                        from er.views.annotations import atype_to_name
-                        subject = 'replied to your %s.' % atype_to_name(root.model_object.annotation.atype).lower()
-                    except Exception, ex:
-                        logger.error(ex)
-                        pass
-        elif self.event.etype == 'proprev_accepted':
-            c = self.event.event_handler.create_comment_obj(self.event)
-            if not c:
-                return ""
-            root = c.root
-            if root.user == self.user:
-                subject = 'Your proposed revision is accepted.'
-            else:
-                subject = 'The propesed revision is accepted.'
-            
+                if self.event.action == 'proprev_accepted':
+                    if root.user == self.user:
+                        subject = 'Your proposed revision is accepted.'
+                    else:
+                        subject = 'The propesed revision is accepted.'
+                elif self.event.action == 'proprev_rejected':
+                    if root.user == self.user:
+                        subject = 'Your proposed revision is rejected.'
+                    else:
+                        subject = 'The propesed revision is rejected.'
+                else:
+                    # a regular reply
+                    if root.user == self.user:
+                        try:
+                            from er.views.annotations import atype_to_name
+                            subject = 'replied to your %s.' % atype_to_name(root.model_object.annotation.atype).lower()
+                        except Exception, ex:
+                            logger.error(ex)
+                            pass
         elif self.event.etype == 'comment_news':
             return 'replied to a thread of your interest.'
         elif self.event.etype == 'er':
@@ -138,7 +140,10 @@ class notification(object):
     def subject_user(self):
         try:
             if self.event.etype in ['comment_annotation', 'comment_news']:
-                return self.event.resource.user
+                if self.event.action in ['proprev_accepted', 'proprev_rejected']:
+                    return None
+                else:
+                    return self.event.resource.user
             elif self.event.etype == 'user':
                 return self.event.resource
         except Exception, ex:

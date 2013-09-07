@@ -135,16 +135,17 @@ class Annotation(DiscussionPoint):
 class Event(models.Model):
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     EVENT_TYPES = {
-        #('annotation', 'Annotation'),
         ('comment_annotation', 'Comment'),
         ('comment_news', 'Comment'),
-        ('proprev_accepted', 'Proposed Revision Accepted'),
         ('er', 'EvidenceReview'),
         ('user', 'User'),
     }
     etype = models.CharField(max_length=30, choices=EVENT_TYPES)
     ACTIONS = {
         ('new', 'New'),
+        ('proprev_accepted', 'Proposed Revision Accepted'),
+        ('proprev_rejected', 'Proposed Revision Rejected'),
+        ('shared', 'Shared'),
         ('revised', 'Revised'),
         ('updated', 'Updated'),
         ('published', 'Published'),

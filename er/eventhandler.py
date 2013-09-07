@@ -208,18 +208,19 @@ class commentEventHandler(eventHandler):
             for u in users:
                 output.add(u)
         else:
-            ancestors = comment.ancestors or []
+            if event.action in ['proprev_accepted' , 'proprev_rejected']:
+                # if the comment is a proprev_accepted/rejected, include all parties in the thread
+                comments = comment.root.thread_as_list()
+            else:
+                # include only the ancestors and followers of the ancestors
+                comments = comment.ancestors or []
 
-            # get each one back up the thread
-            for c in ancestors:
+            for c in comments:
                 output.add(c.user)
-
-            # add followers
-            for c in ancestors:
                 followers = mCommentFollower.objects.filter(comment=c.model_object)
                 for f in followers:
                     output.add(f.user)
-                    
+
         if comment.user in output:
             output.remove(comment.user)
         return output
@@ -237,10 +238,11 @@ class commentAnnotationEventHandler(commentEventHandler):
     def get_preview(self, event):
         c = self.__class__.create_comment_obj(event)
         comment_text = c.text[:100]
-        if c.is_root():
-            a = c.model_object.annotation
-            if a.doc_block:
-                return a.doc_block.preview_text
+        if c.is_root() or event.action in ['proprev_accepted', 'proprev_rejected']:
+            try:
+                return c.root.model_object.annotation.doc_block.preview_text
+            except:
+                pass
         return comment_text
 
     @classmethod
@@ -294,18 +296,6 @@ class commentAnnotationEventHandler(commentEventHandler):
             except Exception, ex:
                 logger.error(ex)
         return False
-
-class proprevAcceptedEventHandler(commentAnnotationEventHandler):
-    def __config__(self):
-        commentAnnotationEventHandler.__config__(self)
-        self._etype = 'proprev_accepted'
-
-    def get_preview(self, event):
-        c = self.__class__.create_comment_obj(event)
-        try:
-            return c.root.model_object.annotation.doc_block.preview_text
-        except:
-            return c.root.model_object.text[:100]
 
 class commentNewsEventHandler(commentEventHandler):
     def __config__(self):
@@ -443,7 +433,6 @@ class EvidenceReviewEventHandler(eventHandler):
 EVENT_TYPE_HANDLER_MAP = {
     'comment_annotation' : commentAnnotationEventHandler,
     'comment_news' : commentNewsEventHandler,
-    'proprev_accepted' : proprevAcceptedEventHandler,
     'er' : EvidenceReviewEventHandler,
     #'user' : UserEventHandler,
 }
