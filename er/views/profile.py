@@ -43,6 +43,7 @@ class updateEmailPreferenceForm(forms.Form):
     er_published = forms.BooleanField(required=False)
     new_members = forms.BooleanField(required=False)
 
+
 @login_required
 def profile_json(request, *args, **kwargs):
     modal_id = "modal_profile"
@@ -213,6 +214,35 @@ def profile_json(request, *args, **kwargs):
 
     return(HttpResponse(json, mimetype='application/json'))
 
+
+# TODO: likely want to move this into ../annotation.py
+from er.models import Comment
+from django.db.models import Count
+
+def user_summary(user):
+    """get a summary of annotations and comments for a user"""
+    anno_summary = user.comment_set.values('annotation__atype').annotate(num_annotations=Count('annotation__id'))
+    num_comments = user.comment_set.exclude(parent__isnull=True).count()
+    print anno_summary, num_comments
+
+    m = {
+        'count' : {
+            'comment' : 0,
+            'openq' : 0,
+            'note' : 0,
+            'proprev' : 0,
+        },
+        'contribution' : num_comments,
+    }
+
+    for a in anno_summary:
+        atype = a["annotation__atype"]
+        if atype != None:
+            m["count"][atype] = a["num_annotations"]
+
+    return m
+
+
 class membersSortForm(forms.Form):
     SORT_ORDER_CHOICES = (('contribution', 'Top Contributors',), ('firstname', 'Alphabetical'),)
     sort_order = forms.ChoiceField(widget=forms.RadioSelect, choices=SORT_ORDER_CHOICES)
@@ -239,35 +269,11 @@ def members_json(request, *args, **kwargs):
             profile = user.profile
         except:
             profile = Profile(user=user)
-        comments = comment.fetch_by_user(user)
-        m = {
-            'user' : user,
-            'profile' : profile,
-            'count' : {
-                'comment' : 0,
-                'openq' : 0,
-                'note' : 0,
-                'proprev' : 0,
-            },
-            'contribution' : len(comments),
-        }
 
-        for c in comments:
-            try:
-                # TODO: incorporate into comment class
-                a = c.root.model_object.annotation
-                if c.is_root():
-                    # an annotation
-                    if a.atype in m['count']:
-                        m['count'][a.atype] += 1
-                    else:
-                        m['count'][a.atype] = 1
-                else:
-                    # a reply
-                    m['count']['comment'] += 1
-            except:
-                continue
-        
+        m = user_summary(user)
+        m["user"] = user
+        m["profile"] = profile
+
         members.append(m)
 
     if sort_order == 'contribution':
