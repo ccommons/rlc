@@ -93,9 +93,20 @@ class Comment(models.Model):
     def __unicode__(self):
     	return(u'id: {0} / user: {1} / "{2}"'.format(self.id, self.user.username, self.text[:120]))
 
-# comment rating -- this is relational. possibly split between negative and
-# positive (might speed counts)
-# (comment rating model(s) go here)
+# Comment Ratings
+class CommentRatingPlus(models.Model):
+    comment = models.ForeignKey(Comment, related_name='ratings_plus')
+    user = models.ForeignKey(User, related_name='ratings_plus_given')
+    rated_user = models.ForeignKey(User, related_name='ratings_plus_received')
+    timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
+
+class CommentRatingMinus(models.Model):
+    comment = models.ForeignKey(Comment, related_name='ratings_minus')
+    user = models.ForeignKey(User, related_name='ratings_minus_given')
+    rated_user = models.ForeignKey(User, related_name='ratings_minus_received')
+    timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
+
+# Annotation
 
 class DiscussionPoint(models.Model):
     # abstract base class for annotations and news comments
