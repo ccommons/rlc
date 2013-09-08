@@ -123,7 +123,11 @@ class event(object):
 
     @property
     def url(self):
-        return self.event_handler.construct_url(self)
+        return self.event_handler.get_url(self)
+
+    @property
+    def url_json(self):
+        return self.event_handler.get_url_json(self)
 
     @property
     def preview(self):

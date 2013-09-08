@@ -16,7 +16,6 @@ class eventHandler(object):
     def __init__(self):
         self._etype = ''
         self._resource_model = None
-        #self._event = None
         self.__config__()
 
     @property
@@ -66,7 +65,10 @@ class eventHandler(object):
                 return None
         return None
 
-    def construct_url(self, event):
+    def get_url_json(self, event):
+        return ''
+
+    def get_url(self, event):
         return ''
 
     def get_preview(self, event):
@@ -230,10 +232,15 @@ class commentAnnotationEventHandler(commentEventHandler):
         commentEventHandler.__config__(self)
         self._etype = 'comment_annotation'
 
-    def construct_url(self, event):
+    def get_url_json(self, event):
         c = self.__class__.create_comment_obj(event)
         a = c.root.model_object.annotation
         return reverse('annotation_one_of_all', kwargs={'doc_id':a.er_doc.id,'annotation_id':a.id,})
+
+    def get_url(self, event):
+        c = self.__class__.create_comment_obj(event)
+        a = c.root.model_object.annotation
+        return reverse('document_fullview', kwargs={'doc_id':a.er_doc.id,})
 
     def get_preview(self, event):
         c = self.__class__.create_comment_obj(event)
@@ -302,7 +309,10 @@ class commentNewsEventHandler(commentEventHandler):
         commentEventHandler.__config__(self)
         self._etype = 'comment_news'
 
-    def construct_url(self, event):
+    def get_url(self, event):
+        return reverse('news_index')
+
+    def get_url_json(self, event):
         c = self.__class__.create_comment_obj(event)
         n = c.root.model_object.newsitem
         return reverse('news_comment', kwargs={'item_id':n.id,})
@@ -359,7 +369,7 @@ class EvidenceReviewEventHandler(eventHandler):
     def cast_pks(cls, pks):
         return map(lambda x: int(x), pks)
 
-    def construct_url(self, event):
+    def get_url(self, event):
         return reverse('document_fullview', kwargs=dict(doc_id=event.resource.id))
 
     def get_preview(self, event):

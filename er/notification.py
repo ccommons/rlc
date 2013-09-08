@@ -1,5 +1,3 @@
-from django.core.urlresolvers import resolve
-
 from er.models import Notification as mNotification
 from er.models import EmailNotification as mEmailNotification
 from er.models import EmailPreferences as mEmailPreferences
@@ -132,6 +130,14 @@ class notification(object):
     def url(self):
         try:
             return self.event.url
+        except Exception,ex:
+            logger.error(ex)
+            return ''
+
+    @property
+    def url_json(self):
+        try:
+            return self.event.url_json
         except Exception,ex:
             logger.error(ex)
             return ''

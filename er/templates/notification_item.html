@@ -5,16 +5,16 @@
             </div>
             <div class="notification-context">
                 {% ifequal item.etype 'comment_annotation' %}
-                    <a onclick="annotation_init('{{ item.url }}')">
+                    <a onclick="annotation_init('{{ item.url_json }}')">
                 {% else %}
                     {% ifequal item.etype 'proprev_accepted' %}
-                        <a onclick="annotation_init('{{ item.url }}')">
+                        <a onclick="annotation_init('{{ item.url_json }}')">
                     {% else %}
                         {% ifequal item.etype 'user' %}
-                            <a onclick="myprofile_init('{{ item.url }}')">
+                            <a onclick="myprofile_init('{{ item.url_json }}')">
                         {% else %}
                             {% ifequal item.etype 'comment_news' %}
-                                <a onclick="news_comment_init('{{ item.url }}')">
+                                <a onclick="news_comment_init('{{ item.url_json }}')">
                             {% else %}
                                 <a href="{{ item.url }}">
                             {% endifequal %}
