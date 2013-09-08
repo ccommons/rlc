@@ -24,7 +24,7 @@ class event(object):
                         raise TypeError("model object etype does not match event handler etype")
                 else:
                     # create event handler
-                    self._event_handler = EVENT_TYPE_HANDLER_MAP[kwargs['model_object']]()
+                    self._event_handler = EVENT_TYPE_HANDLER_MAP[kwargs['model_object'].etype]()
                 self._model_object = kwargs['model_object']
                 self.resource_id = self._model_object.resource_id
             else:
@@ -132,5 +132,9 @@ class event(object):
     @property
     def preview(self):
         return self.event_handler.get_preview(self)
+
+    @property
+    def email_message(self):
+        return self.event_handler.compose_email_message(self)
 
 

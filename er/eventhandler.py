@@ -74,6 +74,9 @@ class eventHandler(object):
     def get_preview(self, event):
         return ''
 
+    def compose_email_message(self, event):
+        return ''
+
     @classmethod
     def register_event(cls, *args, **kwargs):
         """notification API
@@ -252,6 +255,13 @@ class commentAnnotationEventHandler(commentEventHandler):
                 pass
         return comment_text
 
+    def compose_email_message(self, event):
+        c = self.__class__.create_comment_obj(event)
+        comment_text = c.text
+        if c.is_root() or event.action in ['proprev_accepted', 'proprev_rejected']:
+            return c.root.text
+        return comment_text
+
     @classmethod
     def match_request(cls, event_model, request):
         """
@@ -322,6 +332,11 @@ class commentNewsEventHandler(commentEventHandler):
         comment_text = c.text[:100]
         return comment_text
 
+    def compose_email_message(self, event):
+        c = self.__class__.create_comment_obj(event)
+        comment_text = c.text
+        return comment_text
+
     @classmethod
     def match_request(cls, event_model, request):
         """
@@ -374,6 +389,9 @@ class EvidenceReviewEventHandler(eventHandler):
 
     def get_preview(self, event):
         return event.resource.title
+
+    def compose_email_message(self, event):
+        return event.resource.title + '\n\n' + event.resource.content
 
     @classmethod
     def create_event(cls, *args, **kwargs):

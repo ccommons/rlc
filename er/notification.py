@@ -1,6 +1,5 @@
 from er.models import Notification as mNotification
-from er.models import EmailNotification as mEmailNotification
-from er.models import EmailPreferences as mEmailPreferences
+from er.emailnotification import emailNotification
 from er.event import event
 
 import HTMLParser
@@ -11,7 +10,6 @@ logger = logging.getLogger(__name__)
 class notification(object):
     """Represents a notification"""
     MODEL = mNotification
-    EMAIL_MODEL = mEmailNotification
 
     def __init__(self, *args, **kwargs):
         self.user = None
@@ -30,7 +28,8 @@ class notification(object):
                 self.model_object.save()
                 self.user = kwargs['user']
                 self.event = kwargs['event']
-                self.make_email_notification()
+                # also create an email notification
+                emailNotification(event=self.event, user=self.user)
 
         if 'model_object' in kwargs:
             if isinstance(kwargs['model_object'], self.__class__.MODEL):
@@ -47,25 +46,6 @@ class notification(object):
             raise Exception("user not set")
         if not self.event:
             raise Exception("event not set")
-
-    def make_email_notification(self):
-        try:
-            if self.email_preferred():
-                email = self.__class__.EMAIL_MODEL(
-                    user=self.user,
-                    event=self.event.model_object,
-                )
-                email.save()
-        except Exception,ex:
-            logger.error(ex)
-
-    def email_preferred(self):
-        try:
-            preferences = self.user.emailpreferences
-        except:
-            preferences = mEmailPreferences(user=self.user)
-            preferences.save()
-        return self.event.event_handler.__class__.match_email_preference(preferences, self.event)
 
     @property
     def subject(self):
