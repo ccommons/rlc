@@ -189,6 +189,7 @@ class EmailPreferences(models.Model):
     er_updated = models.BooleanField(default=True)
     er_published = models.BooleanField(default=True)
     new_member = models.BooleanField(default=True)
+    shared = models.BooleanField(default=True)
 
 class CommentFollower(models.Model):
     user = models.ForeignKey(User)
