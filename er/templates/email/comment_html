@@ -1,0 +1,9 @@
+{{ text|safe }}
+{% for c in comment.ancestors %}
+<li>
+{{ c.text|safe }}
+<p>{{ c.user.first_name }} {{c.user.last_name }}</p>
+</li>
+{% endfor %}
+
+<p>Deeplink: {{ deeplink }}</p>
