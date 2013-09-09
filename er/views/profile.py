@@ -223,7 +223,6 @@ def user_summary(user):
     """get a summary of annotations and comments for a user"""
     anno_summary = user.comment_set.values('annotation__atype').annotate(num_annotations=Count('annotation__id'))
     num_comments = user.comment_set.exclude(parent__isnull=True).count()
-    print anno_summary, num_comments
 
     m = {
         'count' : {
