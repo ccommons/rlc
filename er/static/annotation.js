@@ -23,7 +23,18 @@ annotation_preview_refresh = function() {
         for (var i = 0; i < previews.length; i++) {
             var preview_info = previews[i];
             var $el = $('#' + preview_info["block_id"]);
+
             if ($el !== []) {
+                if ($el.is("table")) {
+                    /* put a container around the table */
+                    var id = $el.attr("id");
+                    $el.removeAttr("id");
+                    var $container = $('<div class="table-container"></div>');
+                    $container.insertBefore($el);
+                    $container.attr("id", id);
+                    $container.append($el);
+                    $el = $container;
+                }
                 $el.addClass('allow-annotation relative').append(preview_info["html"]);
             }
         }
