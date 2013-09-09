@@ -2,6 +2,8 @@ from er.models import Comment as mComment
 from er.models import EvidenceReview as mEvidenceReview
 from er.models import CommentFollower as mCommentFollower
 from django.core.urlresolvers import reverse
+from django.template.loader import render_to_string
+from django.template import Context
 
 import logging
 logger = logging.getLogger(__name__)
@@ -74,7 +76,7 @@ class eventHandler(object):
     def get_preview(self, event):
         return ''
 
-    def compose_email_message(self, event):
+    def compose_email_message(self, event, html):
         return ''
 
     @classmethod
@@ -255,12 +257,17 @@ class commentAnnotationEventHandler(commentEventHandler):
                 pass
         return comment_text
 
-    def compose_email_message(self, event):
-        c = self.__class__.create_comment_obj(event)
-        comment_text = c.text
-        if c.is_root() or event.action in ['proprev_accepted', 'proprev_rejected']:
-            return c.root.text
-        return comment_text
+    def compose_email_message(self, event, html):
+        comment = self.__class__.create_comment_obj(event)
+        context = Context({
+            'comment' : comment,
+            'deeplink': self.get_url(event),
+        })
+        if comment.is_root() or event.action in ['proprev_accepted', 'proprev_rejected']:
+            context['text'] = comment.root.text
+        else:
+            context['text'] = comment.text
+        return render_to_string(html and 'email/comment_html' or 'email/comment_plain', context)
 
     @classmethod
     def match_request(cls, event_model, request):
@@ -332,10 +339,14 @@ class commentNewsEventHandler(commentEventHandler):
         comment_text = c.text[:100]
         return comment_text
 
-    def compose_email_message(self, event):
-        c = self.__class__.create_comment_obj(event)
-        comment_text = c.text
-        return comment_text
+    def compose_email_message(self, event, html):
+        comment = self.__class__.create_comment_obj(event)
+        context = Context({
+            'comment' : comment,
+            'deeplink': self.get_url(event),
+            'text' : comment.text,
+        })
+        return render_to_string(html and 'email/comment_html' or 'email/comment_plain', context)
 
     @classmethod
     def match_request(cls, event_model, request):
@@ -390,8 +401,13 @@ class EvidenceReviewEventHandler(eventHandler):
     def get_preview(self, event):
         return event.resource.title
 
-    def compose_email_message(self, event):
-        return event.resource.title + '\n\n' + event.resource.content
+    def compose_email_message(self, event, html):
+        context = Context({
+            'title' : event.resource.title,
+            'message' : event.resource.content,
+            'deeplink' : self.get_url(event),
+        })
+        return render_to_string(html and 'email/er_html' or 'email/er_plain', context)
 
     @classmethod
     def create_event(cls, *args, **kwargs):

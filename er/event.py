@@ -134,7 +134,11 @@ class event(object):
         return self.event_handler.get_preview(self)
 
     @property
-    def email_message(self):
-        return self.event_handler.compose_email_message(self)
+    def email_message_plain(self):
+        return self.event_handler.compose_email_message(self, False)
+
+    @property
+    def email_message_html(self):
+        return self.event_handler.compose_email_message(self, True)
 
 

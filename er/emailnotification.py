@@ -2,9 +2,8 @@ from er.models import EmailNotification as mEmailNotification
 from er.models import EmailPreferences as mEmailPreferences
 from er.event import event
 from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-
-import HTMLParser
 
 import logging
 logger = logging.getLogger(__name__)
@@ -111,34 +110,30 @@ class emailNotification(object):
         return subject
 
     @property
-    def message(self):
-        try:
-            html_parser = HTMLParser.HTMLParser()
-            return html_parser.unescape(self.event.email_message)
-        except Exception,ex:
-            logger.error(ex)
-            return ''
+    def message_plain(self):
+        return self.event.email_message_plain
+
+    @property
+    def message_html(self):
+        return self.event.email_message_html
 
     @property
     def deeplink(self):
-        try:
-            return self.event.url
-        except Exception,ex:
-            logger.error(ex)
-            return ''
+        return self.event.url
 
     def send(self):
         if not self.user.email:
             logger.info('user %d has no email address saved' % self.user.id)
             return
         try:
-            email = EmailMessage(
+            email = EmailMultiAlternatives(
                 subject = self.subject,
-                body = self.message + '\n\n' + self.deeplink,
+                body = self.message_plain,
                 to = [self.user.email,],
             )
             if self.connection:
                 email.connection = self.connection
+            email.attach_alternative(self.message_html, "text/html")
             email.send()
             self.delete()
         except Exception, ex:
