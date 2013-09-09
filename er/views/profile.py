@@ -12,6 +12,8 @@ from er.models import Profile, EmailPreferences
 from er.annotation import comment
 from er.profile import conversationItem
 
+from ratings import attach_ratings
+
 class updateProfileForm(forms.Form):
     title = forms.CharField(required=False, max_length=100)
     department = forms.CharField(required=False, max_length=100)
@@ -54,6 +56,8 @@ def profile_json(request, *args, **kwargs):
     else:
         myprofile = False
 
+    calling_user = request.user
+
     if myprofile:
         user = request.user
     else:
@@ -80,13 +84,21 @@ def profile_json(request, *args, **kwargs):
 
     comments = comment.fetch_by_user(user)
 
+    attach_ratings(comments, user=calling_user)
+
     conv_count = {'comment':0}
     conv_items = []
     for c in comments:
         try:
             # TODO: incorporate into comment class
             a = c.root.model_object.annotation
+
+
             conv_item = conversationItem(c.model_object.id, doc_id=a.er_doc.id, atype=a.atype, annotation_id=a.id)
+
+            # needed for rating
+            conv_item.comment = c
+
             if c.is_root():
                 # an annotation
                 if a.atype in conv_count:
@@ -106,6 +118,7 @@ def profile_json(request, *args, **kwargs):
                 conv_item.context = c.text[:100]
                 # does not count comments for replies
         except:
+            # TODO: this might be a news item instead
             continue
         else:
             conv_item.timestamp = c.timestamp
