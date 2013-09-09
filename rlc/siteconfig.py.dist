@@ -19,3 +19,5 @@ EMAIL_HOST_USER = 'username'
 EMAIL_HOST_PASSWORD = 'password'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'webmaster@example.com'
+
+EMAIL_NOTIFICATION = True

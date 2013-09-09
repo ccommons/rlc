@@ -197,3 +197,5 @@ from siteconfig import EMAIL_HOST_USER
 from siteconfig import EMAIL_HOST_PASSWORD
 from siteconfig import EMAIL_USE_TLS
 from siteconfig import DEFAULT_FROM_EMAIL
+
+from siteconfig import EMAIL_NOTIFICATION

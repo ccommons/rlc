@@ -2,6 +2,7 @@ from er.models import EmailNotification as mEmailNotification
 from er.models import EmailPreferences as mEmailPreferences
 from er.event import event
 from django.core.mail import EmailMessage
+from django.conf import settings
 
 import HTMLParser
 
@@ -21,7 +22,8 @@ class emailNotification(object):
         # create new email notification record if there are event and user args
         if 'event' in kwargs and 'user' in kwargs:
             if isinstance(kwargs['event'], event) and kwargs['event'].model_object:
-                if self.email_preferred(kwargs['user'], kwargs['event']):
+                if settings.EMAIL_NOTIFICATION and self.email_preferred(kwargs['user'], kwargs['event']):
+                #if self.email_preferred(kwargs['user'], kwargs['event']):
                     self.model_object = self.__class__.MODEL(
                         user=kwargs['user'],
                         event=kwargs['event'].model_object,
