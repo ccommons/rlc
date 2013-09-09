@@ -3,6 +3,7 @@
 /* public API */
 var annotation_preview_init = null;
 var annotation_preview_refresh = null;
+var rating_add = null;
 
 (function () {
 
@@ -42,5 +43,16 @@ annotation_preview_refresh = function() {
     }
     $.get(preview_url, '', display, 'json');
 }
+
+/* ratings */
+rating_add = function(rate_url, rating_element_id) {
+    var rating_result = function(data, status, jqxhr) {
+        $rating_el = $('#' + rating_element_id);
+        $rating_el.html(data["body_html"]);
+    }
+    $.get(rate_url, '', rating_result, 'json');
+    return(false);
+}
+
 })();
 

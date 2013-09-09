@@ -20,7 +20,7 @@ from ckeditor.widgets import CKEditorWidget
 
 from docutils import get_doc
 
-import uuid
+# from ratings import attach_ratings
 
 def atype_to_name(atype):
     for t in Annotation.ANNOTATION_TYPES:
@@ -101,18 +101,16 @@ def full_json(request, *args, **kwargs):
     num_annotations = len(annotations)
     for index, a in enumerate(annotations, 1):
         a.comments = a.comment.thread_as_list()
+        # attach_ratings(a.comments)
         a.reply_count = len(a.comments) - 1
         if requested_id != None:
             if a.model_object.id == requested_id:
                 selected_annotation = index
 
-    modal_id = "modal-{0}-{1}".format(doc.id, str(uuid.uuid4()))
-
     context = Context({
 	"doc" : doc,
         "atype" : atype,
         "atype_name" : atype_to_name(atype),
-	"modal_id" : modal_id,
 	"annotations" : annotations,
 	"num_annotations" : num_annotations,
         "this_url_name" : this_url_name,
@@ -134,7 +132,6 @@ def full_json(request, *args, **kwargs):
     body_html = render_to_string("annotation.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
     	"body_html" : body_html,
-	"modal_id" : modal_id,
     })
 
     return(HttpResponse(json, mimetype='application/json'))
@@ -192,8 +189,6 @@ def compose_json(request, *args, **kwargs):
         block_id = None
 
 
-    modal_id = "modal-compose-{0}".format(doc.id)
-
     form = AnnotationComposeForm(initial=data)
 
     # if there is no block, this is an open question and we do not allow
@@ -204,7 +199,6 @@ def compose_json(request, *args, **kwargs):
     context = Context({
 	"doc" : doc,
         # "atype_name" : atype_to_name(kwargs["atype"]),
-	"modal_id" : modal_id,
         "form" : form,
         "form_action" : form_action,
     })
@@ -212,7 +206,6 @@ def compose_json(request, *args, **kwargs):
     body_html = render_to_string("annotation_compose.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
     	"body_html" : body_html,
-	"modal_id" : modal_id,
         "use_ckeditor" : True,
         "ckeditor_config" : "annotation_compose",
     })
@@ -319,8 +312,6 @@ def reply_compose_json(request, *args, **kwargs):
         "comment_text" : "",
     }
 
-    modal_id = "modal-reply-{0}".format(kwargs["comment_id"])
-
     group_names = [g["name"] for g in request.user.groups.values()]
 
     if atype == "proprev" and "Editor" in group_names:
@@ -342,7 +333,6 @@ def reply_compose_json(request, *args, **kwargs):
 
     context = Context({
 	"doc" : doc,
-	"modal_id" : modal_id,
         "form" : form,
         "form_action" : form_action,
         "form_type" : form_type,
@@ -352,7 +342,6 @@ def reply_compose_json(request, *args, **kwargs):
     body_html = render_to_string("reply_compose_inline.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
     	"body_html" : body_html,
-	"modal_id" : modal_id,
         "use_ckeditor" : True,
         "ckeditor_config" : "annotation_compose",
     })
