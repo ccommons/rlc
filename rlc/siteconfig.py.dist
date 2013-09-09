@@ -13,3 +13,9 @@ DATABASES = {
 # where you'll collect static files (not needed for dev server)
 STATIC_ROOT = '/home/www/rlc-static'
 
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'username'
+EMAIL_HOST_PASSWORD = 'password'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'webmaster@example.com'
