@@ -86,13 +86,11 @@ def profile_json(request, *args, **kwargs):
 
     attach_ratings(comments, user=calling_user)
 
-    conv_count = {'comment':0}
     conv_items = []
     for c in comments:
         try:
             # TODO: incorporate into comment class
             a = c.root.model_object.annotation
-
 
             conv_item = conversationItem(c.model_object.id, doc_id=a.er_doc.id, atype=a.atype, annotation_id=a.id)
 
@@ -101,10 +99,6 @@ def profile_json(request, *args, **kwargs):
 
             if c.is_root():
                 # an annotation
-                if a.atype in conv_count:
-                    conv_count[a.atype] += 1
-                else:
-                    conv_count[a.atype] = 1
                 conv_item.ctype = a.atype
                 if a.doc_block:
                     conv_item.context = a.doc_block.preview_text
@@ -113,12 +107,12 @@ def profile_json(request, *args, **kwargs):
                 conv_item.comments = len(c.thread_as_list()) - 1
             else:
                 # a reply
-                conv_count['comment'] += 1
                 conv_item.ctype = 'comment'
                 conv_item.context = c.text[:100]
                 # does not count comments for replies
         except:
-            # TODO: this might be a news item instead
+            # TODO: this might be a news item instead;
+            # show it as such
             continue
         else:
             conv_item.timestamp = c.timestamp
@@ -203,15 +197,17 @@ def profile_json(request, *args, **kwargs):
 
 
 
+    conv_summary = user_summary(user)
+
     context = Context({
 	"modal_id" : modal_id,
         "user" : user,
         "profile" : profile,
         "items" : conv_items,
-        "num_note" : conv_count.get('note', 0),
-        "num_proprev" : conv_count.get('proprev', 0),
-        "num_openq" : conv_count.get('openq', 0),
-        "num_comment" : conv_count.get('comment', 0),
+        "num_note" : conv_summary["count"]["note"],
+        "num_proprev" : conv_summary["count"]["proprev"],
+        "num_openq" : conv_summary["count"]["openq"],
+        "num_comment" : conv_summary["contribution"],
     })
 
     if myprofile:
@@ -228,7 +224,7 @@ def profile_json(request, *args, **kwargs):
     return(HttpResponse(json, mimetype='application/json'))
 
 
-# TODO: likely want to move this into ../annotation.py
+# TODO: maybe want to move this into ../annotation.py
 from er.models import Comment
 from django.db.models import Count
 
