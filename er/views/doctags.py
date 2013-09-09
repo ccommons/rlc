@@ -15,7 +15,7 @@ def get_tag_info(doc, tag_types):
     for tag in doc.find_all(tag_types, recursive=False):
 	tag_info.append({
 	    "id" : tag["id"],
-	    "text" : unicode(tag.string),
+	    "text" : unicode(tag.get_text()),
 	    "position" : position,
 	})
 	position += 1
