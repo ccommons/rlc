@@ -21,7 +21,7 @@
                         {% endifequal %}
                     {% endifequal %}
                 {% endifequal %}
-                {{ item.context|striptags }}
+                {{ item.context | safe}}
                 </a>
             </div>
             <div class="notification-timestamp">
