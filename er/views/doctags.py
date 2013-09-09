@@ -26,7 +26,7 @@ def section_info(doc):
     return(get_tag_info(doc, ["h1", "h2"]))
 
 def block_info(doc):
-    return(get_tag_info(doc, ["div", "p"]))
+    return(get_tag_info(doc, ["div", "p", "table"]))
 
 def add_id_attrs(doc, tag, id_prefix):
     """add id attributes to a document as needed"""
@@ -82,6 +82,7 @@ def add_header_id_attrs(doc):
 def add_ids(doc):
     doc = add_id_attrs(doc, "div", "erb-")
     doc = add_id_attrs(doc, "p", "erb-")
+    doc = add_id_attrs(doc, "table", "erb-")
     doc = add_id_attrs(doc, "h1", "erh-")
     doc = add_id_attrs(doc, "h2", "erh-")
     return(doc)
