@@ -36,8 +36,10 @@ for article in root.iter('item'):
         existing_item = NewsItem.objects.get(url=url)
         # matching URL, skip to next iteration
         # TODO: look for changes and save them
+        print("got existing: {0}".format(url))
         continue
     except NewsItem.DoesNotExist:
+        print("new: {0}".format(url))
         pass
 
     # title
@@ -67,6 +69,7 @@ for article in root.iter('item'):
         preview=summary,
         comments=c.model_object,
         pubdate=d,
+        authorjournal="stand-in for author/journal info",
     )
 
     news_item.save()

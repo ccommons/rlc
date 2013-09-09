@@ -277,6 +277,32 @@ function NewsModal() {
 
             $('.tag-filter').click(function(event) {
                 var url = $(event.currentTarget).attr('url');
+                var tag = $(event.currentTarget).attr('tag-value');
+                var tags = this.attached_data["tags"]
+                if (tags.indexOf(tag) >= 0) {
+                    /* tag is already in place; do nothing */
+                    return false;
+                } else {
+                    tags.push(tag);
+                }
+                var tags_json = encodeURIComponent(JSON.stringify(tags));
+                url = url.replace("TAGS_HERE", tags_json);
+                this.load(url);
+            }.bind(this));
+
+            $('.tag-filter-remove').click(function(event) {
+                var url = $(event.currentTarget).attr('url');
+                var tag = $(event.currentTarget).attr('tag-value');
+                var tags = this.attached_data["tags"];
+                if (tags.indexOf(tag) >= 0) {
+                    /* remove tag from tags */
+                    tags.splice(tags.indexOf(tag), 1)
+                } else {
+                    /* tag isn't selected; do nothing */
+                    return false;
+                }
+                var tags_json = encodeURIComponent(JSON.stringify(tags));
+                url = url.replace("TAGS_HERE", tags_json);
                 this.load(url);
             }.bind(this));
         }

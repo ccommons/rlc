@@ -78,7 +78,7 @@
                     <p class="profile-conv-context"><a
                     href="javascript:annotation_init('{{ item.url }}');">{{ item.context|safe }}</a></p>
                     <p class="profile-conv-line3">
-                        rating 
+                        {% include "rating_control.html" with comment=item.comment %}
                         {% if item.comments %}| {{ item.comments }} Comment{{ item.comments|pluralize }} {% endif %}
                     </p>
                 </li>

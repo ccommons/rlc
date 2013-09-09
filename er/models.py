@@ -205,6 +205,9 @@ class NewsItem(models.Model):
     comments = models.OneToOneField(Comment)
     pubdate = models.DateTimeField(auto_now=False, auto_now_add=True)
 
+    # this is a unified author, journal, date field, as shown in the feed
+    authorjournal = models.CharField(max_length=250, null=True)
+
     # for use in templates
     def tag_objects(self):
         return(self.tags.all())
@@ -214,7 +217,7 @@ class NewsItem(models.Model):
 
 class NewsTag(models.Model):
     news_items = models.ManyToManyField(NewsItem, related_name="tags")
-    tag_value = models.CharField(max_length=30)
+    tag_value = models.CharField(max_length=100)
 
     def __unicode__(self):
     	return(u"News tag: {0}".format(self.tag_value))

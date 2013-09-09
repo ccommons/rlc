@@ -18,6 +18,9 @@ from django.core.urlresolvers import reverse
 
 from ratings import attach_ratings
 
+import json
+import urllib
+
 @login_required
 def index(request, *args, **kwargs):
     """index page"""
@@ -44,7 +47,18 @@ def index_json(request, *args, **kwargs):
     user = request.user
 
     if "tag" in kwargs:
-        news_items = news_objects.filter(tags__tag_value=kwargs["tag"])
+        try:
+            tag_json = urllib.unquote(kwargs["tag"]).decode("utf8")
+            tags = json.loads(tag_json)
+        except:
+            tags = []
+    else:
+        tags = []
+
+    if tags != []:
+        news_items = news_objects
+        for tag in tags:
+            news_items = news_items.filter(tags__tag_value=tag)
     else:
         news_items = news_objects.all()
         
@@ -55,14 +69,16 @@ def index_json(request, *args, **kwargs):
 
     context = Context({
     	"news_items" : news_items,
+        "tags" : tags,
     })
 
     body_html = render_to_string("news_index.html", context, context_instance=req_cxt)
-    json = simplejson.dumps({
+    json_str = simplejson.dumps({
         "body_html" : body_html,
+        "tags" : tags,
     })
 
-    return(HttpResponse(json, mimetype='application/json'))
+    return(HttpResponse(json_str, mimetype='application/json'))
 
 @login_required
 def comment_json(request, *args, **kwargs):
@@ -92,11 +108,11 @@ def comment_json(request, *args, **kwargs):
         "comments" : comments,
     })
     body_html = render_to_string("news_comment.html", context, context_instance=req_cxt)
-    json = simplejson.dumps({
+    json_str = simplejson.dumps({
         "body_html" : body_html,
     })
 
-    return(HttpResponse(json, mimetype='application/json'))
+    return(HttpResponse(json_str, mimetype='application/json'))
 
 class NewsReplyForm(forms.ModelForm):
     class Meta:
@@ -123,13 +139,13 @@ def reply_json(request, *args, **kwargs):
     })
 
     body_html = render_to_string("reply_compose_inline.html", context, context_instance=req_cxt)
-    json = simplejson.dumps({
+    json_str = simplejson.dumps({
         "body_html" : body_html,
         "use_ckeditor" : True,
         "ckeditor_config" : "annotation_compose",
     })
 
-    return(HttpResponse(json, mimetype='application/json'))
+    return(HttpResponse(json_str, mimetype='application/json'))
 
 @login_required
 @require_POST
@@ -160,9 +176,9 @@ def reply_new_json(request, *args, **kwargs):
 
     new_comment_html = render_to_string("reply_comment.html", context)
 
-    json = simplejson.dumps({
+    json_str = simplejson.dumps({
         "html" : new_comment_html,
     })
 
-    return(HttpResponse(json, mimetype='application/json'))
+    return(HttpResponse(json_str, mimetype='application/json'))
 
