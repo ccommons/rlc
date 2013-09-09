@@ -15,6 +15,7 @@ A_ID = r'/(?P<annotation_id>\d+)'
 A_BLOCK = r'/(?P<block_id>[a-z0-9-]+)'
 A_COMMENT = r'/(?P<comment_id>\d+)'
 USER_ID = r'/(?P<user_id>\d+)'
+RATING_PREFIX = r'^commentrating' + A_COMMENT
 
 urlpatterns = patterns('',
     # index page
@@ -53,6 +54,10 @@ urlpatterns = patterns('',
     # annotation reply to comment (in block)
     url(ANNO_PREFIX + r'/brc' +A_BLOCK+A_COMMENT+ r'/json$', 'er.views.annotations.reply_compose_json', name='annotation_reply_in_block'),
     url(ANNO_PREFIX + r'/brn' +A_BLOCK+A_COMMENT+ r'/json$', 'er.views.annotations.reply_add_json', name='annotation_reply_new_in_block'),
+
+    # annotation ratings
+    url(RATING_PREFIX + r'/plus/json$', 'er.views.ratings.rate_json', name='rate_plus'),
+    url(RATING_PREFIX + r'/minus/json$', 'er.views.ratings.rate_json', name='rate_minus'),
 
     # editor
     url(DOC_PREFIX + r'/edit$', 'er.views.edit.formview', name='doc_editor'),

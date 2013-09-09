@@ -9,12 +9,14 @@ from django.http import HttpResponse
 
 from er.models import NewsItem, Comment
 
+from django.db.models import Count
+
 from er.annotation import comment
 
 from django import forms
 from django.core.urlresolvers import reverse
 
-import uuid
+from ratings import attach_ratings
 
 @login_required
 def index(request, *args, **kwargs):
@@ -39,22 +41,25 @@ def index_json(request, *args, **kwargs):
 
     news_objects = NewsItem.objects
 
+    user = request.user
+
     if "tag" in kwargs:
         news_items = news_objects.filter(tags__tag_value=kwargs["tag"])
     else:
         news_items = news_objects.all()
+        
+    for news_item in news_items:
+        news_item.initial_comment = comment.fetch(news_item.comments.id)
 
-    modal_id = "modal-news-index-{0}".format(str(uuid.uuid4()))
+    attach_ratings([item.initial_comment for item in news_items], user=user)
 
     context = Context({
-        "modal_id" : modal_id,
     	"news_items" : news_items,
     })
 
     body_html = render_to_string("news_index.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
         "body_html" : body_html,
-        "modal_id" : modal_id,
     })
 
     return(HttpResponse(json, mimetype='application/json'))
@@ -64,6 +69,8 @@ def comment_json(request, *args, **kwargs):
     """news item comments"""
     from er.notification import notification
     notification.mark_read(request)
+
+    user=request.user
 
     req_cxt = RequestContext(request)
 
@@ -76,12 +83,10 @@ def comment_json(request, *args, **kwargs):
     # replies are the true comments
     head_comment = comment.fetch(news_item.comments.id)
     all_comments = head_comment.thread_as_list()
+    attach_ratings(all_comments, user=user)
     comments = all_comments[1:]
 
-    modal_id = "modal-news-{0}".format(item_id)
-
     context = Context({
-        "modal_id" : modal_id,
         "news_item" : news_item,
         "head_comment" : head_comment,
         "comments" : comments,
@@ -89,7 +94,6 @@ def comment_json(request, *args, **kwargs):
     body_html = render_to_string("news_comment.html", context, context_instance=req_cxt)
     json = simplejson.dumps({
         "body_html" : body_html,
-        "modal_id" : modal_id,
     })
 
     return(HttpResponse(json, mimetype='application/json'))

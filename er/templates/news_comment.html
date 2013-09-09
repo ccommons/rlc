@@ -8,7 +8,8 @@
     <h4>{{ news_item.title }}</h4>
     <div>{{ news_item.preview|safe }}</div>
 
-    <div class="head-news-comment" id="news-comment-{{ head_comment.model_object.id }}">
+    {% include "rating_control.html" with comment=head_comment %} |
+    <span class="head-news-comment" id="news-comment-{{ head_comment.model_object.id }}">
         <a class="newsitem-reply"
            parent_id="news-comment-{{ head_comment.model_object.id }}"
            reply_level="{{ head_comment.level }}"
@@ -16,7 +17,7 @@
            Comment
         </a>
         <hr />
-    </div>
+    </span>
 
     {% for comment in comments %}
     <div id="news-comment-{{ comment.model_object.id }}">
@@ -29,7 +30,9 @@
                 {{ comment.model_object.user.last_name }} |
                 {{ comment.timestamp | date }}
             </div>
-            <div class="annotation-comment-actions">rating |
+            <div class="annotation-comment-actions">
+            {% include "rating_control.html" with comment=comment %}
+            |
             {% if comment.level == 0 %}
                 {% if a.reply_count == 1 %}
                     One Reply |

@@ -1,0 +1,15 @@
+{% with id=comment.model_object.id %}
+    <span id="rating-c-{{id}}">
+    {% if comment.user = user %}{# you can't rate your own articles #}
+        {{ comment.rating }}
+    {% elif comment.user_rated_plus == False and comment.user_rated_minus == False %}
+        <a onclick="rating_add('{% url 'rate_minus' comment_id=id %}','rating-c-{{id}}')">-</a>
+        {{ comment.rating }}
+        <a onclick="rating_add('{% url 'rate_plus' comment_id=id %}','rating-c-{{id}}')">+</a>
+    {% elif comment.user_rated_plus == True %}
+        {{ comment.rating }} [you thumbed up]
+    {% else %}{# comment.user_rated_minus == False #}
+        {{ comment.rating }} [you thumbed down]
+    {% endif %}
+</span>
+{% endwith %}
