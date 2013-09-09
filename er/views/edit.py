@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 
 from django.core.urlresolvers import reverse
 
-from er.models import EvidenceReview, DocumentRevision
+from er.models import EvidenceReview, DocumentRevision, PublicationInfo
 from er.models import PaperSection, PaperBlock
 
 from docutils import get_doc
@@ -22,6 +22,7 @@ class EREditForm(forms.Form):
     # content = forms.CharField(widget=CKEditorWidget())
     # following is for default text widget
     content = forms.CharField(widget=forms.Textarea())
+    is_published = forms.BooleanField(label="Is published", required=False)
     publication_link = forms.URLField()
     publication_date = forms.DateTimeField() 
 
@@ -38,7 +39,18 @@ def formview(request, *args, **kwargs):
 	"publication_link" : doc.publication_link,
 	"publication_date" : doc.publication_date,
     }
-    form = EREditForm(data)
+
+    try:
+        lp = PublicationInfo.objects.filter(document=doc).latest('timestamp')
+        data["publication_link"] = lp.link
+        data["publication_date"] = lp.publication_date
+        data["is_published"] = lp.is_published
+    except PublicationInfo.DoesNotExist:
+        # TODO: remove these when gone from the original models
+	data["publication_link"] = doc.publication_link
+	data["publication_date"] = doc.publication_date
+
+    form = EREditForm(initial=data)
     context = Context({
     	# "main_document" : content,
 	"doctitle" : "Melanoma RLC: Edit " + doc.title,
@@ -63,7 +75,7 @@ def change(request, *args, **kwargs):
     	# any more needed?
 	id = form.cleaned_data["id"]
     else:
-	# TODO: need better destination
+	# TODO: form validation, etc
 	return HttpResponseRedirect('/er/')
 
     kwargs = { "doc_id" : id }
@@ -182,9 +194,36 @@ def change(request, *args, **kwargs):
         doc.content = new_content
         doc.title = new_title
 
-    # doc.title = form.cleaned_data["title"]
-    doc.publication_link = form.cleaned_data["publication_link"]
-    doc.publication_date = form.cleaned_data["publication_date"]
+    # change publication information if necessary
+    is_published = form.cleaned_data["is_published"]
+    publication_link = form.cleaned_data["publication_link"]
+    publication_date = form.cleaned_data["publication_date"]
+
+    create_new_pubinfo = False
+
+    try:
+        # get last publication info
+        lp = PublicationInfo.objects.filter(document=doc).latest('timestamp')
+        if lp.is_published != is_published:
+            create_new_pubinfo = True
+        if lp.link != publication_link:
+            create_new_pubinfo = True
+        if lp.publication_date != publication_date:
+            create_new_pubinfo = True
+    except PublicationInfo.DoesNotExist:
+        create_new_pubinfo = True
+
+    if create_new_pubinfo:
+        pubinfo = PublicationInfo(document=doc,
+                                  is_published=is_published, 
+                                  link=publication_link,
+                                  publication_date=publication_date)
+        pubinfo.save()
+
+        # TODO: remove these after they're gone from the model
+        doc.publication_link = publication_link
+        doc.publication_date = publication_date
+
     doc.save()
 
     if document_changed:
@@ -194,5 +233,6 @@ def change(request, *args, **kwargs):
         revision = DocumentRevision(paper=doc, title=new_title, content=new_content)
         revision.save()
 
-    return HttpResponseRedirect(reverse('document_fullview', kwargs=kwargs))
+    return_url = reverse('document_fullview', kwargs=kwargs)
+    return HttpResponseRedirect(return_url)
 

@@ -26,7 +26,9 @@ $(document).ready(function() {
     {% endfor %}
     </div>
     <div>Last Revision: {{ doc.revision_date|date:"F j, Y" }} | <a href="#">Download</a></div>
-    <div>Last Published: {{ doc.publication_date|date:"F j, Y" }} | <a href="{{ doc.publication_link }}">Download</a></div>
+    {% if last_published_info != None and last_published_info.is_published == True %}
+        <div>Last Published: {{ last_published_info.publication_date|date:"F j, Y" }} | <a href="{{ last_published_info.link }}">Download</a></div>
+    {% endif %}
 
     {% if "Editor" in group_names %}
         <div>

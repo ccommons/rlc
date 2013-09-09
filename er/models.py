@@ -30,14 +30,24 @@ class Author(models.Model):
 class EvidenceReview(models.Model):
     content = models.TextField()
     title = models.CharField(max_length=100)
-    publication_link = models.URLField()
+
+    # TODO: remove the following two fields in favor of PublicationInfo
+    publication_link = models.URLField(null=True, blank=True)
     publication_date = models.DateTimeField()
-    revision_date = models.DateTimeField(auto_now=True, auto_now_add=True)
+
+    revision_date = models.DateTimeField()
 
     authors = models.ManyToManyField(Author, through='PaperAuthorship')
 
     def __unicode__(self):
     	return(self.title)
+
+class PublicationInfo(models.Model):
+    document = models.ForeignKey(EvidenceReview)
+    is_published = models.BooleanField()
+    link = models.URLField(null=True, blank=True)
+    publication_date = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
 
 class DocumentRevision(models.Model):
     paper = models.ForeignKey(EvidenceReview)
