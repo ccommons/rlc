@@ -499,6 +499,7 @@ def preview_json(request, *args, **kwargs):
         })
 
     summary_context = annotation_summary(doc)
+    summary_context["doc"] = doc
     summary_html = render_to_string("annotation_summary.html", summary_context)
 
     return_data = {
