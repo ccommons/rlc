@@ -2,8 +2,6 @@ from er.models import Notification as mNotification
 from er.emailnotification import emailNotification
 from er.event import event
 
-import HTMLParser
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -100,8 +98,7 @@ class notification(object):
     @property
     def context(self):
         try:
-            html_parser = HTMLParser.HTMLParser()
-            return html_parser.unescape(self.event.preview)
+            return self.event.preview
         except Exception,ex:
             logger.error(ex)
             return ''
