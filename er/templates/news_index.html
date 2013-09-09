@@ -3,6 +3,17 @@
     News
 {% endblock %}
 {% block modal_body %}
+    <div class="news-tag-list">
+        {{ news_items.count }} Article{{ news_items.count|pluralize }}
+        {% for tag in tags %}
+            <span class="label label-info">
+                {{ tag }}
+                <span class="tag-filter-remove" tag-value="{{ tag }}" url="{% url 'news_index_tag_modal' tag='TAGS_HERE' %}">
+                    x
+                </span>
+            </span>
+        {% endfor %}
+    </div>
     <ul class="news-listing">
     {% for news_item in news_items %}
 	<li>
@@ -16,9 +27,12 @@
                 <p>{{ news_item.preview|safe }}</p>
                 </a>
             </div>
+            <div class="news-authorjournalinfo">
+                {{ news_item.authorjournal }}
+            </div>
             <div class="news-tags">
                 {% for tag in news_item.tag_objects %}
-                    <span class="label label-info tag-filter" url="{% url 'news_index_tag_modal' tag=tag.tag_value %}">
+                    <span class="label label-info tag-filter" tag-value="{{ tag.tag_value }}" url="{% url 'news_index_tag_modal' tag='TAGS_HERE' %}">
                         {{ tag.tag_value }}
                     </span>
                 {% endfor %}
