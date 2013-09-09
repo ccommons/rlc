@@ -90,7 +90,8 @@ urlpatterns = patterns('',
     # framework login
     # note template_name -- not sure if this is a "correct" template, but
     # it seems to work (will need to replace in the product later)
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {"template_name": "admin/login.html"}),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {"template_name": "login/login.html"}),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {"next_page":"/"}, name="logout"),
 
     # Examples:
     # url(r'^$', 'rlc.views.home', name='home'),
