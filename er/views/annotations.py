@@ -361,6 +361,8 @@ def reply_add_json(request, *args, **kwargs):
     root = original_comment.root
     a = annotation.fetch(id=root.model_object.annotation.id)
 
+    doc = get_doc(**kwargs)
+
     annotation_id = a.model_object.id
 
     atype = a.atype
@@ -374,10 +376,32 @@ def reply_add_json(request, *args, **kwargs):
         form = AnnotationReplyForm(request.POST)
         form_type = "normal_reply"
 
-    if form.is_valid():
-        pass
+    if not form.is_valid():
+        # render form with errors (possibly merge with earlier form)
+        context = Context({
+            "doc" : doc,
+            "form" : form,
+            "form_action" : request.path,
+            "form_type" : form_type,
+            "original_comment" : original_comment,
+        })
 
-    doc = get_doc(**kwargs)
+        req_cxt = RequestContext(request)
+        resubmit_html = render_to_string("reply_compose_inline.html", context, context_instance=req_cxt)
+        json_source = {
+            "body_html" : resubmit_html,
+            "error" : "invalid form",
+            "use_ckeditor" : True,
+            "ckeditor_config" : "annotation_compose",
+        }
+
+        if change_modal == True:
+            json_source["url"] = return_url
+
+        json = simplejson.dumps(json_source)
+
+        return(HttpResponse(json, mimetype='application/json'))
+
     user = request.user
     new_comment_text = form.cleaned_data["comment_text"]
 

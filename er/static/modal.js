@@ -324,6 +324,10 @@ function InlineReply(initiating_element) {
         'show_reply_form' : function(data, status, jqxhr) {
             this.$new = $("<div/>").html(data["body_html"]);
             this.$parent.after(this.$new);
+            this.render(data);
+        },
+
+        'render' : function(data) {
             if (data["use_ckeditor"] === true) {
                 this.use_ckeditor = true;
                 var ckconfig_name = "";
@@ -364,10 +368,18 @@ function InlineReply(initiating_element) {
         },
 
         'reply_form_response' : function(data, status, jqxhr) {
-            /* close inline commenter and replace with new comment */
             if (this.use_ckeditor === true) {
                 this.ckeditor.finalize();
             }
+
+            /* check response for invalid form */
+            if (data.hasOwnProperty("error")) {
+                this.$new.html(data["body_html"]);
+                this.render(data);
+                return(false);
+            }
+
+            /* close inline commenter and replace with new comment */
             this.$new.html(data["html"]);
 
             // TODO: this seems to also scroll the base window
