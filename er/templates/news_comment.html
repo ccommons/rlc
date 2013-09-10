@@ -16,6 +16,9 @@
            reply_url="{% url 'news_reply' comment_id=head_comment.model_object.id %}">
            Comment
         </a>
+        |
+        {% include "follow_control.html" with comment=head_comment %}
+
         <hr />
     </span>
 
@@ -46,7 +49,11 @@
                reply_url="{% url 'news_reply' comment_id=comment.model_object.id %}">
                 Reply
             </a>
-            | Follow | Share</div>
+            {% if comment.model_object.user != user %}
+                | {% include "follow_control.html" with comment=comment %}
+            {% endif %}
+            | Share
+            </div>
             <hr />
         </div>
     </div>

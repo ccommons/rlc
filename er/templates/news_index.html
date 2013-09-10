@@ -38,19 +38,12 @@
                 {% endfor %}
             </div>
             <div class="news-actions">
-                Reply |
+                <a class='news-comments-link' url="{% url 'news_comment' item_id=news_item.id %}">Comments</a> |
                 {% include "rating_control.html" with comment=news_item.initial_comment %}
-                {% comment %}
-                {% with id=news_item.comments.id %}
-                    <span id="news-rating-{{id}}">
-                    <a onclick="rating_add('{% url 'rate_minus' comment_id=id %}','news-rating-{{id}}')">-</a>
-                    {{ news_item.num_plus }} - {{ news_item.num_minus }}
-                    <a onclick="rating_add('{% url 'rate_plus' comment_id=id %}','news-rating-{{id}}')">+</a>
-                </span>
-                {% endwith %}
-                {% endcomment %}
                 |
-                <a class='news-comments-link' url="{% url 'news_comment' item_id=news_item.id %}">Comments</a> | Share | Follow
+                {% include "follow_control.html" with comment=news_item.initial_comment %}
+                |
+                Share
             </div>
             <hr / >
         </li>

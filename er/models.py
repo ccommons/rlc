@@ -201,8 +201,8 @@ class EmailPreferences(models.Model):
     new_member = models.BooleanField(default=True)
 
 class CommentFollower(models.Model):
-    user = models.ForeignKey(User)
-    comment = models.ForeignKey(Comment)
+    user = models.ForeignKey(User, related_name="following")
+    comment = models.ForeignKey(Comment, related_name="following")
 
 # News models
 class NewsItem(models.Model):
