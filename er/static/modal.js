@@ -154,6 +154,15 @@ function AnnotationComposeModal() {
     var submit_response_handler = function(data, texttype) {
         this.editors_finalize();
 
+        /* check for errors */
+        if (data.hasOwnProperty("error")) {
+            /* if there are errors, load the error-indicating compose form
+               and re-render */
+            this.content_set(data["body_html"]);
+            this.render();
+            return(false);
+        }
+
         this.close_for_new(); /* "do not backtrack" */
         // modal stack: Compose, [OQ dialog if called from New OQ button]
 

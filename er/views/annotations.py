@@ -216,15 +216,41 @@ def compose_json(request, *args, **kwargs):
 @require_POST
 def add_json(request, *args, **kwargs):
     """annotation create"""
+
     req_cxt = RequestContext(request)
     this_url_name = request.resolver_match.url_name
+    doc = get_doc(**kwargs)
 
     form = AnnotationComposeForm(request.POST)
 
-    if form.is_valid():
-        pass
+    if not form.is_valid():
+        # return form with indicated errors
 
-    doc = get_doc(**kwargs)
+        if this_url_name == "annotation_new_in_block":
+            # return_kwargs = dict(kwargs)
+            form_action = reverse('annotation_new_in_block', kwargs=kwargs)
+        else:    # this_url_name == "annotation_new":
+            # if there's no block ID, this is an open question;
+            # field type must be hidden
+            form.fields["atype"].widget = forms.HiddenInput()
+            form_action = reverse('annotation_new', kwargs=kwargs)
+
+        context = Context({
+            "doc" : doc,
+            "form" : form,
+            "form_action" : form_action,
+        })
+
+        body_html = render_to_string("annotation_compose.html", context, context_instance=req_cxt)
+        json = simplejson.dumps({
+            "error" : "invalid form data",
+            "body_html" : body_html,
+            "use_ckeditor" : True,
+            "ckeditor_config" : "annotation_compose",
+        })
+
+        return(HttpResponse(json, mimetype='application/json'))
+
     user = request.user
     atype = form.cleaned_data["atype"]
 
