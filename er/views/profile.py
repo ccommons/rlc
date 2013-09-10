@@ -207,7 +207,7 @@ def profile_json(request, *args, **kwargs):
         "num_note" : conv_summary["count"]["note"],
         "num_proprev" : conv_summary["count"]["proprev"],
         "num_openq" : conv_summary["count"]["openq"],
-        "num_comment" : conv_summary["contribution"],
+        "num_comment" : conv_summary["count"]["comment"],
     })
 
     if myprofile:
@@ -235,18 +235,19 @@ def user_summary(user):
 
     m = {
         'count' : {
-            'comment' : 0,
+            'comment' : num_comments,
             'openq' : 0,
             'note' : 0,
             'proprev' : 0,
         },
-        'contribution' : num_comments,
+        'contribution' : 0,
     }
 
     for a in anno_summary:
         atype = a["annotation__atype"]
         if atype != None:
             m["count"][atype] = a["num_annotations"]
+            m["contribution"] += a["num_annotations"]
 
     return m
 
@@ -270,7 +271,8 @@ def members_json(request, *args, **kwargs):
     else:
         form = membersSortForm(initial=initial_values)
 
-    users = User.objects.all().order_by('first_name', 'last_name')
+    users = User.objects.exclude(username="news").order_by('first_name', 'last_name')
+
     members = []
     for user in users:
         try:
