@@ -395,9 +395,6 @@ def reply_add_json(request, *args, **kwargs):
             "ckeditor_config" : "annotation_compose",
         }
 
-        if change_modal == True:
-            json_source["url"] = return_url
-
         json = simplejson.dumps(json_source)
 
         return(HttpResponse(json, mimetype='application/json'))
