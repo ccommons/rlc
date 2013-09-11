@@ -21,7 +21,12 @@ class conversationItem(object):
         self._doc_id = kwargs.get('doc_id', '')
         self._atype = kwargs.get('atype', '')
         self._annotation_id = kwargs.get('annotation_id', '')
+        self._item_id = kwargs.get('item_id', '')
     
+    @property
+    def item_id(self):
+        return self._item_id
+
     @property
     def url(self):
         if not self._url:
@@ -30,6 +35,9 @@ class conversationItem(object):
                         doc_id=self._doc_id,
                         annotation_id=self._annotation_id)
                 self._url = reverse('annotation_one_of_all', kwargs=url_kwargs)
+            elif self._item_id:
+                url_kwargs = dict(item_id=self._item_id)
+                self._url = reverse('news_comment', kwargs=url_kwargs)
         return self._url
 
     @property
