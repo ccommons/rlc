@@ -32,7 +32,7 @@
             </div>
             <div class="news-tags">
                 {% for tag in news_item.tag_objects %}
-                    <span class="label label-info tag-filter" tag-value="{{ tag.tag_value }}" url="{% url 'news_index_tag_modal' tag='TAGS_HERE' %}">
+                    <span class="label label-info tag-filter" tag-value="{{ tag.tag_value }}" url="{{ tag_change_url }}">
                         {{ tag.tag_value }}
                     </span>
                 {% endfor %}

@@ -61,7 +61,8 @@ def index_json(request, *args, **kwargs):
         for tag in tags:
             news_items = news_items.filter(tags__tag_value=tag)
     else:
-        news_items = news_objects.all()[:30]
+        news_items = news_objects.all()[:20]
+        # news_items = news_objects.all()
         
     for news_item in news_items:
         news_item.initial_comment = comment.fetch(news_item.comments.id)
@@ -69,12 +70,17 @@ def index_json(request, *args, **kwargs):
     attach_ratings([item.initial_comment for item in news_items], user=user)
     attach_following([item.initial_comment for item in news_items], user)
 
+    tag_change_url = reverse("news_index_tag_modal", kwargs={"tag" : "TAGS_HERE"})
+
     context = Context({
     	"news_items" : news_items,
         "tags" : tags,
+        "tag_change_url" : tag_change_url,
     })
 
     body_html = render_to_string("news_index.html", context, context_instance=req_cxt)
+    print tag_change_url
+
     json_str = simplejson.dumps({
         "body_html" : body_html,
         "tags" : tags,
