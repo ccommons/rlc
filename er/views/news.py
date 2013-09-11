@@ -43,7 +43,7 @@ def index(request, *args, **kwargs):
 def index_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
 
-    news_objects = NewsItem.objects
+    news_objects = NewsItem.objects.all()
 
     user = request.user
 
@@ -61,7 +61,7 @@ def index_json(request, *args, **kwargs):
         for tag in tags:
             news_items = news_items.filter(tags__tag_value=tag)
     else:
-        news_items = news_objects.all()
+        news_items = news_objects.all()[:30]
         
     for news_item in news_items:
         news_item.initial_comment = comment.fetch(news_item.comments.id)
