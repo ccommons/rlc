@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
 
-from er.models import EvidenceReview
+from er.models import EvidenceReview, PublicationInfo
 
 from django.core.urlresolvers import reverse
 
@@ -47,6 +47,11 @@ def fullpage(request, *args, **kwargs):
 
     summary = annotation_summary(doc)
 
+    try:
+        lpi = PublicationInfo.objects.filter(document=doc).latest('timestamp')
+    except PublicationInfo.DoesNotExist:
+        lpi = None
+
     # get URL reverse kwargs for viewing open questions
     oq_kwargs = deepcopy(kwargs)
     oq_kwargs["atype"] = "openq"
@@ -64,6 +69,7 @@ def fullpage(request, *args, **kwargs):
 	"doc" : doc,
         "authors" : authors,
 	"doctitle" : "Melanoma RLC: " + doc.title,
+        "last_published_info" : lpi,
     	"main_document" : content,
         "widget_media" : widget_media,
         "override_ckeditor" : override_ckeditor,

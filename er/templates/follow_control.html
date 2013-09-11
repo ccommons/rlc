@@ -1,0 +1,13 @@
+{% with id=comment.model_object.id %}
+<span id="follow-c-{{id}}">
+{% if comment.following == False %}
+    <a onclick="follow_toggle('{% url 'follow_json' comment_id=id %}','follow-c-{{id}}')">
+        Follow
+    </a>
+{% else %}
+    <a onclick="follow_toggle('{% url 'unfollow_json' comment_id=id %}','follow-c-{{id}}')">
+        Unfollow
+    </a>
+{% endif %}
+</span>
+{% endwith %}

@@ -16,6 +16,7 @@ A_BLOCK = r'/(?P<block_id>[a-z0-9-]+)'
 A_COMMENT = r'/(?P<comment_id>\d+)'
 USER_ID = r'/(?P<user_id>\d+)'
 RATING_PREFIX = r'^commentrating' + A_COMMENT
+FOLLOW_PREFIX = r'^follow' + A_COMMENT
 
 urlpatterns = patterns('',
     # index page
@@ -68,6 +69,10 @@ urlpatterns = patterns('',
     url(NOTIFICATION_PREFIX + r'/json$', 'er.views.notification.notifications_json', name='notification_json'),
     url(NOTIFICATION_PREFIX + r'/count/json$', 'er.views.notification.notifications_count_json', name='notification_count_json'),
 
+    # follow
+    url(FOLLOW_PREFIX + r'/start/json$', 'er.views.follow.follow_json', name='follow_json'),
+    url(FOLLOW_PREFIX + r'/stop/json$', 'er.views.follow.follow_json', name='unfollow_json'),
+
     # my profile
     url(PROFILE_PREFIX + r'/json$', 'er.views.profile.profile_json', name='myprofile'),
     # member profile
@@ -90,7 +95,8 @@ urlpatterns = patterns('',
     # framework login
     # note template_name -- not sure if this is a "correct" template, but
     # it seems to work (will need to replace in the product later)
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {"template_name": "admin/login.html"}),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {"template_name": "login/login.html"}),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {"next_page":"/"}, name="logout"),
 
     # Examples:
     # url(r'^$', 'rlc.views.home', name='home'),

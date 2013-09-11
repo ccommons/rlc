@@ -17,6 +17,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 
 from ratings import attach_ratings
+from follow import attach_following
 
 import json
 import urllib
@@ -66,6 +67,7 @@ def index_json(request, *args, **kwargs):
         news_item.initial_comment = comment.fetch(news_item.comments.id)
 
     attach_ratings([item.initial_comment for item in news_items], user=user)
+    attach_following([item.initial_comment for item in news_items], user)
 
     context = Context({
     	"news_items" : news_items,
@@ -100,6 +102,7 @@ def comment_json(request, *args, **kwargs):
     head_comment = comment.fetch(news_item.comments.id)
     all_comments = head_comment.thread_as_list()
     attach_ratings(all_comments, user=user)
+    attach_following(all_comments, user)
     comments = all_comments[1:]
 
     context = Context({

@@ -216,15 +216,41 @@ def compose_json(request, *args, **kwargs):
 @require_POST
 def add_json(request, *args, **kwargs):
     """annotation create"""
+
     req_cxt = RequestContext(request)
     this_url_name = request.resolver_match.url_name
+    doc = get_doc(**kwargs)
 
     form = AnnotationComposeForm(request.POST)
 
-    if form.is_valid():
-        pass
+    if not form.is_valid():
+        # return form with indicated errors
 
-    doc = get_doc(**kwargs)
+        if this_url_name == "annotation_new_in_block":
+            # return_kwargs = dict(kwargs)
+            form_action = reverse('annotation_new_in_block', kwargs=kwargs)
+        else:    # this_url_name == "annotation_new":
+            # if there's no block ID, this is an open question;
+            # field type must be hidden
+            form.fields["atype"].widget = forms.HiddenInput()
+            form_action = reverse('annotation_new', kwargs=kwargs)
+
+        context = Context({
+            "doc" : doc,
+            "form" : form,
+            "form_action" : form_action,
+        })
+
+        body_html = render_to_string("annotation_compose.html", context, context_instance=req_cxt)
+        json = simplejson.dumps({
+            "error" : "invalid form data",
+            "body_html" : body_html,
+            "use_ckeditor" : True,
+            "ckeditor_config" : "annotation_compose",
+        })
+
+        return(HttpResponse(json, mimetype='application/json'))
+
     user = request.user
     atype = form.cleaned_data["atype"]
 
@@ -361,6 +387,8 @@ def reply_add_json(request, *args, **kwargs):
     root = original_comment.root
     a = annotation.fetch(id=root.model_object.annotation.id)
 
+    doc = get_doc(**kwargs)
+
     annotation_id = a.model_object.id
 
     atype = a.atype
@@ -374,10 +402,29 @@ def reply_add_json(request, *args, **kwargs):
         form = AnnotationReplyForm(request.POST)
         form_type = "normal_reply"
 
-    if form.is_valid():
-        pass
+    if not form.is_valid():
+        # render form with errors (possibly merge with earlier form)
+        context = Context({
+            "doc" : doc,
+            "form" : form,
+            "form_action" : request.path,
+            "form_type" : form_type,
+            "original_comment" : original_comment,
+        })
 
-    doc = get_doc(**kwargs)
+        req_cxt = RequestContext(request)
+        resubmit_html = render_to_string("reply_compose_inline.html", context, context_instance=req_cxt)
+        json_source = {
+            "body_html" : resubmit_html,
+            "error" : "invalid form",
+            "use_ckeditor" : True,
+            "ckeditor_config" : "annotation_compose",
+        }
+
+        json = simplejson.dumps(json_source)
+
+        return(HttpResponse(json, mimetype='application/json'))
+
     user = request.user
     new_comment_text = form.cleaned_data["comment_text"]
 
@@ -499,6 +546,7 @@ def preview_json(request, *args, **kwargs):
         })
 
     summary_context = annotation_summary(doc)
+    summary_context["doc"] = doc
     summary_html = render_to_string("annotation_summary.html", summary_context)
 
     return_data = {

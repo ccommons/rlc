@@ -23,7 +23,18 @@ annotation_preview_refresh = function() {
         for (var i = 0; i < previews.length; i++) {
             var preview_info = previews[i];
             var $el = $('#' + preview_info["block_id"]);
+
             if ($el !== []) {
+                if ($el.is("table")) {
+                    /* put a container around the table */
+                    var id = $el.attr("id");
+                    $el.removeAttr("id");
+                    var $container = $('<div class="table-container"></div>');
+                    $container.insertBefore($el);
+                    $container.attr("id", id);
+                    $container.append($el);
+                    $el = $container;
+                }
                 $el.addClass('allow-annotation relative').append(preview_info["html"]);
             }
         }
@@ -48,9 +59,19 @@ annotation_preview_refresh = function() {
 rating_add = function(rate_url, rating_element_id) {
     var rating_result = function(data, status, jqxhr) {
         $rating_el = $('#' + rating_element_id);
-        $rating_el.html(data["body_html"]);
+        $rating_el.replaceWith(data["body_html"]);
     }
     $.get(rate_url, '', rating_result, 'json');
+    return(false);
+}
+
+/* follow/unfollow (identical to ratings for now) */
+follow_toggle = function(follow_url, follow_element_id) {
+    var follow_result = function(data, status, jqxhr) {
+        $rating_el = $('#' + follow_element_id);
+        $rating_el.replaceWith(data["body_html"]);
+    }
+    $.get(follow_url, '', follow_result, 'json');
     return(false);
 }
 
