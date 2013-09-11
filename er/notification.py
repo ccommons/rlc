@@ -1,6 +1,8 @@
 from er.models import Notification as mNotification
 from er.emailnotification import emailNotification
 from er.event import event
+import json
+from django.contrib.auth.models import User
 
 import logging
 logger = logging.getLogger(__name__)
@@ -61,38 +63,54 @@ class notification(object):
             subject = 'replied to a thread of your interest.'
             try:
                 # an annotation
-                subject = annotation_subject.get(c.model_object.annotation.atype, '')
+                atype = c.model_object.annotation.atype
+                if self.event.action == 'shared':
+                    return ' '.join([
+                        'shared',
+                        (atype=='openq' and 'an' or 'a'),
+                        atype_to_name(atype),
+                        'with you.'
+                    ])
+                else:
+                    return annotation_subject.get(atype, '')
             except:
                 # a reply
                 root = c.root
                 if self.event.action == 'proprev_accepted':
                     if root.user == self.user:
-                        subject = 'Your proposed revision is accepted.'
+                        return 'Your proposed revision is accepted.'
                     else:
-                        subject = 'The propesed revision is accepted.'
+                        return 'The propesed revision is accepted.'
                 elif self.event.action == 'proprev_rejected':
                     if root.user == self.user:
-                        subject = 'Your proposed revision is rejected.'
+                        return 'Your proposed revision is rejected.'
                     else:
-                        subject = 'The propesed revision is rejected.'
+                        return 'The propesed revision is rejected.'
+                elif self.event.action == 'shared':
+                    return 'shared a comment with you.'
                 else:
                     # a regular reply
                     if root.user == self.user:
                         try:
                             from er.views.annotations import atype_to_name
-                            subject = 'replied to your %s.' % atype_to_name(root.model_object.annotation.atype).lower()
+                            return 'replied to your %s.' % atype_to_name(root.model_object.annotation.atype).lower()
                         except Exception, ex:
                             logger.error(ex)
                             pass
         elif self.event.etype == 'comment_news':
-            return 'replied to a thread of your interest.'
+            if self.event.action == 'shared':
+                return 'shared a comment with you.'
+            else:
+                return 'replied to a thread of your interest.'
         elif self.event.etype == 'er':
+            if self.event.action == 'shared':
+                return 'shared an Evidence Review with you.'
             if self.event.action in ['revised', 'updated']:
-                subject = 'The Evidence Review is revised.'
+                return 'The Evidence Review is revised.'
             elif self.event.action == 'published':
-                subject = "The Evidence Review is published."
+                return "The Evidence Review is published."
         elif self.event.etype == 'user':
-            subject = "joined the system."
+            return "joined the system."
         return subject
 
     @property
@@ -122,6 +140,12 @@ class notification(object):
     @property
     def subject_user(self):
         try:
+            if self.event.action == 'shared':
+                try:
+                    remarks = json.loads(self.event.remarks)
+                    return User.objects.get(id=remarks['sharer'])
+                except:
+                    return None
             if self.event.etype in ['comment_annotation', 'comment_news']:
                 if self.event.action in ['proprev_accepted', 'proprev_rejected']:
                     return None

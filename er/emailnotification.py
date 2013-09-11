@@ -59,7 +59,13 @@ class emailNotification(object):
     @property
     def subject(self):
         subject_user = None
-        if self.event.etype in ['comment_annotation', 'comment_news']:
+        if self.event.action == 'shared':
+            try:
+                remarks = json.loads(self.event.remarks)
+                subject_user = User.objects.get(id=remarks['sharer'])
+            except:
+                pass
+        elif self.event.etype in ['comment_annotation', 'comment_news']:
             if self.event.action not in ['proprev_accepted', 'proprev_rejected']:
                 subject_user = self.event.resource.user
         elif self.event.etype == 'user':
