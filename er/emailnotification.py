@@ -4,6 +4,8 @@ from er.event import event
 from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from django.contrib.auth.models import User
+import json
 
 import logging
 logger = logging.getLogger(__name__)
@@ -59,7 +61,13 @@ class emailNotification(object):
     @property
     def subject(self):
         subject_user = None
-        if self.event.etype in ['comment_annotation', 'comment_news']:
+        if self.event.action == 'shared':
+            try:
+                remarks = json.loads(self.event.remarks)
+                subject_user = User.objects.get(id=remarks['sharer'])
+            except Exception, ex:
+                logger.error(ex)
+        elif self.event.etype in ['comment_annotation', 'comment_news']:
             if self.event.action not in ['proprev_accepted', 'proprev_rejected']:
                 subject_user = self.event.resource.user
         elif self.event.etype == 'user':
@@ -77,7 +85,16 @@ class emailNotification(object):
             subject = 'replied to a thread of your interest.'
             try:
                 # an annotation
-                subject = annotation_subject.get(c.model_object.annotation.atype, '')
+                atype = c.model_object.annotation.atype
+                if self.event.action == 'shared':
+                    subject = ' '.join([
+                        'shared',
+                        (atype=='openq' and 'an' or 'a'),
+                        atype_to_name(atype),
+                        'with you.'
+                    ])
+                else:
+                    subject = annotation_subject.get(atype, '')
             except:
                 # a reply
                 root = c.root
@@ -91,20 +108,28 @@ class emailNotification(object):
                         subject = 'Your proposed revision is rejected.'
                     else:
                         subject = 'The propesed revision is rejected.'
+                elif self.event.action == 'shared':
+                    subject = 'shared a comment with you.'
                 else:
                     # a regular reply
                     if root.user == self.user:
                         from er.views.annotations import atype_to_name
                         subject = 'replied to your %s.' % atype_to_name(root.model_object.annotation.atype).lower()
         elif self.event.etype == 'comment_news':
-            subject = 'replied to a thread of your interest.'
+            if self.event.action == 'shared':
+                subject = 'shared a comment with you.'
+            else:
+                subject = 'replied to a thread of your interest.'
         elif self.event.etype == 'er':
-            if self.event.action in ['revised', 'updated']:
+            if self.event.action == 'shared':
+                subject = 'shared an Evidence Review with you.'
+            elif self.event.action in ['revised', 'updated']:
                 subject = 'The Evidence Review is revised.'
             elif self.event.action == 'published':
                 subject = "The Evidence Review is published."
         elif self.event.etype == 'user':
             subject = "joined the system."
+
         if subject_user:
             subject = ' '.join([subject_user.first_name, subject_user.last_name, subject])
         return subject

@@ -4,6 +4,7 @@ from er.models import CommentFollower as mCommentFollower
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.template import Context
+import json
 
 import logging
 logger = logging.getLogger(__name__)
@@ -154,7 +155,32 @@ class eventHandler(object):
             logger.error(ex)
 
     @classmethod
+    def share(cls, sharer, recipients, *args, **kwargs):
+        """
+        notification API
+        shorthand for create_event() and make_notifications()
+        the kwargs are shared between the two methods
+        """
+        try:
+            if 'action' in kwargs:
+                del kwargs['action']
+            remarks = {'sharer':sharer.id}
+            event = cls.create_event(action='shared', remarks=json.dumps(remarks), *args, **kwargs)
+            cls.make_notifications(event, users=recipients, **kwargs)
+        except Exception, ex:
+            logger.error(ex)
+
+    @classmethod
     def match_email_preference(cls, preferences, event):
+        """
+        subclass should not override this method, instead should override _match_email_preference()
+        """
+        if event.action == 'shared':
+            return preferences.shared
+        return cls._match_email_preference(preferences, event)
+
+    @classmethod
+    def _match_email_preference(cls, preferences, event):
         """
         subclass should implement
         match the event with email preferences
@@ -292,7 +318,7 @@ class commentAnnotationEventHandler(commentEventHandler):
         return False
 
     @classmethod
-    def match_email_preference(cls, preferences, event):
+    def _match_email_preference(cls, preferences, event):
         """
         match the event with email preferences
         """
@@ -370,7 +396,7 @@ class commentNewsEventHandler(commentEventHandler):
         return False
 
     @classmethod
-    def match_email_preference(cls, preferences, event):
+    def _match_email_preference(cls, preferences, event):
         """
         match the event with email preferences
         """
@@ -457,7 +483,7 @@ class EvidenceReviewEventHandler(eventHandler):
         return False
 
     @classmethod
-    def match_email_preference(cls, preferences, event):
+    def _match_email_preference(cls, preferences, event):
         """
         match the event with email preferences
         """

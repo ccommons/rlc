@@ -111,12 +111,24 @@ def profile_json(request, *args, **kwargs):
                 conv_item.context = c.text[:100]
                 # does not count comments for replies
         except:
-            # TODO: this might be a news item instead;
-            # show it as such
-            continue
+            pass
         else:
             conv_item.timestamp = c.timestamp
             conv_items.append(conv_item)
+            continue
+
+        # news comment
+        try:
+            n = c.root.model_object.newsitem
+            conv_item = conversationItem(c.model_object.id, item_id=n.id)
+            # needed for rating
+            conv_item.comment = c
+            conv_item.ctype = 'comment'
+            conv_item.context = c.text[:100]
+            conv_item.timestamp = c.timestamp
+            conv_items.append(conv_item)
+        except:
+            pass
 
     if myprofile:
         # handle form submission
