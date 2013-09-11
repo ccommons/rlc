@@ -1,11 +1,46 @@
 from bs4 import BeautifulSoup
 import uuid
+import re
 
 debug = False
 
 def parse(doc_txt):
     doc = BeautifulSoup(doc_txt, "html.parser")
     return(doc)
+
+
+def find_tables(doc):
+    """find tables with captions"""
+    table_elements_found = doc.find_all(["table"], recursive=False)
+    tables_found = [
+        # { "id": .., "position": .., "caption": .., },
+    ]
+    position = 0
+    captions_found = []
+    for te in table_elements_found:
+        # get id (assume that it has one, possibly added by add_id())
+        table_info = { "id": te["id"] }
+        tables_found.append(table_info)
+
+        # look for caption
+        caption = te.find_previous_sibling("h3", text=re.compile(r"Table.\d+"))
+        if caption != []:
+            caption_text = caption.get_text()
+            if not caption_text in captions_found:
+                captions_found.append(caption_text)
+            else:
+                caption_text = "Caption Not Found"
+                caption = None
+        else:
+            caption_text = "Caption Not Found"
+            caption = None
+
+        table_info["caption"] = caption_text
+        table_info["position"] = position
+
+        position += 1
+
+    return(tables_found)
 
 def get_tag_info(doc, tag_types):
     """get section information in a document

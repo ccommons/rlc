@@ -90,6 +90,15 @@ class PaperBlock(models.Model):
     def __unicode__(self):
     	return(u"{0} / {1}".format(self.tag_id, self.preview_text[:40]))
 
+class PaperTable(models.Model):
+    tag_id = models.CharField(max_length=100)
+    paper = models.ForeignKey(EvidenceReview)
+    caption = models.CharField(max_length=100)
+    position = models.IntegerField()
+
+    def __unicode__(self):
+    	return(u"{0} / {1}".format(self.tag_id, self.caption[:20]))
+
 # Annotation models
 class Comment(models.Model):
     # parent is null if this is the root comment

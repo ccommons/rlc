@@ -11,6 +11,8 @@ from copy import deepcopy
 from docutils import get_doc
 from annotations import annotation_summary
 
+import re
+
 @login_required
 def index(request):
     """index page"""
@@ -42,6 +44,11 @@ def fullpage(request, *args, **kwargs):
     group_names = [g["name"] for g in request.user.groups.values()]
 
     sections = doc.papersection_set.order_by('position')
+
+    tables = doc.papertable_set.order_by('position')
+    for table in tables:
+        table.label = re.sub(r'(Table \d+)\..*$', r'\1', table.caption)
+        table.caption_no_num = re.sub(r'Table \d+\.(.*)$', r'\1', table.caption)
 
     authors = doc.authors.order_by('paperauthorship__position')
 
@@ -75,7 +82,7 @@ def fullpage(request, *args, **kwargs):
         "override_ckeditor" : override_ckeditor,
 	"group_names" : group_names,
 	"sections" : sections,
-        # "openq_url" : openq_url,
+	"tables" : tables,
         "tab" : "documents",
     }
     context.update(summary)

@@ -486,6 +486,10 @@ function news_comment_init(url) {
     modal_init(url, AnnotationModal);
 }
 
+function table_view_init(url) {
+    modal_init(url, Modal);
+}
+
 /* dynamic ckeditor setup/sync/teardown */
 function CKEditorsInModal(element, config_name) {
     this.element = element;

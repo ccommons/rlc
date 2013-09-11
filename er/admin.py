@@ -1,7 +1,7 @@
 from django.contrib import admin
 from models import Author
 from models import EvidenceReview, PaperAuthorship, PublicationInfo
-from models import PaperSection, PaperBlock
+from models import PaperSection, PaperBlock, PaperTable
 from models import DocumentRevision
 from models import Profile
 from models import Annotation, Comment
@@ -14,6 +14,7 @@ admin.site.register(PublicationInfo)
 admin.site.register(PaperAuthorship)
 admin.site.register(PaperSection)
 admin.site.register(PaperBlock)
+admin.site.register(PaperTable)
 
 admin.site.register(DocumentRevision)
 

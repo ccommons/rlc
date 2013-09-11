@@ -17,6 +17,7 @@ A_COMMENT = r'/(?P<comment_id>\d+)'
 USER_ID = r'/(?P<user_id>\d+)'
 RATING_PREFIX = r'^commentrating' + A_COMMENT
 FOLLOW_PREFIX = r'^follow' + A_COMMENT
+TABLE_PREFIX = DOC_PREFIX + r'/table' + A_BLOCK
 
 urlpatterns = patterns('',
     # index page
@@ -88,6 +89,9 @@ urlpatterns = patterns('',
     url(r'^news/(?P<item_id>\d+)/json$', 'er.views.news.comment_json', name='news_comment'),
     url(r'^news/reply/(?P<comment_id>\d+)/json$', 'er.views.news.reply_json', name='news_reply'),
     url(r'^news/reply/(?P<comment_id>\d+)/new/json$', 'er.views.news.reply_new_json', name='news_reply_new'),
+
+    # tables
+    url(TABLE_PREFIX + r'/json$', 'er.views.table.display_json', name='table_modal'),
 
     # framework administration
     url(r'^admin/', include(admin.site.urls)),

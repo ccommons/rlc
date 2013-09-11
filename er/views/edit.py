@@ -91,14 +91,14 @@ def change(request, *args, **kwargs):
 
     # get old section info
     old_section_values = doc.papersection_set.values("id", "tag_id", "position", "header_text")
-    old_ids = set([old_section["tag_id"] for old_section in old_section_values])
+    old_ids = { old_section["tag_id"] for old_section in old_section_values }
     old_section_info = {}
     for s in old_section_values:
         old_section_info[s["tag_id"]] = s
 
     # extract new section info
     new_section_info = doctags.section_info(parsed_doc)
-    new_ids = set([section["id"] for section in new_section_info])
+    new_ids = { section["id"] for section in new_section_info }
 
     unchanged_ids = old_ids.intersection(new_ids)
     added_ids = new_ids.difference(old_ids)
@@ -136,14 +136,14 @@ def change(request, *args, **kwargs):
 
     # get old block info
     old_block_values = doc.paperblock_set.values("id", "tag_id", "position", "preview_text")
-    old_ids = set([old_block["tag_id"] for old_block in old_block_values])
+    old_ids = { old_block["tag_id"] for old_block in old_block_values }
     old_block_info = {}
     for b in old_block_values:
         old_block_info[b["tag_id"]] = b
 
     # extract new block info
     new_block_info = doctags.block_info(parsed_doc)
-    new_ids = set([block["id"] for block in new_block_info])
+    new_ids = { block["id"] for block in new_block_info }
 
     unchanged_ids = old_ids.intersection(new_ids)
     added_ids = new_ids.difference(old_ids)
@@ -180,6 +180,53 @@ def change(request, *args, **kwargs):
     for block in doc.paperblock_set.filter(tag_id__in=deleted_ids):
         block.delete()
 
+
+    # update document tables
+
+    # get old table info
+    old_table_values = doc.papertable_set.values("id", "tag_id", "position", "caption")
+    old_ids = { old_table["tag_id"] for old_table in old_table_values }
+    old_table_info = {}
+    for t in old_table_values:
+        old_table_info[t["tag_id"]] = t
+
+    # extract new table info
+    new_table_info = doctags.find_tables(parsed_doc)
+    new_ids = { table["id"] for table in new_table_info }
+
+    unchanged_ids = old_ids.intersection(new_ids)
+    added_ids = new_ids.difference(old_ids)
+    deleted_ids = old_ids.difference(new_ids)
+
+    for table in new_table_info:
+        id = table["id"]
+        if id in added_ids:
+            doc.papertable_set.create(
+                tag_id=id,
+                caption=table["caption"],
+                position=table["position"],
+            )
+        else:
+            # update if necessary
+            old_table = old_table_info[id]
+            if (old_table["caption"] != table["caption"] or
+                old_table["position"] != table["position"]):
+                # it's necessary to update the positions
+                # because their order determines the lineup in the TOC
+                try:
+                    s = doc.papertable_set.get(tag_id=id)
+                    s.caption = table["caption"]
+                    s.position = table["position"]
+                    s.save()
+                except:
+                    # TODO: get rid of all, create new table
+                    pass
+
+    # delete removed tables
+    for table in doc.papertable_set.filter(tag_id__in=deleted_ids):
+        table.delete()
+
+    # check content
     old_content = doc.content
     new_content = str(parsed_doc)
 

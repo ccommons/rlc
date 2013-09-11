@@ -1,0 +1,9 @@
+{% extends "modal.html" %}
+{% block modal_title %}
+    <h4 class="modal-title">
+        {{ table.caption }}
+    </h4>
+{% endblock %}
+{% block modal_body %}
+    {{ table_content|safe }}
+{% endblock %}
