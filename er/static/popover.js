@@ -83,7 +83,7 @@ var POPOVER = {
 		elPosition = this.$el.offset();
 		position = popover.offset();
 		left = position.left - (elPosition.left - position.left);
-		top = position.top;
+		top = position.top + 10;
 		popover.offset({'left': left, 'top': top});
 	},
 	'toggleNotifications': function () {
@@ -91,10 +91,12 @@ var POPOVER = {
         
         if (!this.isInitialized()) {
             var options = {
+	                'title': 'Alerts',
 	                'animation': false,
 	                'html' : true,
 	                'placement': 'bottom'
-	            };
+	            },
+	            popover;
             this.initPopover(options);
         }
 
@@ -102,10 +104,12 @@ var POPOVER = {
             this.hide();
         } else {
             this.show();
+            popover = this.$el.siblings('.popover');
+            popover.addClass('has-header alerts');
             var url = this.$el.attr('data-url');
             if (url !== undefined) {
                 $.get(url, '', function(data, status, jqxhr) {
-                    var $popover_content = this.$el.siblings('.popover').children(".popover-content");
+                    var $popover_content = popover.children(".popover-content");
                     $popover_content.html(data["body_html"]);
                     notification_icon_refresh();
                 }.bind(this));

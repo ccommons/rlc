@@ -1296,6 +1296,7 @@ textarea.hidden {
 			box-sizing: border-box;
 	min-width: 117px;
 	max-width: 350px;
+	padding: 0;
 }
 .popover.alert-popover {
 	width: auto !important; /* Important since popover with is set inline in js */
@@ -1309,7 +1310,7 @@ textarea.hidden {
 .popover.bottom .arrow {
 	position: absolute;
 	left: initial;
-	right: 8%;
+	right: 7%;
 	top: -12px;
 	/*width: 0; 
 	height: 0;
