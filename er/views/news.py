@@ -43,7 +43,7 @@ def index(request, *args, **kwargs):
 def index_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
 
-    news_objects = NewsItem.objects.all()
+    news_objects = NewsItem.objects.order_by('-pubdate')
 
     user = request.user
 
