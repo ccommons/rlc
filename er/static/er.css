@@ -290,6 +290,11 @@
     height: auto;
 }
 
+.profile-header span {
+    font-size: 0.7em;
+    text-transform: capitalize;
+    line-height: 25px;
+}
 /*.member-profile,
 .profile-header {
     display:-moz-inline-stack;
@@ -310,6 +315,12 @@
     margin-bottom: 20px;
     margin-top: 15px;
 }
+.profile-summary {
+    background-color: #E7EEF1;
+    border: none;
+    color: #006697;
+    margin-top: 15px;
+}
 
 .member-summary ul,
 .profile-summary ul,
@@ -319,10 +330,12 @@
     padding-left: 0;
     margin: 0;
 }
+.profile-summary ul {
+    padding: 5px 0;
+}
 
 .document-summary ul li,
-.member-summary ul li,
-.profile-summary ul li {
+.member-summary ul li {
     border-right: 1px solid #ccc;
     width: 28%;
     height: 6em;
@@ -335,12 +348,19 @@
     cursor: default;
 }
 
-.profile-summary ul li,
+.profile-summary ul li {
+    padding: 0 10px;
+}
+.profile-summary ul li + li {
+    border-left: 1px solid #000;
+}
+
 .member-summary ul li {
     width: 22%;
 }
+
 .modal-header .profile-summary {
-    font-size: initial;
+    font-size: 0.5em;
 }
 
 .document-summary ul li:last-child,
@@ -536,6 +556,15 @@ ul.news-listing .news-tags {
 .modal .proprev-header,
 .modal .openq-header {
     color: #fff;
+}
+
+.modal .modal-header.my-profile-modal-header {
+    background-color: #fff;
+    border-bottom: none;
+}
+
+.modal .modal-header.my-profile-modal-header h3 {
+    line-height: 20px;
 }
 
 /**
