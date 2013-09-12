@@ -219,7 +219,8 @@
 .text-red1 {
     color: #dc3c26;
 }
-.bg-green1 {
+.bg-green1,
+.rev-header {
     background-color: #8DBA4D;
 }
 .border-green1 {
@@ -381,9 +382,10 @@
     margin: 0 10px;
     display: inline;
     vertical-align: top;
+    font-size: 20.5px;
 }
 .document-summary ul li strong {
-    vertical-align: 8%
+    vertical-align: 10%
 }
 /*.member-summary-item,
 .profile-summary-item {
@@ -563,7 +565,8 @@ ul.news-listing .news-tags {
 }
 
 .modal .proprev-header,
-.modal .openq-header {
+.modal .openq-header,
+.modal .rev-header {
     color: #fff;
 }
 

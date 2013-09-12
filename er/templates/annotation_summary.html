@@ -6,6 +6,12 @@
         <strong>Note{{ num_note|pluralize }}</strong>
     </li>
     {% endif %}
+    {% if num_rev > 0 %}
+    <li class="document-summary-item text-green1" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='rev' %}')">
+        <h4 class="document-summary-counter"><em>{{ num_rev }}</em></h4>
+        <strong>Accepted Revision{{ num_rev|pluralize }}</strong>
+    </li>
+    {% endif %}
     {% if num_proprev > 0 %}
     <li class="document-summary-item text-red1" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='proprev' %}')">
         <h4 class="document-summary-counter"><em>{{ num_proprev }}</em></h4>
