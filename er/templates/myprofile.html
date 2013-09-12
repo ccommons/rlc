@@ -80,7 +80,7 @@
         </div>
         {% endif %}
         <div class="tab-pane {% if not form_action %}active in{% endif %} fade" id="profile-conversations">
-            <ul>
+            <ul class="unstyled">
             {% for item in items %}
                 <li class="profile-conv-item" id="profile-conv-{{ item.id }}">
                     <p class="profile-conv-line1">{{ item.ctype|upper }} | {{ item.age|upper }}</p>

@@ -1,19 +1,25 @@
 {% with id=comment.model_object.id %}
-<span id="rating-c-{{id}}">
+<span id="rating-c-{{id}}" class="rating btn-group">
     {% if comment.user = user %}
         {# user's own comment -- do not allow clicks #}
-        {{ comment.rating }}
+        <a class="btn disabled" disabled="disabled" aria-hidden="true" data-icon="&#xe01b;"></a>
+        <span>{{ comment.rating }}</span>
+        <a class="btn disabled" disabled="disabled" aria-hidden="true" data-icon="&#xe01c;"></a>
     {% elif comment.user_rated_plus == False and comment.user_rated_minus == False %}
         {# user has not rated comment -- allow all clicks #}
-        <a onclick="rating_add('{% url 'rate_minus' comment_id=id %}','rating-c-{{id}}')">-</a>
-        {{ comment.rating }}
-        <a onclick="rating_add('{% url 'rate_plus' comment_id=id %}','rating-c-{{id}}')">+</a>
+        <a class="btn" onclick="rating_add('{% url 'rate_plus' comment_id=id %}','rating-c-{{id}}')" aria-hidden="true" data-icon="&#xe01b;"></a>
+        <span>{{ comment.rating }}</span>
+        <a class="btn" onclick="rating_add('{% url 'rate_minus' comment_id=id %}','rating-c-{{id}}')" aria-hidden="true" data-icon="&#xe01c;"></a>
     {% elif comment.user_rated_plus == True %}
         {# comment rated plus -- do not allow clicks #}
-        {{ comment.rating }} [you thumbed up]
+        <a class="btn btn-primary disabled" disabled="disabled" aria-hidden="true" data-icon="&#xe01b;"></a>
+        <span>{{ comment.rating }}</span>
+        <a class="btn disabled" disabled="disabled" aria-hidden="true" data-icon="&#xe01c;"></a>
     {% else %}{# comment.user_rated_minus == False #}
         {# comment rated minus -- do not allow clicks #}
-        {{ comment.rating }} [you thumbed down]
+        <a class="btn disabled" disabled="disabled" aria-hidden="true" data-icon="&#xe01b;"></a>
+        <span>{{ comment.rating }}</span>
+        <a class="btn btn-primary disabled" disabled="disabled" aria-hidden="true" data-icon="&#xe01c;"></a>
     {% endif %}
 </span>
 {% endwith %}

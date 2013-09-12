@@ -220,7 +220,8 @@
 	border: 1px solid #00ADF2;
 }
 
-.btn:hover {
+.btn:hover:not(.disabled),
+.btn:hover:not([disabled]) {
 	background: #00ADF2;
 	color: white;
 }

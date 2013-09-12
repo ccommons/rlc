@@ -558,6 +558,12 @@ ul.news-listing .news-tags {
 .modal .btn-group a.btn {
     font-size: 20px;
 }
+.modal .rating.btn-group a {
+    font-size: 10px;
+}
+.modal .rating.btn-group > span {
+    margin-left: 0;
+}
 
 .modal .btn-group > span {
     position: relative;
@@ -573,6 +579,8 @@ ul.news-listing .news-tags {
     vertical-align: middle;
     font-size: 14px;
 }
+
+
 
 .modal .proprev-header,
 .modal .openq-header,
