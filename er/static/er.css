@@ -171,7 +171,8 @@
 .text-blue1 {
     color: #0069A0;
 }
-.bg-blue2 {
+.bg-blue2,
+.openq-header {
     background-color: #018bba;
 }
 .border-blue2 {
@@ -180,7 +181,8 @@
 .text-blue2 {
     color: #018bba;
 }
-.bg-red1 {
+.bg-red1,
+.proprev-header {
     background-color: #dc3c26;
 }
 .border-red1 {
@@ -501,6 +503,11 @@ ul.news-listing .news-tags {
     text-align: center;
     vertical-align: middle;
     font-size: 14px;
+}
+
+.modal .proprev-header,
+.modal .openq-header {
+    color: #fff;
 }
 
 /**
