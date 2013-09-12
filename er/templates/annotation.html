@@ -68,7 +68,9 @@
                         {{ comment.model_object.user.last_name }} |
                         {{ comment.timestamp | naturaltime }}
                     </div>
-                    <div class="annotation-comment-actions">rating |
+                    <div class="annotation-comment-actions">
+                    {% include "rating_control.html" with comment=comment %}
+                    |
                     {% if comment.level == 0 %}
                         {% if a.reply_count == 1 %}
                             One Reply |
@@ -90,7 +92,12 @@
                     {% endif %}
                         Reply
                     </a>
-                    | Follow | Share</div>
+                    |
+                    {% if comment.model_object.user != user %}
+                        {% include "follow_control.html" with comment=comment %}
+                        |
+                    {% endif %}
+                    Share</div>
                     <hr />
                 </div>
             </div>

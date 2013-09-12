@@ -20,7 +20,8 @@ from ckeditor.widgets import CKEditorWidget
 
 from docutils import get_doc
 
-# from ratings import attach_ratings
+from ratings import attach_ratings
+from follow import attach_following
 
 def atype_to_name(atype):
     for t in Annotation.ANNOTATION_TYPES:
@@ -48,6 +49,8 @@ def full_json(request, *args, **kwargs):
     from er.notification import notification
     notification.mark_read(request)
     req_cxt = RequestContext(request)
+
+    user = request.user
 
     this_url_name = request.resolver_match.url_name
 
@@ -101,7 +104,8 @@ def full_json(request, *args, **kwargs):
     num_annotations = len(annotations)
     for index, a in enumerate(annotations, 1):
         a.comments = a.comment.thread_as_list()
-        # attach_ratings(a.comments)
+        attach_ratings(a.comments, user=user)
+        attach_following(a.comments, user)
         a.reply_count = len(a.comments) - 1
         if requested_id != None:
             if a.model_object.id == requested_id:
@@ -117,6 +121,7 @@ def full_json(request, *args, **kwargs):
         "selected_annotation" : selected_annotation,
         "show_compose_button" : show_compose_button,
         "reply_url_name" : reply_url_name,
+        "user" : user,
     })
     
     if reply_url_name == "annotation_reply_in_block":
