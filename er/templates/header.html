@@ -25,11 +25,9 @@
                     </div>
 
                     <div id="profile-menu-content" class="hide">
-                        <ul class="unstyled">
+                        <ul class="unstyled profile-menu">
                             <li><a href="javascript:myprofile_init('{% url 'myprofile' %}')">My Profile</a></li>
-                            <li class="horizontal-separator"></li>
                             <li><a href="javascript:members_init('{% url 'all_members' %}')">All Members</a></li>
-                            <li class="horizontal-separator"></li>
                             <li><a href="{% url 'logout' %}">Sign out</a></li>
                         </ul>
                     </div>

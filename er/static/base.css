@@ -105,9 +105,6 @@
 /**
  * Override Bootstrap styles.
 */
-.btn-group :not(.btn) {
-	border: none;
-}
 .btn-group .btn:last-of-type {
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;
@@ -1292,19 +1289,13 @@ textarea.hidden {
 }
 
 .popover {
-	background: #444;
 	position: absolute;
 	border-radius: 5px;
 	-webkit-box-sizing: border-box;
 	   -moz-box-sizing: border-box;
 			box-sizing: border-box;
-	color: white;
 	min-width: 117px;
 	max-width: 350px;
-}
-.popover a,
-.popover a:hover {
-	color: #fff;
 }
 .popover.alert-popover {
 	width: auto !important; /* Important since popover with is set inline in js */
@@ -1312,20 +1303,20 @@ textarea.hidden {
 .popover p {
 	width: 100%;
 }
-.popover.bottom .arrow:after {
+/*.popover.bottom .arrow:after {
 	border-bottom-color: transparent;
-}
+}*/
 .popover.bottom .arrow {
 	position: absolute;
 	left: initial;
-	right: 2%;
-	top: -10px;
-	width: 0; 
+	right: 8%;
+	top: -12px;
+	/*width: 0; 
 	height: 0;
 	border-style: none;
 	border-left: 20px solid transparent;
 	border-right: 20px solid transparent;
-	border-bottom: 10px solid #444;
+	border-bottom: 10px solid #444;*/
 }
 
 .error-message {

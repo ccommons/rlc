@@ -45,6 +45,13 @@
     bottom:70px;
 }
 
+.profile-menu li {
+    margin-bottom: 10px;
+}
+.profile-menu li:last-of-type {
+    margin-bottom: 0;
+}
+
 .annotation_pager {
     margin-right: 20px;
     margin-left: 20px;
