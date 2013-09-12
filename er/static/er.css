@@ -248,15 +248,16 @@
     margin-bottom: 5px;
     display: block;
 }*/
+.modal-title form {
+    margin-bottom: 0;
+}
 
 #member-name{
     font-size: 1.2em;
-    display: block;
 }
 
 .member-details{
     font-size: 0.9em;
-    display: block;
 }
 
 /*.modal-title .profile-title,
@@ -316,7 +317,8 @@
     margin-bottom: 20px;
     margin-top: 15px;
 }
-.profile-summary {
+.profile-summary,
+.member-summary {
     background-color: #E7EEF1;
     border: none;
     color: #006697;
@@ -331,8 +333,14 @@
     padding-left: 0;
     margin: 0;
 }
-.profile-summary ul {
+.profile-summary ul,
+.member-summary ul {
     padding: 5px 0;
+}
+
+.profile-summary ul:empty,
+.member-summary ul:empty {
+    display: none;
 }
 
 .document-summary ul li {
@@ -346,14 +354,16 @@
     border-top: 1px solid #ccc;
 }
 
-.profile-summary ul li {
+.profile-summary ul li,
+.member-summary ul li {
     padding: 0 10px;
 }
-.profile-summary ul li + li {
+.profile-summary ul li + li,
+.member-summary ul li + li {
     border-left: 1px solid #000;
 }
 
-.member-summary ul li {
+/*.member-summary ul li {
     width: 22%;
     border-right: 1px solid #ccc;
     height: 6em;
@@ -361,7 +371,7 @@
     vertical-align: top;
     text-align: center;
     padding: 5px;
-}
+}*/
 
 .modal-header .profile-summary {
     font-size: 0.5em;

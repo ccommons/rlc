@@ -1,50 +1,39 @@
 {% extends "modal.html" %}
 {% block modal_title %}
-    <h4 class="modal-title">
-        ALL MEMBERS
-        <div class="inline-radio">
-        <form id="members-sort-form" method="post" action="{{ form_action }}">
-        <ul>
-        {% for radio in form.sort_order %}
-        <li>{{ radio }}</li>
-        {% endfor %}
-        </ul>
-        {% csrf_token %}
-        </form>
-        </div>
-    </h4>
+    <div class="modal-title clearfix">
+        <span>ALL MEMBERS</span>
+        <span class="pull-right">
+            <form id="members-sort-form" method="post" action="{{ form_action }}">
+                <ul class="inline">
+                    {% for radio in form.sort_order %}
+                    <li>{{ radio }}</li>
+                    {% endfor %}
+                </ul>
+            {% csrf_token %}
+            </form>
+        </span>
+    </div>
 {% endblock %}
 {% block modal_body %}
-    <ul id="member-list">
+    <ul id="member-list" class="unstyled">
     {% for member in members %}
         <li class="member-list-item">
         <div class="member-profile">
-            <span id="member-name"><a href="javascript:myprofile_init('{% url 'profile' user_id=member.user.id %}');">
+            <div id="member-name"><a href="javascript:myprofile_init('{% url 'profile' user_id=member.user.id %}');">
             {% if member.user.first_name and member.user.last_name %}
             {{ member.user.first_name }} {{ member.user.last_name }}
             {% else %}
             {{ member.user.username }}
             {% endif %}
-            </a></span>
+            </a></div>
             {% if member.profile.title %}<span class="member-details">{{ member.profile.title }}</span>{% endif %}
             {% if member.profile.department %}<span class="member-details">{{ member.profile.department }}</span>{% endif %}
             {% if member.profile.institution %}<span class="member-details">{{ member.profile.institution }}</span>{% endif %}
         </div>
         <div class="member-summary">
-            <ul class="inline">
-            {% if member.count.note > 0 %}
-            <li class="member-summary-item"><h2 class="member-summary-counter text-blue1"><em>{{ member.count.note }}</em></h2><strong>Note{{ member.count.note|pluralize }}</strong></li>
-            {% endif %}
-            {% if member.count.proprev > 0 %}
-            <li class="member-summary-item"><h2 class="member-summary-counter text-red1"><em>{{ member.count.proprev }}</em></h2><strong>Proposed Revision{{ member.count.proprev|pluralize }}</strong></li>
-            {% endif %}
-            {% if member.count.openq > 0 %}
-            <li class="member-summary-item"><h2 class="member-summary-counter text-blue2"><em>{{ member.count.openq }}</em></h2><strong>Open Question{{ member.count.openq|pluralize }}</strong></li>
-            {% endif %}
-            {% if member.count.comment > 0 %}
-            <li class="member-summary-item"><h2 class="member-summary-counter"><em>{{ member.count.comment }}</em></h2><strong>Comment{{ member.count.comment|pluralize }}</strong></li>
-            {% endif %}
-            </ul>
+            <ul class="inline">{% if member.count.note > 0 %}<li class="member-summary-item"><strong>{{ member.count.note }}</strong> Note{{ member.count.note|pluralize }}</li>
+            {% endif %}{% if member.count.proprev > 0 %}<li class="member-summary-item"><strong>{{ member.count.proprev }}</strong> Proposed Revision</li>{% endif %}{% if member.count.openq > 0 %}<li class="member-summary-item"><strong>{{ member.count.openq }}</strong> Open Question{{ member.count.openq|pluralize }}</li>{% endif %}{% if member.count.comment > 0 %}
+            <li class="member-summary-item"><strong>{{ member.count.comment }}</strong> Comment{{ member.count.comment|pluralize }}</li>{% endif %}</ul>
         </div>
         </li>
     {% endfor %}

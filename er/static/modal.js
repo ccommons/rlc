@@ -50,6 +50,7 @@ function Modal() {
             if (this.rendered === false) {
                 this.content_element.on('show', function () {
                     $('body').css('overflow', 'hidden');
+                    this.content_element.find('#members-sort-form li>label').addClass('radio');
                 }.bind(this));
                 this.content_element.on('shown', this.assignHeight.bind(this));
                 window.addEventListener('resize', this.assignHeight, false);
