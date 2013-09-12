@@ -604,15 +604,6 @@ ul.news-listing .news-tags {
     .section-header {
         font-size: 1.2em;
     }
-
-    .document-summary ul li,
-    .profile-summary ul li {
-        width: 27%;
-        font-size: 0.8em;
-    }
-    .profile-summary ul li {
-        width: 21.63%;
-    }
     
     .annotation-preview {
         width: 59%;
