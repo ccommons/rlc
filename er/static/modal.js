@@ -55,7 +55,7 @@ function Modal() {
                 }.bind(this));
                 this.content_element.on('shown', this.assignHeight.bind(this));
                 window.addEventListener('resize', this.assignHeight.bind(this), false);
-                this.content_element.find('.modal-body').on('DOMSubtreeModified', this.assignHeight.bind(this));
+                this.content_element.on('DOMSubtreeModified', this.assignHeight.bind(this));
                 this.content_element.modal();
                 this.content_element.on('hidden', this.content_delete.bind(this));
                 this.content_element.on('hidden', function () {
