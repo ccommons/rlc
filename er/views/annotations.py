@@ -31,15 +31,10 @@ def atype_to_name(atype):
     return(None)
 
 def annotation_summary(doc):
-    counts = {
-        "num_note" : 0,
-        "num_openq" : 0,
-        "num_proprev" : 0,
-        "num_rev" : 0,
-    }
-    # the string-append is slow but probably insignificant
+    counts = { "num_"+atype: 0 for atype, text in Annotation.ANNOTATION_TYPES }
+
     for a in annotation.doc_all(doc):
-        counts["num_" + a.atype] += 1
+        counts["num_"+a.atype] += 1
 
     return(counts)
 
@@ -141,10 +136,8 @@ def full_json(request, *args, **kwargs):
 
     return(HttpResponse(json, mimetype='application/json'))
 
-compose_choices = [c for c in Annotation.ANNOTATION_TYPES
-                             if c[0] != 'rev']
-# TODO: move this to model
-default_choice="note"
+compose_choices = Annotation.compose_choices
+default_choice = Annotation.default_choice
 
 class AnnotationComposeForm(forms.ModelForm):
     class Meta:
@@ -441,12 +434,13 @@ def reply_add_json(request, *args, **kwargs):
         approval = form.cleaned_data["approval"]
         if approval == "accept":
             # change to accepted revision
-            a.atype = "rev"
+            a.atype = "acptrev"
             change_modal = True
             # TODO: record the change somewhere
             caeh.notify(new_comment.model_object, action='proprev_accepted')
         elif approval == "reject":
-            # what do we do here?
+            a.atype = "rejrev"
+            change_modal = True
             caeh.notify(new_comment.model_object, action='proprev_rejected')
             pass
         elif approval == "defer":
@@ -510,14 +504,9 @@ def preview_json(request, *args, **kwargs):
         }
 
         preview_data = {
-            "openq" : [],
-            "note" : [],
-            "proprev" : [],
-            "rev" : [],
+            atype: [] for atype, text in Annotation.ANNOTATION_TYPES
         }
 
-        # TODO: make this use the annotation class
-        # (for now, leave as-is because it can be very slow otherwise)
         for a in block.annotations.all():
             preview_data[a.atype].append(a)
         

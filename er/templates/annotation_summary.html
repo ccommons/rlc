@@ -9,7 +9,13 @@
     {% if num_rev > 0 %}
     <li class="document-summary-item text-green1" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='rev' %}')">
         <h4 class="document-summary-counter"><em>{{ num_rev }}</em></h4>
-        <strong>Accepted Revision{{ num_rev|pluralize }}</strong>
+        <strong>Revision{{ num_rev|pluralize }}</strong>
+    </li>
+    {% endif %}
+    {% if num_acptrev > 0 %}
+    <li class="document-summary-item text-green1" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='acptrev' %}')">
+        <h4 class="document-summary-counter"><em>{{ num_acptrev }}</em></h4>
+        <strong>Accepted Revision{{ num_acptrev|pluralize }}</strong>
     </li>
     {% endif %}
     {% if num_proprev > 0 %}

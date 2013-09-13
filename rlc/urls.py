@@ -10,7 +10,7 @@ ANNO_PREFIX = DOC_PREFIX + r'/annotation'
 PROFILE_PREFIX = r'^profile'
 NOTIFICATION_PREFIX = r'^notifications'
 
-A_TYPES = r'/(?P<atype>openq|note|proprev|rev)'
+A_TYPES = r'/(?P<atype>openq|note|proprev|rev|acptrev|rejrev)'
 A_ID = r'/(?P<annotation_id>\d+)'
 A_BLOCK = r'/(?P<block_id>[a-z0-9-]+)'
 A_COMMENT = r'/(?P<comment_id>\d+)'

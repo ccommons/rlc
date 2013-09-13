@@ -220,7 +220,8 @@
     color: #dc3c26;
 }
 .bg-green1,
-.rev-header {
+.rev-header,
+.acptrev-header {
     background-color: #8DBA4D;
 }
 .border-green1 {
@@ -228,6 +229,18 @@
 }
 .text-green1 {
     color: #8DBA4D;
+}
+.bg-black1 {
+    background-color: #202020;
+}
+.border-black1 {
+    border-color: #202020;
+}
+.text-black1 {
+    color: #202020;
+}
+.rejrev-header {
+    background-color: #A0A0A0;
 }
 /**
  * END of color definitions.

@@ -23,6 +23,13 @@
             {{ proprev_count }} Proposed Revision{{ proprev_count|pluralize }}
         </div>
     </div>
+{% endif %}{% if acptrev_count > 0 %}
+    <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='acptrev' %}">
+        <div class="annotation-pointer pointer-left border-green1"></div>
+        <div class="annotation-content bg-green1">
+            {{ acptrev_count }} Accepted Revision{{ acptrev_count|pluralize }}
+        </div>
+    </div>
 {% endif %}{% if rev_count > 0 %}
     <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='rev' %}">
         <div class="annotation-pointer pointer-left border-green1"></div>
@@ -30,7 +37,14 @@
             {{ rev_count }} Revision{{ rev_count|pluralize }}
         </div>
     </div>
-{% endif %}</div>
+{% endif %}{% if rejrev_count > 0 %}
+    <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='rejrev' %}">
+        <div class="annotation-pointer pointer-left border-black1"></div>
+        <div class="annotation-content bg-black1">
+            {{ rejrev_count }} Rejected Revision{{ rejrev_count|pluralize }}
+        </div>
+    </div>
+{% endif %}{# rejrev_count > 0 #}</div>
     <div class="add-annotation" url="{{ compose_url }}">
         <div class="annotation-pointer pointer-left border-blue1"></div>
         <div class="annotation-content bg-blue1">
