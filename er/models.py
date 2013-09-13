@@ -141,8 +141,14 @@ class Annotation(DiscussionPoint):
     	('note', 'Note'),
     	('openq', 'Open Question'),
     	('proprev', 'Proposed Revision'),
+    	('acptrev', 'Accepted Revision'),
+    	('rejrev', 'Rejected Revision'),
     	('rev', 'Revision'),
     ]
+    compose_choices = [t for t in ANNOTATION_TYPES
+                       if t[0] in ['note', 'openq', 'proprev']]
+    default_choice = 'note'
+
     atype = models.CharField(max_length=10, choices=ANNOTATION_TYPES, default='note')
     # TODO: remove null from the following (easier to debug when null allowed)
     er_doc = models.ForeignKey(EvidenceReview, related_name="annotations", null=True)
@@ -222,7 +228,7 @@ class NewsItem(models.Model):
     title = models.CharField(max_length=500)
     preview = models.TextField()
     comments = models.OneToOneField(Comment)
-    pubdate = models.DateTimeField(auto_now=False, auto_now_add=True)
+    pubdate = models.DateTimeField(auto_now=False, auto_now_add=False)
 
     # this is a unified author, journal, date field, as shown in the feed
     authorjournal = models.CharField(max_length=250, null=True)
