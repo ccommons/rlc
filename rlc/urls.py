@@ -82,9 +82,12 @@ urlpatterns = patterns('',
     url(PROFILE_PREFIX + r'/all/json$', 'er.views.profile.members_json', name='all_members'),
 
     # news
-    url(r'^news$', 'er.views.news.index', name='news_index'),
-    url(r'^news/json$', 'er.views.news.index_json', name='news_index_modal'),
-    url(r'^news/tag/(?P<tag>.+)/json$', 'er.views.news.index_json', name='news_index_tag_modal'),
+    # url(r'^news$', 'er.views.news.index', name='news_index'),
+
+    url(r'^news/json$', 'er.views.news.index_json', {"offset":0}, name='news_index_modal'),
+    url(r'^news/o/(?P<offset>\d+)/json$', 'er.views.news.index_json', {"is_addition" : True}, name='news_index_offset_addition'),
+    url(r'^news/tag/(?P<tag>.+)/json$', 'er.views.news.index_json', {"offset":0}, name='news_index_tag_modal'),
+    url(r'^news/o/(?P<offset>\d+)/tag/(?P<tag>.+)/json$', 'er.views.news.index_json', {"is_addition": True}, name='news_index_tag_offset_addition'),
 
     url(r'^news/(?P<item_id>\d+)/json$', 'er.views.news.comment_json', name='news_comment'),
     url(r'^news/reply/(?P<comment_id>\d+)/json$', 'er.views.news.reply_json', name='news_reply'),

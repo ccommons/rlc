@@ -43,9 +43,14 @@ def index(request, *args, **kwargs):
 def index_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
 
+    offset = int(kwargs["offset"])
+    this_url_name = request.resolver_match.url_name
+
     news_objects = NewsItem.objects.order_by('-pubdate')
 
     user = request.user
+    num_per_load = 20
+    end_limit = offset + num_per_load
 
     if "tag" in kwargs:
         try:
@@ -61,9 +66,11 @@ def index_json(request, *args, **kwargs):
         for tag in tags:
             news_items = news_items.filter(tags__tag_value=tag)
     else:
-        news_items = news_objects.all()[:20]
-        # news_items = news_objects.all()
+        news_items = news_objects.all()
         
+    num_articles = news_items.all().count()
+    news_items = news_items[offset:end_limit]
+
     for news_item in news_items:
         news_item.initial_comment = comment.fetch(news_item.comments.id)
 
@@ -72,14 +79,38 @@ def index_json(request, *args, **kwargs):
 
     tag_change_url = reverse("news_index_tag_modal", kwargs={"tag" : "TAGS_HERE"})
 
+    if tags == []:
+        load_more_url = reverse("news_index_offset_addition", kwargs={
+            "offset" : offset + num_per_load,
+        })
+    else:
+        load_more_url = reverse("news_index_tag_offset_addition", kwargs={
+            "offset" : offset + num_per_load,
+            "tag" : kwargs["tag"],
+        })
+
+    if num_articles <= offset + num_per_load:
+        more_to_show = False
+    else:
+        more_to_show = True
+
     context = Context({
     	"news_items" : news_items,
+    	"num_articles" : num_articles,
         "tags" : tags,
         "tag_change_url" : tag_change_url,
+        "more_to_show" : more_to_show,
+        "load_more_url" : load_more_url,
+        "num_per_load" : num_per_load,
     })
 
-    body_html = render_to_string("news_index.html", context, context_instance=req_cxt)
-    print tag_change_url
+    template_name = "news_modal.html"
+    if "is_addition" in kwargs and kwargs["is_addition"] == True:
+        # return only additional news items if the modal has already been
+        # rendered and we're just getting more entries
+        template_name = "news_index.html"
+
+    body_html = render_to_string(template_name, context, context_instance=req_cxt)
 
     json_str = simplejson.dumps({
         "body_html" : body_html,
