@@ -18,6 +18,22 @@ from django.contrib.auth.models import User
 from er.models import NewsItem, NewsTag
 from er.annotation import comment
 
+ZERO = datetime.timedelta(0)
+
+class UTC(datetime.tzinfo):
+    """UTC"""
+
+    def utcoffset(self, dt):
+        return ZERO
+
+    def tzname(self, dt):
+        return "UTC"
+
+    def dst(self, dt):
+        return ZERO
+
+utc = UTC()
+
 feed_url = 'http://www.cancercommons.org/feed/?tag=melanoma%20rc'
 
 response = urllib2.urlopen(feed_url)
@@ -36,10 +52,10 @@ for article in root.iter('item'):
         existing_item = NewsItem.objects.get(url=url)
         # matching URL, skip to next iteration
         # TODO: look for changes and save them
-        print("got existing: {0}".format(url))
+        print(u"got existing: {0}".format(url))
         continue
     except NewsItem.DoesNotExist:
-        print("new: {0}".format(url))
+        print(u"new: {0}".format(url))
         pass
 
     # title
@@ -61,6 +77,11 @@ for article in root.iter('item'):
     # for some reason, the TZ offset isn't supported universally
     pubdate_no_offset = re.sub(r' \+0000$', '', pubdate.text)
     d = datetime.datetime.strptime(pubdate_no_offset, "%a, %d %b %Y %H:%M:%S")
+    d = d.replace(tzinfo=utc)
+
+    if url == None:
+        print(u"Warning: article has no URL\n:{0}".format(summary))
+        continue
 
     # set up comment root
     c = comment(text="all comments for " + url, user=news_user)
