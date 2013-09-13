@@ -1,0 +1,27 @@
+{% extends "modal.html" %}
+{% block modal_title %}
+    News
+{% endblock %}
+{% block modal_body %}
+    <div class="news-tag-list">
+        {% if tags|length > 0 %}
+            Tags:
+            {% for tag in tags %}
+                <span class="label label-info">
+                    {{ tag }}
+                    <span class="tag-filter-remove" tag-value="{{ tag }}" url="{% url 'news_index_tag_modal' tag='TAGS_HERE' %}">
+                        x
+                    </span>
+                </span>
+            {% endfor %}
+            -
+        {% endif %}
+        {{ num_articles }} Article{{ num_articles|pluralize }}
+    </div>
+    <ul id="news-listing" class="news-listing">
+        {% include "news_index.html" %}
+    </ul>
+    <div>
+        Suggest Article
+    </div>
+{% endblock %}
