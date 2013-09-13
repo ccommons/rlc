@@ -30,7 +30,7 @@ function Modal() {
             if (this.content_element !== null) {
                 this.content_element.remove();
                 this.content_element = null;
-                window.removeEventListener('resize', this.assignHeight, false);
+                window.removeEventListener('resize', this.assignHeight.bind(this), false);
                 this.contentHeight = 0;
             }
         },
@@ -53,7 +53,7 @@ function Modal() {
                     this.content_element.find('#members-sort-form li>label').addClass('radio');
                 }.bind(this));
                 this.content_element.on('shown', this.assignHeight.bind(this));
-                window.addEventListener('resize', this.assignHeight, false);
+                window.addEventListener('resize', this.assignHeight.bind(this), false);
                 this.content_element.modal();
                 this.content_element.on('hidden', this.content_delete.bind(this));
                 this.content_element.on('hidden', function () {
@@ -63,12 +63,14 @@ function Modal() {
                         MODAL_STACK.backtrack();
                     }
                 }.bind(this));
+            } else {
+                this.assignHeight();
             }
             this.rendered = true;
         },
         'contentHeight': 0,
         'assignHeight': function () {
-            //Calculate and assign height to modal.
+            // Calculate and assign height to modal.
             var modalBody = this.content_element.find('.modal-body'),
                 totalHeight = window.innerHeight,
                 headerHeight = this.content_element.find('.modal-header').outerHeight(),
@@ -111,6 +113,7 @@ function AnnotationModal() {
                 // start inline editor
                 var event_element = $(event.currentTarget);
                 var reply = new InlineReply(event_element);
+                reply.$calling_modal = this;
             }.bind(this));
             $('a.annotation-page').click(function(event) {
                 var source = $(event.currentTarget);
@@ -315,6 +318,33 @@ function NewsModal() {
                 url = url.replace("TAGS_HERE", tags_json);
                 this.load(url);
             }.bind(this));
+
+            this.load_more_setup();
+        },
+
+        // this could be a part of render?
+        // will that send multiple events?
+
+        'load_more_setup' : function() {
+            $('.news_load_more').click(function(event) {
+                var url = $(event.currentTarget).attr('url');
+                this.load_more_articles(url);
+            }.bind(this));
+        },
+
+        'load_more_articles' : function(url) {
+            var display_more = function(data, status, jqxhr) {
+                // TODO: add protocol error checking
+
+                $('.load_more_articles').remove();
+
+                var $parent = $('#news-listing');
+                $parent.append(data["body_html"]);
+
+                // set up event handlers and render
+                this.render();
+            };
+            $.get(url, '', display_more.bind(this), 'json');
         }
     });
 }
@@ -527,3 +557,4 @@ function CKEditorsInModal(element, config_name) {
         }
     });
 }
+
