@@ -50,55 +50,64 @@
         <div class="tab-pane fade" id="annotation-{{forloop.counter}}">
         {% endif %}
         {% if a.model_object.doc_block != None %}
-        <div class="annotation-context">
-            {# TODO: move model_object stuff into annotation class #}
-            <a block_id="{{ a.model_object.doc_block.tag_id }}">
-                {{ a.model_object.doc_block.preview_text }}
-            </a>
+        <div class="annotation-context relative">
+            <div class="annotation-body">
+                {# TODO: move model_object stuff into annotation class #}
+                <a block_id="{{ a.model_object.doc_block.tag_id }}">
+                    {{ a.model_object.doc_block.preview_text }}
+                </a>
+            </div>
+            <div class="annotation-arrow"></div>
         </div>
         {% endif %}
         {% for comment in a.comments %}
-            <div id="annotation-comment-{{ comment.model_object.id }}">
+            <div id="annotation-comment-{{ comment.model_object.id }}" class="level-{{ comment.level }}">
                 <div class="reply-comment" style="margin-left: {{ comment.level }}0px">
+                    <div class="annotation-comment-author">
+                        <ul class="inline">
+                            {% if comment.model_object.user.first_name or comment.model_object.user.last_name %}
+                            <li>{{ comment.model_object.user.first_name }} {{ comment.model_object.user.last_name }}</li>
+                            {% endif %}
+                            {% if comment.timestamp or naturaltime %}
+                            <li>{{ comment.timestamp | naturaltime }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
                     <div class="annotation-comment-text">
                         {{ comment.text|safe }}
                     </div>
-                    <div class="annotation-comment-author">
-                        {{ comment.model_object.user.first_name }}
-                        {{ comment.model_object.user.last_name }} |
-                        {{ comment.timestamp | naturaltime }}
-                    </div>
                     <div class="annotation-comment-actions">
-                    {% include "rating_control.html" with comment=comment %}
-                    |
-                    {% if comment.level == 0 %}
-                        {% if a.reply_count == 1 %}
-                            One Reply |
-                        {% elif a.reply_count > 1 %}
-                            {{ a.reply_count }} Replies |
-                        {% endif %}
-                    {% endif %}
-                    {% if reply_url_name == "annotation_reply" %}
-                    <a class="annotation-reply"
-                       parent_id="annotation-comment-{{ comment.model_object.id }}"
-                       reply_level="{{ comment.level }}"
-                       reply_url="{% url reply_url_name doc_id=doc.id comment_id=comment.model_object.id %}">
-                    {% else %}
-                    {# reply_url_name == "annotation_reply_in_block" #}
-                    <a class="annotation-reply"
-                       parent_id="annotation-comment-{{ comment.model_object.id }}"
-                       reply_level="{{ comment.level }}"
-                       reply_url="{% url reply_url_name doc_id=doc.id comment_id=comment.model_object.id block_id=block_id%}">
-                    {% endif %}
-                        Reply
-                    </a>
-                    |
-                    {% if comment.model_object.user != user %}
-                        {% include "follow_control.html" with comment=comment %}
-                        |
-                    {% endif %}
-                    Share</div>
-                    <hr />
+                        {% include "rating_control.html" with comment=comment %}
+                        <ul class="inline">
+                            {% if comment.level == 0 %}
+                                {% if a.reply_count != 0 %}
+                                <li>
+                                    {% if a.reply_count == 1 %}
+                                        One Reply
+                                    {% elif a.reply_count > 1 %}
+                                        {{ a.reply_count }} Replies
+                                    {% endif %}
+                                </li>
+                                {% endif %}
+                            {% endif %}
+                            {% if reply_url_name == "annotation_reply" %}
+                            <li>
+                                <a class="annotation-reply" parent_id="annotation-comment-{{ comment.model_object.id }}" reply_level="{{ comment.level }}" reply_url="{% url reply_url_name doc_id=doc.id comment_id=comment.model_object.id %}">
+                            {% else %}
+                            {# reply_url_name == "annotation_reply_in_block" #}
+                                <a class="annotation-reply" parent_id="annotation-comment-{{ comment.model_object.id }}" reply_level="{{ comment.level }}" reply_url="{% url reply_url_name doc_id=doc.id comment_id=comment.model_object.id block_id=block_id%}">
+                            {% endif %}
+                                    Reply
+                                </a>
+                            </li>
+                            {% if comment.model_object.user != user %}
+                            <li>
+                                {% include "follow_control.html" with comment=comment %}
+                            </li>
+                            {% endif %}
+                            <li>Share</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         {% endfor %}{# comment in a.comments #}
