@@ -108,16 +108,26 @@ function AnnotationModal() {
                 annotation_compose_init(url);
             }.bind(this));
             $('a.annotation-reply').click(function(event) {
+                /* close any active editors */
+                if (this.inline_reply !== undefined) {
+                    this.inline_reply.cancel_form();
+                }
                 // start inline editor, attach modal
                 var event_element = $(event.currentTarget);
                 var reply = new InlineReply(event_element);
                 reply.$calling_modal = this;
+                this.inline_reply = reply;
             }.bind(this));
             $('a.newsitem-reply').click(function(event) {
+                /* close any active editors */
+                if (this.inline_reply !== undefined) {
+                    this.inline_reply.cancel_form();
+                }
                 // start inline editor
                 var event_element = $(event.currentTarget);
                 var reply = new InlineReply(event_element);
                 reply.$calling_modal = this;
+                this.inline_reply = reply;
             }.bind(this));
             $('a.annotation-page').click(function(event) {
                 var source = $(event.currentTarget);
@@ -369,6 +379,8 @@ function InlineReply(initiating_element) {
 
     this.$calling_modal = undefined;
 
+    this.active = true;
+
     $.extend(this, {
         'show_reply_form' : function(data, status, jqxhr) {
             this.$new = $("<div/>").html(data["body_html"]);
@@ -401,8 +413,11 @@ function InlineReply(initiating_element) {
         },
 
         'cancel_form' : function(event) {
-            this.ckeditor.finalize();
-            this.$new.remove();
+            if (this.active === true) {
+                this.ckeditor.finalize();
+                this.$new.remove();
+                this.active = false;
+            }
         },
 
         'submit_reply_form' : function(event) {
@@ -427,6 +442,9 @@ function InlineReply(initiating_element) {
                 this.render(data);
                 return(false);
             }
+
+            /* mark as inactive */
+            this.active = false;
 
             /* close inline commenter and replace with new comment */
             this.$new.html(data["html"]);
