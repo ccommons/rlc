@@ -16,7 +16,15 @@
     {% endif %}
 
     <div>
-        {{ form.comment_text.errors }}
+        {% if form.comment_text.errors %}
+        {% for error in form.comment_text.errors %}
+            <div class="form-error alert alert-error fade">
+                <i class="icon-chevron-down"></i>
+                {{ error|escape }}
+            </div>
+        {% endfor %}
+        <script language="javascript">$('.form-error').addClass("in")</script>
+        {% endif %}
         {# {{ form.comment_text.label }} #}
         {{ form.comment_text }}
     </div>
