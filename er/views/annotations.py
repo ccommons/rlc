@@ -3,7 +3,7 @@ from django.template import loader as template_loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 
-from er.models import EvidenceReview, PaperBlock
+from er.models import EvidenceReview, PaperBlock, PaperTable
 from er.models import Annotation, Comment
 
 from er.annotation import annotation, comment
@@ -56,7 +56,6 @@ def full_json(request, *args, **kwargs):
     else:
         content = "no document"
 
-
     # TODO: should probably error out if annotation can't be found
     selected_annotation = 1
 
@@ -78,6 +77,7 @@ def full_json(request, *args, **kwargs):
         # TODO: raise proper exception (this will error out some other way)
         pass
 
+
     # get annotations
     if this_url_name in ["annotation_all", "annotation_one_of_all"]:
         # TODO: move this into annotation class
@@ -96,6 +96,20 @@ def full_json(request, *args, **kwargs):
         # TODO: raise proper exception (this will error out some other way)
         pass
 
+    # TODO: put context info into class method in annotation class
+    # (see later)
+
+    annotation_objs = Annotation.objects.filter(id__in=[a.id for a in annotations])
+    # get context info
+    context_info = annotation_objs.exclude(doc_block=None).values_list('id', 'doc_block__tag_id', 'doc_block__preview_text')
+    block_context = { id: { "tag_id": tag_id, "context": context }
+                                for id, tag_id, context in context_info }
+
+    # get tables and caption info
+    table_info = doc.papertable_set.values_list('tag_id', 'caption')
+    table_captions = { tag_id: caption for tag_id, caption in table_info }
+
+
     num_annotations = len(annotations)
     for index, a in enumerate(annotations, 1):
         a.comments = a.comment.thread_as_list()
@@ -105,6 +119,19 @@ def full_json(request, *args, **kwargs):
         if requested_id != None:
             if a.model_object.id == requested_id:
                 selected_annotation = index
+
+        # extract and connect context if necessary
+        # TODO: context-attaching to a set of annotations should probably be
+        # a class method in the annotation class
+        if a.id in block_context:
+            a.show_context = True
+            a.tag_id = block_context[a.id]["tag_id"]
+            if a.tag_id in table_captions:
+                a.context = table_captions[a.tag_id]
+            else:
+                a.context = block_context[a.id]["context"]
+        else:
+            a.show_context = False
 
     context = Context({
 	"doc" : doc,

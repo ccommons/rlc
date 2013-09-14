@@ -49,12 +49,11 @@
         {% else %}
         <div class="tab-pane fade" id="annotation-{{forloop.counter}}">
         {% endif %}
-        {% if a.model_object.doc_block != None %}
+        {% if a.show_context == True %}
         <div class="annotation-context relative">
             <div class="annotation-body">
-                {# TODO: move model_object stuff into annotation class #}
-                <a block_id="{{ a.model_object.doc_block.tag_id }}">
-                    {{ a.model_object.doc_block.preview_text }}
+                <a block_id="{{ a.tag_id }}">
+                    {{ a.context }}
                 </a>
             </div>
             <div class="annotation-arrow"></div>
