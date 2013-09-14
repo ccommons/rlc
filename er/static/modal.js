@@ -206,6 +206,11 @@ function AnnotationComposeModal() {
                     ckconfig_name = this.attached_data["ckeditor_config"];
                 }
                 this.ckeditor = new CKEditorsInModal(this.content_element, ckconfig_name);
+                // the focus for any ckeditors must happen after the modal
+                // is ready
+                this.content_element.on('shown', function (e) {
+                    this.ckeditor.focus();
+                }.bind(this));
             }
         },
         'editors_sync' : function() {
@@ -542,17 +547,26 @@ function CKEditorsInModal(element, config_name) {
         if (config_name in __CKEDITOR_CONFIGS) {
             ckconfig = __CKEDITOR_CONFIGS[config_name];
         }
+        ckconfig["startupFocus"] = true;
+
         var instance = CKEDITOR.replace(textarea_id, ckconfig);
         this.editors.push(instance);
     }.bind(this));
 
     $.extend(this, {
+        'focus' : function() {
+            $.each(this.editors, function(i, ckinstance) {
+                ckinstance.focus();
+            });
+        },
+
         'sync' : function() {
             /* synchronize ckeditors if present */
             $.each(this.editors, function(i, ckinstance) {
                 ckinstance.updateElement();
             });
         },
+
         'finalize' : function() {
             /* tear down ckeditors if present */
             $.each(this.editors, function(i, ckinstance) {
