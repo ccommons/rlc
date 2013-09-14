@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
+from er.login_decorators import login_required_json
 
 from django.template.loader import render_to_string
 from django.utils import simplejson
@@ -14,7 +15,7 @@ from django.db.models import Count
 
 from django.core.urlresolvers import reverse
 
-@login_required
+@login_required_json
 def follow_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
 

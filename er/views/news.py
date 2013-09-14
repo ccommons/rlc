@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
+from er.login_decorators import login_required_json
 from django.views.decorators.http import require_POST
 
 from django.template.loader import render_to_string
@@ -39,7 +40,7 @@ def index(request, *args, **kwargs):
 
     return(render_to_response("news.html", context, context_instance=req_cxt))
 
-@login_required
+@login_required_json
 def index_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
 
@@ -119,7 +120,7 @@ def index_json(request, *args, **kwargs):
 
     return(HttpResponse(json_str, mimetype='application/json'))
 
-@login_required
+@login_required_json
 def comment_json(request, *args, **kwargs):
     """news item comments"""
     from er.notification import notification
@@ -162,7 +163,7 @@ class NewsReplyForm(forms.ModelForm):
     comment_text = forms.CharField(widget=forms.Textarea())
 
 
-@login_required
+@login_required_json
 def reply_json(request, *args, **kwargs):
     """news item -- compose a reply"""
     req_cxt = RequestContext(request)
@@ -187,7 +188,7 @@ def reply_json(request, *args, **kwargs):
 
     return(HttpResponse(json_str, mimetype='application/json'))
 
-@login_required
+@login_required_json
 @require_POST
 def reply_new_json(request, *args, **kwargs):
     original_comment = comment.fetch(id=kwargs["comment_id"])
