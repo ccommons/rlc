@@ -96,6 +96,9 @@ urlpatterns = patterns('',
     # tables
     url(TABLE_PREFIX + r'/json$', 'er.views.table.display_json', name='table_modal'),
 
+    # json logged out message
+    url(r'^loggedout/json', 'er.views.login.logged_out_json', name='logged_out_json'),
+
     # framework administration
     url(r'^admin/', include(admin.site.urls)),
 
