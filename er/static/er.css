@@ -73,7 +73,7 @@
     overflow-y: auto;
 }
 
-.annotation_pager {
+.annotation-pager {
     margin-right: 20px;
     margin-left: 20px;
     -webkit-touch-callout: none;
@@ -82,6 +82,7 @@
     -moz-user-select: -moz-none;
     -ms-user-select: none;
     user-select: none;
+    color: #000000;
 }
 
 .annotation-preview {
