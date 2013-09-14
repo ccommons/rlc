@@ -19,19 +19,25 @@ class emailNotification(object):
         self.event = None
         self.model_object = None
         self.connection = None
+        self.reply_to = None
 
-        # create new email notification record if there are event and user args
-        if 'event' in kwargs and 'user' in kwargs:
+        if 'event' in kwargs:
             if isinstance(kwargs['event'], event) and kwargs['event'].model_object:
-                if settings.EMAIL_NOTIFICATION and self.email_preferred(kwargs['user'], kwargs['event']):
-                #if self.email_preferred(kwargs['user'], kwargs['event']):
-                    self.model_object = self.__class__.MODEL(
-                        user=kwargs['user'],
-                        event=kwargs['event'].model_object,
-                    )
-                    self.model_object.save()
-                    self.user = kwargs['user']
+                if 'user' in kwargs:
+                    # create new email notification record if there are event and user args
+                    if settings.EMAIL_NOTIFICATION and self.email_preferred(kwargs['user'], kwargs['event']):
+                        self.model_object = self.__class__.MODEL(
+                            user=kwargs['user'],
+                            event=kwargs['event'].model_object,
+                        )
+                        self.model_object.save()
+                        self.user = kwargs['user']
+                        self.event = kwargs['event']
+                elif 'to' in kwargs and kwargs['to']:
+                    # email without creating model object
                     self.event = kwargs['event']
+                    # dummy user
+                    self.user = User(username='dummy', email=kwargs['to'])
 
         if 'model_object' in kwargs:
             if isinstance(kwargs['model_object'], self.__class__.MODEL):
@@ -44,6 +50,9 @@ class emailNotification(object):
         # should check
         if 'connection' in kwargs:
             self.connection = kwargs['connection']
+
+        if 'reply_to' in kwargs:
+            self.reply_to = kwargs['reply_to']
 
     def email_preferred(self, user, event):
         try:
@@ -151,13 +160,20 @@ class emailNotification(object):
             logger.info('user %d has no email address saved' % self.user.id)
             return
         try:
+            headers = {}
+            connection = None
+            if self.reply_to:
+                headers['Reply-To'] = self.reply_to
+            if self.connection:
+                connection = self.connection
+
             email = EmailMultiAlternatives(
                 subject = self.subject,
                 body = self.message_plain,
                 to = [self.user.email,],
+                headers = headers,
+                connection = connection,
             )
-            if self.connection:
-                email.connection = self.connection
             email.attach_alternative(self.message_html, "text/html")
             email.send()
             self.delete()

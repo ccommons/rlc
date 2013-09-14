@@ -171,6 +171,39 @@ class eventHandler(object):
             logger.error(ex)
 
     @classmethod
+    def share_via_email(cls, sharer, recipients, *args, **kwargs):
+        """
+        notification API
+        shorthand for create_event() and make_notifications()
+        the kwargs are shared between the two methods
+        """
+        connection = None
+        try:
+            if 'action' in kwargs:
+                del kwargs['action']
+            remarks = {'sharer':sharer.id}
+            event = cls.create_event(action='shared', remarks=json.dumps(remarks), *args, **kwargs)
+            from er.emailnotification import emailNotification
+            from django.core import mail
+            connection = mail.get_connection()
+            connection.open()
+            for recipient in recipients:
+                try:
+                    email = emailNotification(event=event, to=recipient, connection=connection)
+                    # reply to sharer
+                    if sharer.email:
+                        email.reply_to = sharer.email
+                    email.send()
+                except Exception, ex:
+                    logger.error(ex)
+                    continue
+            connection.close()
+        except Exception, ex:
+            logger.error(ex)
+            if connection:
+                connection.close()
+
+    @classmethod
     def match_email_preference(cls, preferences, event):
         """
         subclass should not override this method, instead should override _match_email_preference()
