@@ -18,8 +18,14 @@ import json
 def logged_out_json(request):
     req_cxt = RequestContext(request)
 
+    # currently, the javascript calls location.reload() to reload the page,
+    # which will redirect to an appropriate login URL, with a (mostly)
+    # correct redirect to the previous context
+    # login_url = reverse('login')
+
     json_str = simplejson.dumps({
         "error" : "logged_out",
+        # "login_url" : login_url,
     })
 
     return(HttpResponse(json_str, mimetype='application/json'))
