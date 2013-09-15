@@ -15,6 +15,7 @@ annotation_preview_init = function(url) {
 
 annotation_preview_refresh = function() {
     var display = function(data, status, jqxhr) {
+        verify_json_response(data);
         /* TODO: check status */
         /* remove any pre-existing previews */
         $('.annotation-preview').remove();
@@ -58,6 +59,7 @@ annotation_preview_refresh = function() {
 /* ratings */
 rating_add = function(rate_url, rating_element_id) {
     var rating_result = function(data, status, jqxhr) {
+        verify_json_response(data);
         $rating_el = $('#' + rating_element_id);
         $rating_el.replaceWith(data["body_html"]);
     }
@@ -68,6 +70,7 @@ rating_add = function(rate_url, rating_element_id) {
 /* follow/unfollow (identical to ratings for now) */
 follow_toggle = function(follow_url, follow_element_id) {
     var follow_result = function(data, status, jqxhr) {
+        verify_json_response(data);
         $rating_el = $('#' + follow_element_id);
         $rating_el.replaceWith(data["body_html"]);
     }
