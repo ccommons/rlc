@@ -18,7 +18,9 @@ function Modal() {
 
         'load' : function (url) {
             var display = function(data, status, jqxhr) {
+                verify_json_response(data);
                 // TODO: add protocol error checking
+
                 this.content_set(data["body_html"]);
                 this.set_data(data);
                 this.render();
