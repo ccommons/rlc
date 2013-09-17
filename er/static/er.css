@@ -623,6 +623,7 @@ ul.news-listing > li {
 }
 ul.news-listing > li:last-child {
     border-bottom: none;
+    padding-top: 15px;
 }
 
 ul.news-listing h1 {
