@@ -36,8 +36,8 @@
     </div>
 
     {% for comment in comments %}
-    <div id="news-comment-{{ comment.model_object.id }}">
-        <div class="reply-comment" style="margin-left: {{ comment.level|add:-1 }}0px">
+    <div id="news-comment-{{ comment.model_object.id }}" class="level-{{comment.level}}">
+        <div class="reply-comment" style="margin-left: {{ comment.level }}0px">
             <div class="annotation-comment-text">
                 {{ comment.text|safe }}
             </div>

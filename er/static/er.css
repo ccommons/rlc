@@ -181,9 +181,9 @@
 .reply-comment {
     margin-bottom: 0px;
 }
-.reply-comment > div {
+/*.reply-comment > div {
     line-height: 14px;
-}
+}*/
 
 .reply-comment-inline {
     border-radius: 3px;
@@ -308,6 +308,7 @@
 
 .annotation-comment-author {
     text-transform: uppercase;
+    padding-left: 5px;
 }
 
 .annotation-comment-actions {
@@ -614,6 +615,14 @@
 ul.news-listing {
     list-style-type: none;
     margin-left: 0;
+}
+
+ul.news-listing > li {
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ccc;
+}
+ul.news-listing > li:last-child {
+    border-bottom: none;
 }
 
 ul.news-listing h1 {
