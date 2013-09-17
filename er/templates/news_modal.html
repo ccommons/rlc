@@ -1,6 +1,20 @@
 {% extends "modal.html" %}
-{% block modal_title %}
-    News
+{% block modal_header %}
+    
+    <div class="btn-group pull-right annotation-pager">
+        <a class="btn js-prev annotation-page" incr="-1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe01d;"></a>
+        <span>
+            <span id="current_annotation" num_news="{{ num_news }}" current_pos="{{ selected_annotation }}">
+                {{ selected_annotation }}
+            </span>
+            | {{ num_news }}
+        </span>
+        <a class="btn js-next annotation-page" incr="1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe019;"></a>
+    </div>
+
+    <h3 class="modal-title all-caps">
+        <em>NEWS</em>
+    </h3>
 {% endblock %}
 {% block modal_body %}
     <div class="news-tag-list">

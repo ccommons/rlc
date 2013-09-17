@@ -1,26 +1,39 @@
 {% extends "modal.html" %}
-{% block modal_title %}
-    <h4 class="modal-title">
-        News
-    </h4>
+{% block modal_header %}
+    <div class="pull-right">
+        <form id="members-sort-form" method="post" action="/profile/all/json">
+            <ul class="inline">
+                <li><label class="radio"><input checked="checked" name="sort_order" type="radio" value="contribution">Latest</label></li>
+                <li><label class="radio"><input name="sort_order" type="radio" value="firstname">Highest Rated</label></li>
+            </ul>
+            <input type="hidden" name="csrfmiddlewaretoken" value="2HkZt6vhD5Y5eMtfkWV7wFSgfFx8Trwi">
+        </form>
+    </div>
+
+    <h3 class="modal-title all-caps">
+        <em>NEWS</em>
+    </h3>
 {% endblock %}
 {% block modal_body %}
     <h4>{{ news_item.title }}</h4>
     <div>{{ news_item.preview|safe }}</div>
 
-    {% include "rating_control.html" with comment=head_comment %} |
-    <span class="head-news-comment" id="news-comment-{{ head_comment.model_object.id }}">
-        <a class="newsitem-reply"
-           parent_id="news-comment-{{ head_comment.model_object.id }}"
-           reply_level="{{ head_comment.level }}"
-           reply_url="{% url 'news_reply' comment_id=head_comment.model_object.id %}">
-           Comment
-        </a>
-        |
-        {% include "follow_control.html" with comment=head_comment %}
-
-        <hr />
-    </span>
+    <div class="news-actions">
+        {% include "rating_control.html" with comment=head_comment %}
+        <ul class="inline head-news-comment" id="news-comment-{{ head_comment.model_object.id }}">
+            <li>
+                <a class="newsitem-reply"
+                   parent_id="news-comment-{{ head_comment.model_object.id }}"
+                   reply_level="{{ head_comment.level }}"
+                   reply_url="{% url 'news_reply' comment_id=head_comment.model_object.id %}">
+                   Comment
+                </a>
+            </li>
+            <li>
+                {% include "follow_control.html" with comment=head_comment %}
+            </li>
+        </ul>
+    </div>
 
     {% for comment in comments %}
     <div id="news-comment-{{ comment.model_object.id }}">
@@ -54,7 +67,6 @@
             {% endif %}
             | Share
             </div>
-            <hr />
         </div>
     </div>
     {% endfor %}{# comments #}

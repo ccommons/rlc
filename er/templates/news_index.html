@@ -1,34 +1,38 @@
 {% for news_item in news_items %}
     <li>
-        <h1>
-        <a target="_blank" href="{{ news_item.url }}">
-            {{ news_item.title }}
-        </a>
-        </h1>
-        <div class="news-summary">
+        <h4>
             <a target="_blank" href="{{ news_item.url }}">
-            <p>{{ news_item.preview|safe }}</p>
+                {{ news_item.title }}
             </a>
-        </div>
-        <div class="news-authorjournalinfo">
+        </h4>
+        <div class="news-authorjournalinfo all-caps text-gray1">
             {{ news_item.authorjournal }}
+        </div>
+        <div class="news-summary">
+            <p class="two-line-preview">{{ news_item.preview|safe }}</p>
         </div>
         <div class="news-tags">
             {% for tag in news_item.tag_objects %}
-                <span class="label label-info tag-filter" tag-value="{{ tag.tag_value }}" url="{{ tag_change_url }}">
+                <span class="label text-blue4 bg-blue3 tag-filter " tag-value="{{ tag.tag_value }}" url="{{ tag_change_url }}">
                     {{ tag.tag_value }}
                 </span>
             {% endfor %}
         </div>
         <div class="news-actions">
-            <a class='news-comments-link' url="{% url 'news_comment' item_id=news_item.id %}">Comments</a> |
             {% include "rating_control.html" with comment=news_item.initial_comment %}
-            |
-            {% include "follow_control.html" with comment=news_item.initial_comment %}
-            |
-            Share
+            <ul class="inline">
+                <li>
+                    <a class='news-comments-link' url="{% url 'news_comment' item_id=news_item.id %}">Comments</a>
+                </li>
+                <li>
+                    {% include "follow_control.html" with comment=news_item.initial_comment %}
+                </li>
+                <li>
+                    Share
+                </li>
+            </ul>
         </div>
-        <hr / >
+        <div class="horisontal-separator"></div>
     </li>
 {% endfor %}
 

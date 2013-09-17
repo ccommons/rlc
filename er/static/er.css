@@ -222,6 +222,24 @@
 .text-blue2 {
     color: #018bba;
 }
+.bg-blue3 {
+    background-color: #DDE8EE;
+}
+.border-blue3 {
+    border-color: #DDE8EE;
+}
+.text-blue3 {
+    color: #DDE8EE;
+}
+.bg-blue4 {
+    background-color: #0069A0;
+}
+.border-blue4 {
+    border-color: #0069A0;
+}
+.text-blue4 {
+    color: #0069A0;
+}
 .bg-red1,
 .proprev-header {
     background-color: #dc3c26;
@@ -251,6 +269,15 @@
 }
 .text-black1 {
     color: #202020;
+}
+.bg-gray1 {
+    background-color: #6E6E6E;
+}
+.border-gray1 {
+    border-color: #6E6E6E;
+}
+.text-gray1 {
+    color: #6E6E6E;
 }
 .rejrev-header {
     background-color: #A0A0A0;
@@ -287,12 +314,14 @@
     padding: 0 5px;
 }
 
-.annotation-comment-actions ul {
+.annotation-comment-actions ul,
+.news-actions ul {
     display: inline-block;
 }
 
 .annotation-comment-author ul li + li,
-.annotation-comment-actions ul li + li {
+.annotation-comment-actions ul li + li,
+.news-actions ul li + li {
     border-left: 1px solid #000;
     line-height: 14px;
 }
@@ -596,6 +625,11 @@ ul.news-listing h1 {
 ul.news-listing .news-tags {
     margin-bottom: 3px;
 }
+ul.news-listing .news-tags .label {
+    padding: 8px;
+    margin-top: 10px;
+    font-weight: 400;
+}
 
 /* notification classes */
 .notification-content {
@@ -641,7 +675,6 @@ ul.news-listing .news-tags {
     margin-left: 0;
     font-size: 18px;
     font-weight: bold;
-    background-color: #DDE8EE;
 }
 
 .modal .btn-group > span {
@@ -649,7 +682,6 @@ ul.news-listing .news-tags {
     margin-left: -1px;
     display: inline-block;
     height: 30px;
-    background-color: #fff;
     box-sizing: border-box;
     border: 1px solid #d3d3d3;
     padding: 4px 12px;
