@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
+from er.login_decorators import login_required_json
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.http import HttpResponse
@@ -69,7 +70,7 @@ def notifications_menu(request):
     req_cxt = RequestContext(request)
     return(render_to_response("notification_page.html", context, context_instance=req_cxt))
 
-@login_required
+@login_required_json
 def notifications_json(request):
     """notification menu shows each notification item"""
     context = get_notifications(request)
@@ -80,7 +81,7 @@ def notifications_json(request):
     })
     return (HttpResponse(json, mimetype='application/json'))
 
-@login_required
+@login_required_json
 def notifications_count_json(request):
     """notification count for the user"""
     req_cxt = RequestContext(request)

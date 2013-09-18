@@ -109,6 +109,7 @@ var POPOVER = {
             var url = this.$el.attr('data-url');
             if (url !== undefined) {
                 $.get(url, '', function(data, status, jqxhr) {
+                    verify_json_response(data);
                     var $popover_content = popover.children(".popover-content");
                     $popover_content.html(data["body_html"]);
                     notification_icon_refresh();

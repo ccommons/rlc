@@ -11,6 +11,7 @@ notification_icon_init = function(url){
 
 notification_icon_refresh = function(){
     var display = function(data, status, jqxhr) {
+        verify_json_response(data);
         count = data['count'];
         if (count > 0) {
             $('#notifications-count').html(data['count']);
