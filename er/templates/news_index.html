@@ -22,7 +22,13 @@
             {% include "rating_control.html" with comment=news_item.initial_comment %}
             <ul class="inline">
                 <li>
-                    <a class='news-comments-link' url="{% url 'news_comment' item_id=news_item.id %}">Comments</a>
+                    <a class='news-comments-link' url="{% url 'news_comment' item_id=news_item.id %}">
+                        {% if news_item.num_comments == 0 %}
+                            Leave Comment
+                        {% else %}
+                            {{ news_item.num_comments }} Comment{{ news_item.num_comments|pluralize }}
+                        {% endif %}
+                    </a>
                 </li>
                 <li>
                     {% include "follow_control.html" with comment=news_item.initial_comment %}

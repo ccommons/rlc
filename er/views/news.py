@@ -74,6 +74,7 @@ def index_json(request, *args, **kwargs):
 
     for news_item in news_items:
         news_item.initial_comment = comment.fetch(news_item.comments.id)
+        news_item.num_comments = news_item.initial_comment.model_object.all_replies.count()
 
     attach_ratings([item.initial_comment for item in news_items], user=user)
     attach_following([item.initial_comment for item in news_items], user)
