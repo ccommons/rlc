@@ -245,8 +245,7 @@ function MyProfileModal() {
     var $super = new Modal();
 
     var submit_response_handler = function(data, texttype) {
-        // this.close();
-        // this.content_delete();
+        verify_json_response(data);
         /* TODO: make this into some better sort of handler */
         this.content_set(data["body_html"]);
         this.set_data(data);
@@ -274,6 +273,7 @@ function MembersModal() {
     var $super = new Modal();
 
     var submit_response_handler = function(data, texttype) {
+        verify_json_response(data);
         // no actions needed for MODAL_STACK; changes are in-place
         this.content_set(data["body_html"]);
         this.set_data(data);
@@ -356,6 +356,7 @@ function NewsModal() {
 
         'load_more_articles' : function(url) {
             var display_more = function(data, status, jqxhr) {
+                verify_json_response(data);
                 // TODO: add protocol error checking
 
                 $('.load_more_articles').remove();

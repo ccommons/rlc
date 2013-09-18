@@ -1,5 +1,6 @@
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
+from er.login_decorators import login_required_json
 from django.contrib.auth.models import User
 
 from django.template.loader import render_to_string
@@ -46,7 +47,7 @@ class updateEmailPreferenceForm(forms.Form):
     new_members = forms.BooleanField(required=False)
 
 
-@login_required
+@login_required_json
 def profile_json(request, *args, **kwargs):
     modal_id = "modal_profile"
     req_cxt = RequestContext(request)
@@ -268,7 +269,7 @@ class membersSortForm(forms.Form):
     SORT_ORDER_CHOICES = (('contribution', 'Top Contributors',), ('firstname', 'Alphabetical'),)
     sort_order = forms.ChoiceField(widget=forms.RadioSelect, choices=SORT_ORDER_CHOICES)
 
-@login_required
+@login_required_json
 def members_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
     modal_id = "modal_members"
