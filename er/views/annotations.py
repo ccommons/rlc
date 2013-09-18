@@ -1,6 +1,7 @@
 from django.template import Context, RequestContext, Template
 from django.template import loader as template_loader
 from django.contrib.auth.decorators import login_required
+from er.login_decorators import login_required_json
 from django.views.decorators.http import require_POST
 
 from er.models import EvidenceReview, PaperBlock, PaperTable
@@ -38,7 +39,7 @@ def annotation_summary(doc):
 
     return(counts)
 
-@login_required
+@login_required_json
 def full_json(request, *args, **kwargs):
     """annotation view"""
     from er.notification import notification
@@ -180,7 +181,7 @@ class AnnotationComposeForm(forms.ModelForm):
     initial_comment_text = forms.CharField(widget=forms.Textarea(), label="")
 
 
-@login_required
+@login_required_json
 def compose_json(request, *args, **kwargs):
     """annotation compose view"""
     req_cxt = RequestContext(request)
@@ -237,7 +238,7 @@ def compose_json(request, *args, **kwargs):
 
     return(HttpResponse(json, mimetype='application/json'))
 
-@login_required
+@login_required_json
 @require_POST
 def add_json(request, *args, **kwargs):
     """annotation create"""
@@ -333,7 +334,7 @@ class EditorProposedRevisionReplyForm(AnnotationReplyForm):
     ]
     approval = forms.ChoiceField(choices=APPROVAL_CHOICES, widget=forms.RadioSelect, label = "")
 
-@login_required
+@login_required_json
 def reply_compose_json(request, *args, **kwargs):
     """annotation comment reply view"""
     this_url_name = request.resolver_match.url_name
@@ -399,7 +400,7 @@ def reply_compose_json(request, *args, **kwargs):
 
     return(HttpResponse(json, mimetype='application/json'))
 
-@login_required
+@login_required_json
 @require_POST
 def reply_add_json(request, *args, **kwargs):
     """annotation create"""
@@ -511,7 +512,7 @@ def reply_add_json(request, *args, **kwargs):
     return(HttpResponse(json, mimetype='application/json'))
 
 
-@login_required
+@login_required_json
 def preview_json(request, *args, **kwargs):
     req_cxt = RequestContext(request)
 

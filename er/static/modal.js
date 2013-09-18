@@ -172,6 +172,7 @@ function AnnotationComposeModal() {
     var $super = new Modal();
 
     var submit_response_handler = function(data, texttype) {
+        verify_json_response(data);
         this.editors_finalize();
 
         /* check for errors */
@@ -385,6 +386,7 @@ function InlineReply(initiating_element) {
 
     $.extend(this, {
         'show_reply_form' : function(data, status, jqxhr) {
+            verify_json_response(data);
             this.$new = $("<div/>").html(data["body_html"]);
             this.$parent.after(this.$new);
             this.render(data);
@@ -434,6 +436,7 @@ function InlineReply(initiating_element) {
         },
 
         'reply_form_response' : function(data, status, jqxhr) {
+            verify_json_response(data);
             if (this.use_ckeditor === true) {
                 this.ckeditor.finalize();
             }
