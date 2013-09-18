@@ -1,6 +1,7 @@
 from django.template import Context, RequestContext, Template
 from django.template import loader as template_loader
 from django.contrib.auth.decorators import login_required
+from er.login_decorators import login_required_json
 
 from er.models import EvidenceReview, PaperTable
 from er.models import Annotation, Comment
@@ -16,7 +17,7 @@ from docutils import get_doc
 
 from bs4 import BeautifulSoup
 
-@login_required
+@login_required_json
 def display_json(request, *args, **kwargs):
     """table modal view"""
     req_cxt = RequestContext(request)
