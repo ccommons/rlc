@@ -6,7 +6,7 @@
     {% if num_annotations > 1 %}{# pager #}
     <div class="btn-group pull-right annotation-pager">
         <a class="btn js-prev annotation-page" incr="-1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe01d;"></a>
-        <span>
+        <span class="pager-status-view">
             <span id="current_annotation" num_annotations="{{ num_annotations }}" current_pos="{{ selected_annotation }}">
                 {{ selected_annotation }}
             </span>
