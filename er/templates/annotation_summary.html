@@ -1,5 +1,11 @@
 <div id="annotation-summary-container" class="document-summary relative">
     <ul class="unstyled">
+    {% if num_openq > 0 %}
+    <li class="document-summary-item text-blue2" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='openq' %}')">
+        <h4 class="document-summary-counter"><em>{{ num_openq }}</em></h4>
+        <strong>Open Question{{ num_openq|pluralize }}</strong>
+    </li>
+    {% endif %}
     {% if num_note > 0 %}
     <li class="document-summary-item text-blue1" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='note' %}')">
         <h4 class="document-summary-counter"><em>{{ num_note }}</em></h4>
@@ -22,12 +28,6 @@
     <li class="document-summary-item text-red1" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='proprev' %}')">
         <h4 class="document-summary-counter"><em>{{ num_proprev }}</em></h4>
         <strong>Proposed Revision{{ num_proprev|pluralize }}</strong>
-    </li>
-    {% endif %}
-    {% if num_openq > 0 %}
-    <li class="document-summary-item text-blue2" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='openq' %}')">
-        <h4 class="document-summary-counter"><em>{{ num_openq }}</em></h4>
-        <strong>Open Question{{ num_openq|pluralize }}</strong>
     </li>
     {% endif %}
     </ul>
