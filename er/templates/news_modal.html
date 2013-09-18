@@ -1,16 +1,16 @@
 {% extends "modal.html" %}
 {% block modal_header %}
     
-    <div class="btn-group pull-right annotation-pager">
-        <a class="btn js-prev annotation-page" incr="-1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe01d;"></a>
-        <span>
-            <span id="current_annotation" num_news="{{ num_news }}" current_pos="{{ selected_annotation }}">
-                {{ selected_annotation }}
-            </span>
-            | {{ num_news }}
-        </span>
-        <a class="btn js-next annotation-page" incr="1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe019;"></a>
+    {% comment %}{# filtering by rating is not yet implemented #}
+    <div class="pull-right">
+        <form id="news-filter-select" method="post" action="">
+            <ul class="inline">
+                <li><label class="radio"><input checked="checked" name="sort_order" type="radio" value="contribution">Latest</label></li>
+                <li><label class="radio"><input name="sort_order" type="radio" value="firstname">Highest Rated</label></li>
+            </ul>
+        </form>
     </div>
+    {% endcomment %}
 
     <h3 class="modal-title all-caps">
         <em>NEWS</em>

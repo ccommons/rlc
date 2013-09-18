@@ -1,14 +1,18 @@
 {% extends "modal.html" %}
 {% block modal_header %}
-    <div class="pull-right">
-        <form id="members-sort-form" method="post" action="/profile/all/json">
-            <ul class="inline">
-                <li><label class="radio"><input checked="checked" name="sort_order" type="radio" value="contribution">Latest</label></li>
-                <li><label class="radio"><input name="sort_order" type="radio" value="firstname">Highest Rated</label></li>
-            </ul>
-            <input type="hidden" name="csrfmiddlewaretoken" value="2HkZt6vhD5Y5eMtfkWV7wFSgfFx8Trwi">
-        </form>
+
+    {% comment %}{# news item paging not yet implemented #}
+    <div class="btn-group pull-right annotation-pager">
+        <a class="btn js-prev annotation-page" incr="-1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe01d;"></a>
+        <span>
+            <span id="current_annotation" num_news="{{ num_news }}" current_pos="{{ selected_annotation }}">
+                {{ selected_annotation }}
+            </span>
+            | {{ num_news }}
+        </span>
+        <a class="btn js-next annotation-page" incr="1" target_el="current_annotation" aria-hidden="true" data-icon="&#xe019;"></a>
     </div>
+    {% endcomment %}
 
     <h3 class="modal-title all-caps">
         <em>NEWS</em>
