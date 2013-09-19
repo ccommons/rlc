@@ -6,10 +6,13 @@
 {% load staticfiles %}
 {% block header_media %}
 <link rel="stylesheet" type="text/css" href="{% static "vendor/bootstrap.css" %}" />
+<link type="text/css" href="{% static "vendor/jscrollpane/jquery.jscrollpane.css" %}" rel="stylesheet" media="all" />
 <link rel="stylesheet" type="text/css" href="{% static "base.css" %}" />
 <link rel="stylesheet" type="text/css" href="{% static "er.css" %}" />
 <script src="{% static "vendor/jquery-1.8.3.min.js" %}"></script>
 <script src="{% static "vendor/bootstrap.js" %}"></script>
+<script src="{% static "vendor/jscrollpane/jquery.mousewheel.js" %}"></script>
+<script src="{% static "vendor/jscrollpane/jquery.jscrollpane.min.js" %}"></script>
 <script src="{% static "doc.js" %}"></script>
 <script src="{% static "modal.js" %}"></script>
 <script src="{% static "popover.js" %}"></script>
@@ -36,5 +39,8 @@
 {% block footer %}
 {% include "footer.html" %}
 {% endblock %}
+<script type="text/javascript">
+	$('#toc-container').jScrollPane();
+</script>
 </body>
 </html>

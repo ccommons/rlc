@@ -7,7 +7,16 @@
 
 #toc-container {
 	padding: 9px 12px;
-	/* max-height: 300px; */
+	max-height: 300px;
+    width: 244px;
+    overflow-y: auto;
+}
+
+#toc-container .jspVerticalBar {
+    visibility: hidden;
+}
+#toc-container:hover .jspVerticalBar {
+    visibility: visible;
 }
 
 #toc-container ul {
