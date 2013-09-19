@@ -4,6 +4,7 @@
 $(document).ready(function() {
     annotation_preview_init('{% url 'annotation_previews' doc_id=doc.id %}');
     annotation_preview_refresh();
+    references_init();
 });
 </script>
 {% endblock %}
