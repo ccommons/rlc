@@ -50,7 +50,11 @@ def formview(request, *args, **kwargs):
 	data["publication_link"] = doc.publication_link
 	data["publication_date"] = doc.publication_date
 
-    form = EREditForm(initial=data)
+    if "invalid_form" in kwargs:
+        form = kwargs["invalid_form"]
+    else:
+        form = EREditForm(initial=data)
+
     context = Context({
     	# "main_document" : content,
 	"doctitle" : "Melanoma RLC: Edit " + doc.title,
@@ -65,7 +69,6 @@ def formview(request, *args, **kwargs):
 
 # TODO: add editor permission
 @login_required
-@require_POST
 def change(request, *args, **kwargs):
     """ER editor action"""
 
@@ -75,8 +78,9 @@ def change(request, *args, **kwargs):
     	# any more needed?
 	id = form.cleaned_data["id"]
     else:
-	# TODO: form validation, etc
-	return HttpResponseRedirect('/er/')
+        new_kwargs = dict(kwargs)
+        new_kwargs["invalid_form"] = form
+        return(formview(request, *args, **new_kwargs))
 
     kwargs = { "doc_id" : id }
     doc = get_doc(**kwargs)
