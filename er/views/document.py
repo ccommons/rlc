@@ -47,8 +47,8 @@ def fullpage(request, *args, **kwargs):
 
     tables = doc.papertable_set.order_by('position')
     for table in tables:
-        table.label = re.sub(r'(Table \d+)\..*$', r'\1', table.caption)
-        table.caption_no_num = re.sub(r'Table \d+\.(.*)$', r'\1', table.caption)
+        table.label = re.sub(r'((Table|TABLE).*\d+)\..*$', r'\1', table.caption)
+        table.caption_no_num = re.sub(r'(Table|TABLE).*\d+\.(.*)$', r'\2', table.caption)
 
     authors = doc.authors.order_by('paperauthorship__position')
 
