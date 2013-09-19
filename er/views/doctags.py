@@ -23,7 +23,7 @@ def find_tables(doc):
         tables_found.append(table_info)
 
         # look for caption
-        caption = te.find_previous_sibling("h3", text=re.compile(r"Table.\d+"))
+        caption = te.find_previous_sibling("h3", text=re.compile(r"(Table|TABLE).+\d+"))
         if caption != []:
             caption_text = caption.get_text()
             if not caption_text in captions_found:
@@ -41,6 +41,67 @@ def find_tables(doc):
         position += 1
 
     return(tables_found)
+
+def process_references(doc):
+    """extract references from document"""
+    references = {}
+
+    # find the reference info in the references section
+    name_re = re.compile(r'^_ENREF_\d+')
+    for tag in doc.find_all(["a", "A"], attrs={"name":name_re}, recursive=True):
+        ref_name = tag["name"]
+        if ref_name in references:
+            # TODO: flag error. Reference defined twice.
+            pass
+        else:
+            references[ref_name] = {
+                "in_refs": True,
+            }
+
+        # get reference text
+        text = tag.parent.get_text()
+        text = text.replace(u'\xa0', '')
+        text = re.sub(r'^\s*\d+\.\s*', '', text)
+        text = re.sub(r'\s*http.*$', '', text)
+
+        references[ref_name]["info"] = text
+
+        # look for URL in reference
+        parent = tag.parent
+        links = parent.find_all(["a", "A"])
+        # URL to reference location should be the second one
+        if len(links) > 1:
+            ref_url = links[1]["href"]
+            references[ref_name]["url"] = ref_url
+
+    # find all of the references
+    href_re = re.compile(r'^#_ENREF_\d+')
+    tags = doc.find_all(["a", "A"], attrs={"href":href_re}, recursive=True)
+    for tag in tags:
+        ref_name = tag["href"].replace("#", "")
+        if ref_name not in references:
+            references[ref_name] = {
+                "in_refs": False
+            }
+            # TODO: Flag error. This reference isn't in the refs section.
+
+        if references[ref_name]["in_refs"] == True:
+            bib_item = references[ref_name]
+            tag["data-ref-info"] = bib_item["info"]
+
+            if "onclick" in tag.attrs:
+                del tag["onclick"]
+
+            if "class" not in tag:
+                tag["class"] = []
+
+            if "rlc-reference" not in tag["class"]:
+                tag["class"].append("rlc-reference")
+
+            if "url" in bib_item:
+                tag["url"] = bib_item["url"]
+
+    return(references)
 
 def get_tag_info(doc, tag_types):
     """get section information in a document
