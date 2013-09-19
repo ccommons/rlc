@@ -1,12 +1,10 @@
 <div class="notification-content" id="notifications">
-    Unread:
-    <ul id="notifications-unread">
+    <ul id="notifications-unread" class="unstyled notifications-unread">
     {% for item in unread %}
         {% include 'notification_item.html' %}
     {% endfor %}
     </ul>
-    Read:
-    <ul id="notifications-read">
+    <ul id="notifications-read" class="unstyled notifications-read">
     {% for item in read %}
         {% include 'notification_item.html' %}
     {% endfor %}

@@ -1,7 +1,9 @@
 {% load humanize %}
         <li>
             <div class="notification-subject">
-                {{ item.subject_user.first_name }} {{ item.subject_user.last_name }} {{ item.subject }}
+                <strong>
+                    {{ item.subject_user.first_name }} {{ item.subject_user.last_name }} {{ item.subject }}
+                </strong>
             </div>
             <div class="notification-context">
                 {% ifequal item.etype 'comment_annotation' %}
