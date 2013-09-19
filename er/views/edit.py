@@ -108,12 +108,14 @@ def change(request, *args, **kwargs):
     added_ids = new_ids.difference(old_ids)
     deleted_ids = old_ids.difference(new_ids)
 
+    max_header_length = PaperSection._meta.get_field('header_text').max_length
+
     for section in new_section_info:
         id = section["id"]
         if id in added_ids:
             doc.papersection_set.create(
                 tag_id=id,
-                header_text=section["text"],
+                header_text=section["text"][:max_header_length],
                 position=section["position"],
             )
         else:
