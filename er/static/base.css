@@ -1342,11 +1342,22 @@ textarea.hidden {
 	font-size: 0.8em;
 	margin-top: 0;
 }
-.modal-close-icon {
+.close [class$="icon"] {
 	display: inline-block;
-	width: 27px;
-	height: 27px;
-	background: url('img/btn-close.png') no-repeat 0 0;
+	width: 26px;
+	height: 26px;
+}
+.close .modal-close-icon {
+	background: url('img/btn-modals.png') no-repeat 0 -26px;
+}
+.close:hover .modal-close-icon {
+	background: url('img/btn-modals.png') no-repeat -26px -26px;
+}
+.has-back-btn .close .modal-close-icon {
+	background: url('img/btn-modals.png') no-repeat 0 0;
+}
+.has-back-btn .close:hover .modal-close-icon {
+	background: url('img/btn-modals.png') no-repeat -26px 0;
 }
 
 .modal-header .close:hover {

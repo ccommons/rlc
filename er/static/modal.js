@@ -59,6 +59,9 @@ function Modal() {
                 window.addEventListener('resize', this.assignHeight.bind(this), false);
                 this.content_element.on('DOMSubtreeModified', this.assignHeight.bind(this));
                 this.content_element.modal();
+                if (this.hasBackBtn) {
+                    this.content_element.find('.modal-header').addClass('has-back-btn');
+                }
                 this.content_element.on('hidden', this.content_delete.bind(this));
                 this.content_element.on('hidden', function () {
                     $('body').css('overflow', 'visible');
@@ -75,6 +78,7 @@ function Modal() {
         'contentHeight': 0,
         'assignHeight': function () {
             // Calculate and assign height to modal.
+            if (!this.content_element) return;
             var modalBody = this.content_element.find('.modal-body'),
                 totalHeight = window.innerHeight,
                 headerHeight = this.content_element.find('.modal-header').outerHeight(),
@@ -513,6 +517,9 @@ var MODAL_STACK = {
         if (modal !== undefined) {
             modal_init(modal["url"], modal["modaltype"]);
         }
+    },
+    'getLenght': function () {
+        return this.stack.length;
     }
 };
 
@@ -521,6 +528,9 @@ function modal_init(url, modaltype) {
         var modaltype = Modal;
     }
     var modal = new modaltype();
+    if (MODAL_STACK.getLenght()) {
+        modal.hasBackBtn = true;
+    }
     modal.load(url);
     MODAL_STACK.push(url, modaltype);
 }
