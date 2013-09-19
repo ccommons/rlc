@@ -89,7 +89,12 @@ def change(request, *args, **kwargs):
 	return HttpResponseRedirect('/er/')
 
     parsed_doc = doctags.parse(form.cleaned_data["content"])
+
+    # add section, block, and table IDs
     doctags.add_ids(parsed_doc)
+
+    # update reference tags
+    doctags.process_references(parsed_doc)
 
     # update sections
 
