@@ -48,6 +48,33 @@
     /* text-transform: uppercase; */
 }
 
+a.rlc-reference {
+    background-color: #0069a0;
+    color: #ffffff;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-weight: bold;
+}
+
+a.rlc-reference:hover {
+    background-color: #003560;
+}
+
+.ref-info {
+    text-align: left;
+}
+
+a.ref-url {
+    text-align: left;
+    font-weight: bold;
+    color: #99bbff;
+}
+
+a.ref-url:hover {
+    font-weight: bold;
+    color: #eeeeff;
+}
+
 .footer {
     /* TODO: determine what this was originally supposed to look like */
     position: relative;

@@ -32,12 +32,15 @@ function references_init() {
             $ref_element.attr("data-toggle", "tooltip");
             $ref_element.attr("data-trigger", "click");
             $ref_element.attr("data-placement", "right");
-            var content = "<div class=\"ref-info\">" + $ref_element.attr('data-ref-info') + "</div>";
+            var content = "<div class=\"ref-info\">";
+            content += $ref_element.attr('data-ref-info') 
             if ($ref_element.attr('url') !== undefined) {
-                content = content + "<a class=\"ref-url\" target=\"_blank\" href=\"" + $ref_element.attr('url') + "\">";
-                content = content + "View at PubMed";
-                content = content + "</a>";
+                content += '<br />';
+                content += "<a class=\"ref-url\" target=\"_blank\" href=\"" + $ref_element.attr('url') + "\">";
+                content += "View at PubMed";
+                content += "</a>";
             }
+            content += "</div>";
 
             $ref_element.attr("data-title", content);
             $ref_element.tooltip({
