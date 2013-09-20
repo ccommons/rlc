@@ -103,15 +103,41 @@ def process_references(doc):
 
     return(references)
 
+def clean_document(doc):
+    """clean up a fresh document"""
+
+    tags_to_unwrap = [
+        "font", "FONT",
+        "span", "SPAN",
+    ]
+
+    # strip out unnecessary/harmful tags
+    for tag in doc.find_all(tags_to_unwrap, recursive=True):
+        tag.unwrap()
+
+    # remove all classes
+    class_re = re.compile(r'.*')
+    for tag in doc.find_all(True, attrs={"class":class_re}, recursive=True):
+        del tag["class"]
+
+    # remove all styles
+    style_re = re.compile(r'.*')
+    for tag in doc.find_all(True, attrs={"style":style_re}, recursive=True):
+        del tag["style"]
+
+
 def get_tag_info(doc, tag_types):
     """get section information in a document
        you must process doc with add_header_id_attrs() first"""
     position = 0
     tag_info = [] # needs : id, header text, position
     for tag in doc.find_all(tag_types, recursive=False):
+        text = unicode(tag.get_text())
+        if text.strip() == "":
+            continue
 	tag_info.append({
 	    "id" : tag["id"],
-	    "text" : unicode(tag.get_text()),
+	    "text" : text,
 	    "position" : position,
 	})
 	position += 1

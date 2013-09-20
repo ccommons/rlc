@@ -90,6 +90,9 @@ def change(request, *args, **kwargs):
 
     parsed_doc = doctags.parse(form.cleaned_data["content"])
 
+    # clean out unnecessary stuff in the document
+    doctags.clean_document(parsed_doc)
+
     # add section, block, and table IDs
     doctags.add_ids(parsed_doc)
 
