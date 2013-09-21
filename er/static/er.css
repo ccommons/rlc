@@ -827,7 +827,7 @@ ul.news-listing .news-tags .label {
 /**
  * Media queruies
 */
-@media (max-width: 1199px) {
+@media (min-width: 980px) and (max-width: 1199px) {
     .modal.fade.in {
         width: 54%;
     }
@@ -843,6 +843,11 @@ ul.news-listing .news-tags .label {
 
     .annotation-content {
         font-size: 1em;
-        top: -15px;
+        top: -13px;
+    }
+
+    #toc-container {
+        max-height: 200px;
+        width: 194px;
     }
 }
