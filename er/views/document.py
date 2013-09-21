@@ -45,10 +45,18 @@ def fullpage(request, *args, **kwargs):
 
     sections = doc.papersection_set.order_by('position')
 
+    max_table_label_len = 30
     tables = doc.papertable_set.order_by('position')
     for table in tables:
-        table.label = re.sub(r'((Table|TABLE).*\d+)\..*$', r'\1', table.caption)
+        table_num = re.sub(r'((Table|TABLE).*\d+)\..*$', r'\1', table.caption)
         table.caption_no_num = re.sub(r'(Table|TABLE).*\d+\.(.*)$', r'\2', table.caption)
+        table.label = table_num + ":"
+        for word in table.caption_no_num.split():
+            if len(table.label + ' ' + word) < max_table_label_len:
+                table.label += ' ' + word
+            else:
+                table.label += ' ...'
+                break
 
     authors = doc.authors.order_by('paperauthorship__position')
 
