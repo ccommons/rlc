@@ -3,7 +3,7 @@
 function Modal() {
     $.extend(this, {
         'content_element' : null,
-        'container_html' : '<div class="modal hide fade" tabindex="-1" role="dialog"></div>',
+        'container_html' : '<div class="modal hide" tabindex="-1" role="dialog"></div>',
         'content_set' : function(content_html) {
             if (this.content_element === null) {
                 this.content_element = $(this.container_html).appendTo('body');

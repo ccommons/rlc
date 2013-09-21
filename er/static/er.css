@@ -754,7 +754,7 @@ ul.news-listing .news-tags .label {
 .modal {
     cursor: default;
 }
-.modal.fade.in {
+.modal.in {
     top: 0;
     left: 37%;
     width: 50%;
@@ -838,7 +838,7 @@ ul.news-listing .news-tags .label {
  * Media queruies
 */
 @media (min-width: 980px) and (max-width: 1199px) {
-    .modal.fade.in {
+    .modal.in {
         width: 54%;
     }
 
