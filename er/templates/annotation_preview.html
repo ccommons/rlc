@@ -1,12 +1,15 @@
 <div class="annotation-preview">
+    <div class="add-annotation" url="{{ compose_url }}">
+        <div class="annotation-pointer pointer-left border-blue1"></div>
+        <div class="annotation-content bg-blue1">
+            <span aria-hidden="true" data-icon="&#xe01b;"></span>
+        </div>
+    </div>
 <div class="marker-container relative">{% if note_count > 0 %}
     <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='note' %}">
         <div class="annotation-pointer pointer-left border-blue1"></div>
         <div class="annotation-content bg-blue1 clearfix">
             {{ note_count }} Note{{ note_count|pluralize }}
-            {% if note_date != None %}
-                <span class="all-caps pull-right"><small>Last: {{ note_date|date }}</small></span>
-            {% endif %}
         </div>
     </div>    
 {% endif %}{% if openq_count > 0 %}
@@ -39,16 +42,10 @@
     </div>
 {% endif %}{% if rejrev_count > 0 %}
     <div class="stack-marker annotation-modal-activate" url="{% url 'annotations_in_block' doc_id=doc.id block_id=block_id atype='rejrev' %}">
-        <div class="annotation-pointer pointer-left border-black1"></div>
-        <div class="annotation-content bg-black1">
+        <div class="annotation-pointer pointer-left border-gray2"></div>
+        <div class="annotation-content bg-gray2">
             {{ rejrev_count }} Rejected Revision{{ rejrev_count|pluralize }}
         </div>
     </div>
 {% endif %}{# rejrev_count > 0 #}</div>
-    <div class="add-annotation" url="{{ compose_url }}">
-        <div class="annotation-pointer pointer-left border-blue1"></div>
-        <div class="annotation-content bg-blue1">
-            <span aria-hidden="true" data-icon="&#xe01b;"></span>
-        </div>
-    </div>
 </div>
