@@ -43,6 +43,8 @@ root = ElementTree.fromstring(data)
 
 news_user = User.objects.get(username="news")
 
+tags_to_omit = ["rc", "melanoma"]
+
 for article in root.iter('item'):
     # TODO: catch exceptions
 
@@ -62,9 +64,8 @@ for article in root.iter('item'):
     title = article.find('title').text
 
     # tags
-    tags = []
-    for tag in article.iter('category'):
-        tags.append(tag.text)
+    tags = [tag.text for tag in article.iter('category')
+            if tag.text not in tags_to_omit]
 
     # summary
     summary = article.find('description').text
