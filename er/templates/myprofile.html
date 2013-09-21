@@ -63,14 +63,16 @@
                 <li>{{ email_form.activity_comment }} Comments</li></li></li></li>
             </ul>
             <ul class="email-preference-group">
-                <li>{{ email_form.er_all }} When there's activity on one of my:</li>
-                <li>{{ email_form.er_revised }} Revised</li>
-                <li>{{ email_form.er_updated }} Updated</li>
-                <li>{{ email_form.er_published }} Published</li>
+                <li>{{ email_form.er_all }} When the Evidence Review has a new:</li>
+                <li>{{ email_form.er_revised }} Revision</li>
+                <li>{{ email_form.er_updated }} Updated version</li>
+                <li>{{ email_form.er_published }} Published version</li>
             </ul>
+            {% comment %}
             <ul class="email-preference-group">
                 <li>{{ email_form.new_members }} New members</li>
             </ul>
+            {% endcomment %}
         </div>
         <div id="profile-update-form-buttons">
             <button type="button" id="profile-update-submit" action="{{ form_action }}" class="btn">Submit</button>
