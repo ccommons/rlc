@@ -364,13 +364,26 @@ a.ref-url:hover {
 
 .annotation-context {
     margin-bottom: 15px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+}
+
+.annotation-context + div {
+    margin-top: 70px;
 }
 
 .annotation-context > .annotation-body {
     background-color: #ECEDED;
-    border-radius: 3px;
     padding: 15px;
 }
+
+.annotation-context > .annotation-body > a:after{
+    content: "...";
+}
+
+
 .annotation-context > .annotation-arrow {
     width: 0;
     height: 0;
