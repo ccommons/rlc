@@ -49,6 +49,11 @@ class PublicationInfo(models.Model):
     publication_date = models.DateTimeField()
     timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
 
+# this model is temporary, just to choose a default document if necessary
+class DefaultDocument(models.Model):
+    document = models.ForeignKey(EvidenceReview)
+    timestamp = models.DateTimeField(auto_now=True, auto_now_add=True)
+
 class DocumentRevision(models.Model):
     paper = models.ForeignKey(EvidenceReview)
     title = models.CharField(max_length=100)

@@ -21,8 +21,11 @@ TABLE_PREFIX = DOC_PREFIX + r'/table' + A_BLOCK
 
 urlpatterns = patterns('',
     # index page
-    url(r'^$', 'er.views.document.index', name='root_index'),
-    url(GEN_PREFIX + r'$', 'er.views.document.index', name='index'),
+    url(r'^$', 'er.views.document.default', name='root'),
+    url(GEN_PREFIX + r'$', 'er.views.document.default', name='doc_default'),
+
+    # index
+    url(GEN_PREFIX + r'/index/{0,1}$', 'er.views.document.index', name='index'),
 
     # main view
     #

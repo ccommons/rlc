@@ -1,6 +1,7 @@
 from django.contrib import admin
 from models import Author
 from models import EvidenceReview, PaperAuthorship, PublicationInfo
+from models import DefaultDocument
 from models import PaperSection, PaperBlock, PaperTable
 from models import DocumentRevision
 from models import Profile
@@ -10,6 +11,7 @@ from models import NewsItem, NewsTag
 # ER
 admin.site.register(Author)
 admin.site.register(EvidenceReview)
+admin.site.register(DefaultDocument)
 admin.site.register(PublicationInfo)
 admin.site.register(PaperAuthorship)
 admin.site.register(PaperSection)

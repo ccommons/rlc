@@ -1,8 +1,10 @@
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, Template
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 
 from er.models import EvidenceReview, PublicationInfo
+from er.models import DefaultDocument
 
 from django.core.urlresolvers import reverse
 
@@ -12,6 +14,22 @@ from docutils import get_doc
 from annotations import annotation_summary
 
 import re
+
+@login_required
+def default(request):
+    """redirect to default document or to index"""
+    default_docs = DefaultDocument.objects.all()
+    if default_docs.count() > 0:
+        # redirect to the first default document
+        doc_id = default_docs.latest('timestamp').document.id
+        url = reverse('document_fullview', kwargs={"doc_id": doc_id})
+    else:
+        # no default document found; revert to the index
+        # redirect to the index
+        # (could also call index() here)
+        url = reverse('index')
+
+    return(HttpResponseRedirect(url))
 
 @login_required
 def index(request):
