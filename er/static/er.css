@@ -181,12 +181,12 @@ a.ref-url:hover {
     position: absolute;
     z-index: 1;
     width: 95%;
-    background-color: #fff; /* fallback color if gradients are not supported */
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, white 0.3, transparent);
-    background-image: -webkit-linear-gradient(white 30%, transparent);
-    background-image: -moz-linear-gradient(white 30%, transparent);
-    background-image: -o-linear-gradient(white 30%, transparent);
-    background-image: linear-gradient(white 30%, transparent); /* For Chrome and Safari */ /* For old Fx (3.6 to 15) */ /* For pre-releases of IE 10*/ /* For old Opera (11.1 to 12.0) */  /* Standard syntax; must be last */
+    background: #fff; /* fallback color if gradients are not supported */
+    background: -webkit-gradient(linear, 0 0, 100% 100%, white 0.3, transparent);
+    background: -webkit-linear-gradient(left, white 30%, transparent);
+    background: -moz-linear-gradient(left, white 30%, transparent);
+    background: -o-linear-gradient(left, white 30%, transparent);
+    background: linear-gradient(left, white 30%, transparent); /* For Chrome and Safari */ /* For old Fx (3.6 to 15) */ /* For pre-releases of IE 10*/ /* For old Opera (11.1 to 12.0) */  /* Standard syntax; must be last */
 }
 .add-annotation .annotation-content {
     width: auto;
