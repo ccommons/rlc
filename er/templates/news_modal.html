@@ -18,19 +18,18 @@
 {% endblock %}
 {% block modal_body %}
     <div class="news-tag-list">
+        {{ num_articles }} Article{{ num_articles|pluralize }}
         {% if tags|length > 0 %}
-            Tags:
+            with tag{{ tags|pluralize }}:
             {% for tag in tags %}
-                <span class="label label-info">
+                <span class="label text-blue4 bg-blue3 label-info">
                     {{ tag }}
                     <span class="tag-filter-remove" tag-value="{{ tag }}" url="{% url 'news_index_tag_modal' tag='TAGS_HERE' %}">
-                        x
+                        <i class="icon-remove tag-remove-x"></i>
                     </span>
                 </span>
             {% endfor %}
-            -
         {% endif %}
-        {{ num_articles }} Article{{ num_articles|pluralize }}
     </div>
     <ul id="news-listing" class="news-listing">
         {% include "news_index.html" %}

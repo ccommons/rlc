@@ -721,13 +721,28 @@ ul.news-listing h1 {
     margin-bottom: 0px;
 }
 
-ul.news-listing .news-tags {
+.news-tag-list {
+    font-weight: bold;
+}
+
+ul.news-listing .news-tags,
+.news-tag-list {
     margin-bottom: 3px;
 }
-ul.news-listing .news-tags .label {
+
+ul.news-listing .news-tags .label,
+.news-tag-list .label-info {
     padding: 8px;
     margin-top: 10px;
-    font-weight: 400;
+    font-weight: normal;
+}
+
+ul.news-listing .news-tags .label:hover {
+    background-color: #ffffcc;
+}
+
+.tag-remove-x:hover {
+    background-color: #ffffcc;
 }
 
 /* notification classes */
