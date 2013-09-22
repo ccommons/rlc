@@ -29,25 +29,33 @@
 <div id="content-main">
 <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
   <div class="form-row">
-    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
-    <label for="id_username" class="required">{{ form.username.label }}:</label> {{ form.username }}
+    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %} <input id="id_username" maxlength="254" name="username" type="text" class="input-xlarge" placeholder="Email Address" />
   </div>
   <div class="form-row">
     {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
-    <label for="id_password" class="required">{% trans 'Password:' %}</label> {{ form.password }}
+    <input id="id_password" name="password" type="password" class="input-xlarge" placeholder="Password" />
     <input type="hidden" name="this_is_the_login_form" value="1" />
     <input type="hidden" name="next" value="{{ next }}" />
   </div>
-  {% url 'admin_password_reset' as password_reset_url %}
-  {% if password_reset_url %}
-  <div class="password-reset-link">
-    <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
+  <div class="form-row">
+    <label class="checkbox inline black">
+      <input type="checkbox" id="keep-auth" checked="checked" /> Keep me signed in
+    </label>
+    {% url 'admin_password_reset' as password_reset_url %}
+    {% if password_reset_url %}
+    <label class="checkbox pw-link inline no-margin">
+      <span class="black">|</span> <a href="{{ password_reset_url }}">Forgot your password?</a>
+    </label>
+    {% endif %}
   </div>
-  {% endif %}
   <div class="submit-row">
-    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}" />
+    <input class="btn btn-primary btn-large" type="submit" value="{% trans 'Sign in' %}" />
   </div>
 </form>
+<div class="horizontal-separator"></div>
+<div>
+  <span><a href="#"><strong>Contact us</strong></a> if you do not have login credentials.</span>
+</div>
 
 <script type="text/javascript">
 document.getElementById('id_username').focus()
