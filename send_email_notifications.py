@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import rlc.settings
 from django.core.management import setup_environ
 setup_environ(rlc.settings)
