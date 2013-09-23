@@ -20,7 +20,7 @@
     </h3>
 {% endblock %}
 {% block modal_body %}
-    <h4>{{ news_item.title }}</h4>
+    <h4><a target="_blank" href="{{ news_item.url }}">{{ news_item.title }}</a></h4>
     <div>{{ news_item.preview|safe }}</div>
 
     <div class="news-actions">
