@@ -164,19 +164,19 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
-        'logfile': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log',
-            'maxBytes': 50000,
-            'backupCount': 5,
-            'formatter': 'standard',
-        },
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'standard',
-        },
+        # 'logfile': {
+        #     'level': 'INFO',
+        #     'class': 'logging.handlers.RotatingFileHandler',
+        #     'filename': 'log',
+        #     'maxBytes': 50000,
+        #     'backupCount': 5,
+        #     'formatter': 'standard',
+        # },
+        # 'console': {
+        #     'level': 'INFO',
+        #     'class': 'logging.StreamHandler',
+        #     'formatter': 'standard',
+        # },
     },
     'loggers': {
         'django.request': {
@@ -184,10 +184,10 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        '': {
-            'handlers': ['console', 'logfile'],
-            'level': 'INFO',
-        },
+        # '': {
+        #     'handlers': ['console', 'logfile'],
+        #     'level': 'INFO',
+        # },
     }
 }
 
