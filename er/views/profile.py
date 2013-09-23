@@ -83,7 +83,7 @@ def profile_json(request, *args, **kwargs):
         except:
             email_pref = EmailPreferences(user=user)
 
-    comments = comment.fetch_by_user(user)
+    comments = comment.fetch_by_user(user, max=20)
 
     attach_ratings(comments, user=calling_user)
 
@@ -101,11 +101,20 @@ def profile_json(request, *args, **kwargs):
             if c.is_root():
                 # an annotation
                 conv_item.ctype = a.atype
-                if a.doc_block:
-                    conv_item.context = a.doc_block.preview_text
-                else:
-                    conv_item.context = c.text[:100]
-                conv_item.comments = len(c.thread_as_list()) - 1
+
+                # I believe we just show the comment, not the context
+                conv_item.context = c.text[:100]
+
+                # if a.doc_block:
+                #     conv_item.context = a.doc_block.preview_text
+                # else:
+                #     conv_item.context = c.text[:100]
+
+                # conv_item.comments = len(c.thread_as_list()) - 1
+                # this is too slow, revert to model object
+
+                conv_item.comments = c.model_object.replies.count()
+
             else:
                 # a reply
                 conv_item.ctype = 'comment'
