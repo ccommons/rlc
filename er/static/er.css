@@ -7,7 +7,7 @@
 
 #toc-container {
 	padding: 9px 12px;
-	max-height: 250px;
+	/*max-height: 250px;*/
     width: 244px;
     overflow-y: auto;
 }
@@ -885,7 +885,7 @@ ul.news-listing .news-tags .label:hover {
     }
 
     #toc-container {
-        max-height: 200px;
+        /*max-height: 200px;*/
         width: 194px;
     }
 }

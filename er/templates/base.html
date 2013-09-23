@@ -40,7 +40,41 @@
 {% include "footer.html" %}
 {% endblock %}
 <script type="text/javascript">
-	$('#toc-container').jScrollPane();
+	var pane = $('#toc-container'),
+		api;
+	
+	$(window).on('resize', function () {
+		//Calculate and resize ToC height.
+		var totalHeight = window.innerHeight,
+            tocPositionTop = pane.offset().top,
+            availableHeight = (totalHeight - tocPositionTop) - 30,
+            contentHeight = 0;
+
+        pane.find('ul').each(function (index, el) {
+            contentHeight = contentHeight + $(el).outerHeight();
+        }.bind(this));
+        if (availableHeight <= contentHeight) {
+            pane.css({'height': availableHeight});
+            if (!api) {
+            	pane.jScrollPane();
+				api = pane.data('jsp');
+            } else {
+            	//Reinitialize the scroll on the ToC.
+				api.reinitialise();
+            }
+        } else {
+            if (api) {
+            	api.destroy();
+            	api = null;
+            }
+            //We need to reset the DOM object as it gets replaced
+            //after the plugin gets (re)initialised.
+            pane = $('#toc-container');
+            pane.css({'height': 'auto'});
+        }
+        //End height resize.
+	});
+	$(window).trigger('resize');
 </script>
 </body>
 </html>
