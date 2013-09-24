@@ -6,7 +6,20 @@ var __CKEDITOR_CONFIGS = {
         height: '500px'
     },
     annotation_compose : {
-        toolbar: [ [ 'Source', '-', 'Bold', 'Italic' ]]
+        toolbar: [
+            [ 
+                'Bold', 'Italic', '-',
+                'RemoveFormat'
+            ], [
+                'SpecialChar'
+            ], [
+                'BulletedList', 'NumberedList', '-', 'Table'
+            ], [
+                'Link', 'Unlink'
+            ], [
+                'Image'
+            ]
+        ]
     }
 }
 
