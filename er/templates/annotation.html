@@ -51,7 +51,8 @@
         {% endif %}
         {% if a.show_context == True %}
         <div class="annotation-context">
-            <div class="annotation-body">
+            <div class="annotation-body clearfix">
+                <span class="icon-paragraph pull-left"></span>
                 <a block_id="{{ a.tag_id }}">
                     {{ a.context }}
                 </a>

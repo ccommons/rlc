@@ -4,6 +4,13 @@
     width: 231px !important;
     height: 55px !important;
 }
+.icon-paragraph {
+    display: inline-block;
+    width: 22px;
+    height: 32px;
+    background: url("img/icon-para.png") no-repeat;
+    margin: 0 10px;
+}
 
 #toc-container {
 	padding: 9px 12px;
