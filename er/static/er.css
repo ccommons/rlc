@@ -55,6 +55,11 @@
     /* text-transform: uppercase; */
 }
 
+.paper-content-container h1,
+.paper-content-container h2 {
+    padding-top: 82px;
+}
+
 a.rlc-reference {
     background-color: #0069a0;
     color: #ffffff;

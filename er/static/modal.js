@@ -161,11 +161,14 @@ function AnnotationModal() {
                 // TODO: what to do here with the stack?
                 this.close();
 
-                var els = $('#' + block_id).get();
-                if (els.length > 0) {
-                    els[0].scrollIntoView(true);
+                var els = $('#' + block_id),
+                    top = 0;
+                if (els.length) {
+                    //els[0].scrollIntoView(true);
                     // TODO: move this to a new function that also adjusts
                     // the location versus the header
+                    top = els.offset().top - 82;
+                    window.scrollTo(0, top);
                 }
             }.bind(this));
         }
@@ -415,10 +418,13 @@ function InlineReply(initiating_element) {
             }.bind(this));
 
             // TODO: this seems to also scroll the base window
-            var els = this.$new.get();
+            $('.modal-body').animate({
+                scrollTop: this.$new.offset().top
+            }, 500);
+            /*var els = this.$new.get();
             if (els.length > 0) {
                 els[0].scrollIntoView();
-            }
+            }*/
         },
 
         'cancel_form' : function(event) {
@@ -460,10 +466,13 @@ function InlineReply(initiating_element) {
             this.$new.html(data["html"]);
 
             // TODO: this seems to also scroll the base window
-            var els = this.$new.get();
+            $('.modal-body').animate({
+                scrollTop: this.$new.offset().top
+            }, 500);
+            /*var els = this.$new.get();
             if (els.length > 0) {
                 els[0].scrollIntoView();
-            }
+            }*/
 
             // switch the calling modal to new URL if present
             // (for example, if a proposed revision is approved)
