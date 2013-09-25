@@ -907,7 +907,11 @@
         var that = this
         $(document).on('focusin.modal', function (e) {
           if (that.$element[0] !== e.target && !that.$element.has(e.target).length) {
+            /* workaround to make sure that we don't try to grab focus from
+             * a CKEditor dialog */
+            if ($(e.target).attr("class").match(/^cke/) === null) {
             that.$element.focus()
+            }
           }
         })
       }
