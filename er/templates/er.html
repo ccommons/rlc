@@ -33,22 +33,26 @@ $(document).ready(function() {
     </ul>
 {% endblock %}
 {% block middlecontent %}
+    <div>
+        <span class="label text-blue4 bg-blue3 doc-subtitle">Evidence Review</span>
+    </div>
     <h1>{{ doc.title }}</h1>
     <div class="author-names">
     {% for author in authors %}
         <span class="author-name">{{ author.name }}</span>{% if not forloop.last %},{% endif %}
     {% endfor %}
     </div>
-    <div>Last Revision: {{ doc.revision_date|date:"F j, Y" }} | <a href="#">Download</a></div>
+    <div>
+        Last Revision: {{ doc.revision_date|date:"F j, Y" }}
+        {# | <a href="#">Download</a> #}
+        {% if "Editor" in group_names %}
+            | <a href="{% url 'doc_editor' doc_id=doc.id %}">edit</a>
+        {% endif %}
+    </div> 
     {% if last_published_info != None and last_published_info.is_published == True %}
         <div>Last Published: {{ last_published_info.publication_date|date:"F j, Y" }} | <a href="{{ last_published_info.link }}">Download</a></div>
     {% endif %}
 
-    {% if "Editor" in group_names %}
-        <div>
-	<a href="{% url 'doc_editor' doc_id=doc.id %}">edit</a>
-        </div>
-    {% endif %}
     {% comment %}
     <div>
 	<a onclick="annotation_preview_refresh('{% url 'annotation_previews' doc_id=doc.id %}')">refresh annotations</a>

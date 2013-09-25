@@ -61,6 +61,11 @@
     padding-top: 82px;
 }
 
+.doc-subtitle {
+    padding: 8px;
+    font-weight: normal;
+}
+
 a.rlc-reference {
     background-color: #0069a0;
     color: #ffffff;
