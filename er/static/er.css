@@ -67,15 +67,7 @@
 }
 
 a.rlc-reference {
-    background-color: #0069a0;
-    color: #ffffff;
-    padding-left: 2px;
-    padding-right: 2px;
     font-weight: bold;
-}
-
-a.rlc-reference:hover {
-    background-color: #003560;
 }
 
 .ref-info {
