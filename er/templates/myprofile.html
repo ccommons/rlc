@@ -33,8 +33,8 @@
 {% endblock %}
 {% block modal_body %}
     <ul id="dummytab" class="nav nav-tabs"{% if not form_action %} style="display:none"{% endif %}>
-    {% if form_action %}<li class="active"><a id="profile-tab-details" href="#profile-details">Details</a></li>{% endif %}
-    <li><a id="profile-tab-conversations" href="#profile-conversations">Conversations</a></li>
+    {% if form_action %}<li class="active"><a id="profile-tab-details" href="#profile-details"><strong>Details</strong></a></li>{% endif %}
+    <li><a id="profile-tab-conversations" href="#profile-conversations"><strong>Conversations</strong></a></li>
     </ul>
     <script language="javascript">
     $('#dummytab a').click(function (e) {

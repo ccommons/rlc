@@ -866,6 +866,14 @@ ul.news-listing .news-tags .label:hover {
     line-height: 20px;
 }
 
+.modal .nav-tabs > li:not(.active) > a {
+    border: 1px solid #ddd;
+    background-color: #f4f4f4;
+}
+.modal .nav-tabs > li + li {
+    margin-left: 7px;
+}
+
 /**
  * END of modal window classes
 */
