@@ -64,6 +64,7 @@
 .doc-subtitle {
     padding: 8px;
     font-weight: normal;
+    text-shadow: none;
 }
 
 a.rlc-reference {
