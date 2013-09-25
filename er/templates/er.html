@@ -13,11 +13,9 @@ $(document).ready(function() {
     {% for section in sections %}
     	<li><a href="#{{ section.tag_id }}">{{ section.header_text }}</a></li>
     {% endfor %}
-	<li class="horizontal-separator"></li>
-    	<li><a onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype="openq" %}')">Open Questions</a></li>
         {% if tables.count > 0 %}
     	<li class="horizontal-separator"></li>
-        <li>{# Figures and #}Tables</li>
+        {# <li>Figures and Tables</li> #}
         {% for table in tables %}
             <li><a onclick="table_view_init('{% url 'table_modal' doc_id=doc.id block_id=table.tag_id %}')" class="toc-table" data-toggle="tooltip" data-container="#toc-container" data-placement="right" data-title="{{ table.caption_no_num }}">{# TODO: what about escapejs here? #}
                 {{ table.label }}
@@ -25,6 +23,9 @@ $(document).ready(function() {
         {% endfor %}
         <script language="javascript">$('.toc-table').tooltip();</script>
         {% endif %}{# tables.count > 0 #}
+
+	<li class="horizontal-separator"></li>
+    	<li><a onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype="openq" %}')">Open Questions</a></li>
 
 	<li class="horizontal-separator"></li>
 

@@ -33,8 +33,9 @@
 }
 
 #toc-container li {
-	padding: 1px 0px;
+	padding: 3px 0px;
 	cursor: pointer;
+        line-height: 18px;
 }
 
 .document-container, .summary-container {
