@@ -347,6 +347,9 @@ a.ref-url:hover {
 .text-black1 {
     color: #202020;
 }
+.text-white1 {
+    color: #ffffff;
+}
 .bg-gray1 {
     background-color: #6E6E6E;
 }
@@ -365,6 +368,9 @@ a.ref-url:hover {
 }
 .text-gray2 {
     color: #888;
+}
+.bg-gray3 {
+    background-color: #999999;
 }
 .rejrev-header {
     color: #fff;
