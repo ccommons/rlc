@@ -45,6 +45,12 @@
     <div id="myTabContent" class="tab-content">
         {% if form_action %}
         <div class="tab-pane fade active in" id="profile-details">
+
+        {% if profile_form_mode == "success" %}
+            <div class="form-ok alert alert-success fade"><i class="icon-ok"></i> Settings updated.</div>
+            <script language="javascript">$('.form-ok').addClass("in");</script>
+        {% endif %}
+
         <form id="profile-update-form">
         <div>
         {{ profile_form.as_p }}

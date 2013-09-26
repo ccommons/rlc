@@ -140,12 +140,18 @@ def profile_json(request, *args, **kwargs):
         except:
             pass
 
+    profile_form_mode = "default"
+
     if myprofile:
         # handle form submission
         if request.method == 'POST':
             profile_form = updateProfileForm(request.POST)
+            profile_form_mode = "error"
             email_form = updateEmailPreferenceForm(request.POST)
             if profile_form.is_valid() and email_form.is_valid():
+
+                profile_form_mode = "success"
+
                 # save
                 cd = profile_form.cleaned_data
                 profile.title = cd['title']
@@ -230,6 +236,7 @@ def profile_json(request, *args, **kwargs):
         "num_proprev" : conv_summary["count"]["proprev"],
         "num_openq" : conv_summary["count"]["openq"],
         "num_comment" : conv_summary["count"]["comment"],
+        "profile_form_mode" : profile_form_mode,
     })
 
     if myprofile:

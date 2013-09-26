@@ -269,7 +269,7 @@ a.ref-url:hover {
     background-color: #efefef;
 }
 
-.form-error {
+.form-error, form-ok {
    opacity: 0;
    -webkit-transition: opacity 0.5s linear;
       -moz-transition: opacity 0.5s linear;
