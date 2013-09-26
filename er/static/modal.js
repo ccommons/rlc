@@ -55,9 +55,9 @@ function Modal() {
                     $('body').css('overflow', 'hidden');
                     this.content_element.find('#members-sort-form li>label').addClass('radio');
                 }.bind(this));
-                this.content_element.on('shown', this.assignHeight.bind(this));
+                this.content_element.one('shown', this.assignHeight.bind(this));
                 window.addEventListener('resize', this.assignHeight.bind(this), false);
-                this.content_element.on('DOMSubtreeModified', this.assignHeight.bind(this));
+                // this.content_element.on('DOMSubtreeModified', this.assignHeight.bind(this));
                 this.content_element.modal();
                 if (this.hasBackBtn) {
                     this.content_element.find('.modal-header').addClass('has-back-btn');
@@ -77,6 +77,8 @@ function Modal() {
         },
         'contentHeight': 0,
         'assignHeight': function () {
+            //Remove DOM listener to avoid cyclical execution.
+            //this.content_element.off('DOMSubtreeModified', this.assignHeight.bind(this));
             // Calculate and assign height to modal.
             if (!this.content_element) return;
             var modalBody = this.content_element.find('.modal-body'),
@@ -99,6 +101,7 @@ function Modal() {
                 modalBody.css({'height': 'auto'});
                 this.content_element.css({'height': 'auto'});
             }
+            this.content_element.one('DOMSubtreeModified', this.assignHeight.bind(this));
         }
     });
 }

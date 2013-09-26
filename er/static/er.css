@@ -838,18 +838,14 @@ ul.news-listing .news-tags .label:hover {
 .modal .rating.btn-group a {
     font-size: 10px;
 }
-.modal .rating.btn-group > span {
-    margin-left: 0;
-    font-size: 14px;
-    font-weight: bold;
-    height: 26px;
-}
 
 .modal .btn-group > span {
     position: relative;
     display: inline-block;
     height: 26px;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+            box-sizing: border-box;
     border-top: 1px solid #d3d3d3;
     border-bottom: 1px solid #d3d3d3;
     padding: 2px 12px;
@@ -858,8 +854,10 @@ ul.news-listing .news-tags .label:hover {
     vertical-align: middle;
     font-size: 14px;
 }
-
-
+.modal .rating.btn-group > span {
+    margin-left: 0;
+    font-weight: bold;
+}
 
 .modal .proprev-header,
 .modal .openq-header,
