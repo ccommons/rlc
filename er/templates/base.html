@@ -46,8 +46,8 @@
 	$(window).on('resize', function () {
 		//Calculate and resize ToC height.
 		var totalHeight = window.innerHeight,
-            tocPositionTop = pane.offset().top,
-            availableHeight = (totalHeight - tocPositionTop) - 30,
+            TOP_MARGIN = 143, //The distance from the ToC's header to the top of the window.
+            availableHeight = (totalHeight - TOP_MARGIN) - 30,
             contentHeight = 0;
 
         pane.find('ul').each(function (index, el) {
