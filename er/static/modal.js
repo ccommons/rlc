@@ -67,9 +67,11 @@ function Modal() {
                     // for references (tooltips) inside modals; when "hide"
                     // is called on a tooltip, it bubbles up to the modal,
                     // which closes it.
-                    if ($(event.target).attr("class").match(/rlc-reference/) !== undefined) {
-                        return;
+
+                    if ($(event.target).attr("class").match(/rlc-reference/) !== null) {
+                         return;
                     };
+
                     this.content_delete();
                     $('body').css('overflow', 'visible');
 
