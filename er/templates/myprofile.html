@@ -94,16 +94,16 @@
                     <p class="profile-conv-line1">{{ item.ctype|upper }} | {{ item.age|upper }}</p>
                     <p class="profile-conv-context">
                     {% if item.item_id %}
-                        <a href="javascript:news_comment_init('{{ item.url }}');">
+                        <a class="open-new-modal" href="javascript:news_comment_init('{{ item.url }}');">
                     {% else %}
-                        <a href="javascript:annotation_init('{{ item.url }}');">
+                        <a class="open-new-modal" href="javascript:annotation_init('{{ item.url }}');">
                     {% endif %}
                     {{ item.context|safe }}
                     </a></p>
                     <p class="profile-conv-line3">
-                        {% include "rating_control.html" with comment=item.comment %}
+                        {% include "rating_control.html" with comment=item.comment user=calling_user %}
                         {% if item.comments %} |
-                        <a href="javascript:annotation_init('{{ item.url }}');">
+                        <a class="open-new-modal" href="javascript:annotation_init('{{ item.url }}');">
                             {{ item.comments }} Comment{{ item.comments|pluralize }}
                         </a>
                         {% endif %}

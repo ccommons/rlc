@@ -230,6 +230,7 @@ def profile_json(request, *args, **kwargs):
     context = Context({
 	"modal_id" : modal_id,
         "user" : user,
+        "calling_user" : calling_user,
         "profile" : profile,
         "items" : conv_items,
         "num_note" : conv_summary["count"]["note"],

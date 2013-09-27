@@ -1,6 +1,6 @@
 {% with id=comment.model_object.id %}
 <span id="rating-c-{{id}}" class="rating btn-group">
-    {% if comment.user = user %}
+    {% if comment.user == user %}
         {# user's own comment -- do not allow clicks #}
         <a class="btn disabled" disabled="disabled" aria-hidden="true" data-icon="&#xe01b;"></a>
         <span class="bg-blue3">{{ comment.rating }}</span>

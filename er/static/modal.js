@@ -265,7 +265,7 @@ function MyProfileModal() {
     $.extend(this, $super, {
         'render' : function() {
             $super.render.bind(this)();
-            $('#profile-conversations a').click(function(event) {
+            $('#profile-conversations a.open-new-modal').click(function(event) {
                 // opening a new conversation modal; do not backtrack
                 this.close_for_new();
             }.bind(this));
