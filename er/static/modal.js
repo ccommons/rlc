@@ -161,7 +161,7 @@ function AnnotationModal() {
             $('.annotation-context a').click(function(event) {
                 var block_id = $(event.currentTarget).attr('block_id');
 
-                // TODO: what to do here with the stack?
+                MODAL_STACK.clear();
                 this.close();
 
                 var els = $('#' + block_id),
@@ -520,6 +520,9 @@ var MODAL_STACK = {
     'pop' : function() {
         return(this.stack.pop());
     },
+    'clear' : function() {
+        this.stack.length = 0;
+    },
     'is_empty' : function() {
         return(this.stack.length === 0);
     },
@@ -530,7 +533,7 @@ var MODAL_STACK = {
             modal_init(modal["url"], modal["modaltype"]);
         }
     },
-    'getLenght': function () {
+    'get_length': function () {
         return this.stack.length;
     }
 };
@@ -540,7 +543,7 @@ function modal_init(url, modaltype) {
         var modaltype = Modal;
     }
     var modal = new modaltype();
-    if (MODAL_STACK.getLenght()) {
+    if (MODAL_STACK.get_length()) {
         modal.hasBackBtn = true;
     }
     modal.load(url);
