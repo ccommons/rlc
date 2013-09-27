@@ -49,15 +49,18 @@
     border: 1px solid #ccc;
 }
 
-.paper-content-container h1 {
+.document-container > h1,
+.paper-content-container h1,
+.paper-content-container h2,
+.paper-content-container h3 {
     font-style: italic;
-    font-size: 20px;
-    margin-bottom: 0px;
-    /* text-transform: uppercase; */
+    text-transform: uppercase;
 }
 
 .paper-content-container h1,
-.paper-content-container h2 {
+.paper-content-container h2,
+.paper-content-container h3 {
+    margin-bottom: 0px;
     padding-top: 82px;
 }
 
