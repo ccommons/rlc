@@ -62,8 +62,15 @@ function Modal() {
                 if (this.hasBackBtn) {
                     this.content_element.find('.modal-header').addClass('has-back-btn');
                 }
-                this.content_element.on('hidden', this.content_delete.bind(this));
-                this.content_element.on('hidden', function () {
+                this.content_element.on('hidden', function(event) {
+                    // TODO: figure out a better way around this workaround
+                    // for references (tooltips) inside modals; when "hide"
+                    // is called on a tooltip, it bubbles up to the modal,
+                    // which closes it.
+                    if ($(event.target).attr("class").match(/rlc-reference/) !== undefined) {
+                        return;
+                    };
+                    this.content_delete();
                     $('body').css('overflow', 'visible');
 
                     if (this.backtrack_after_close === true) {

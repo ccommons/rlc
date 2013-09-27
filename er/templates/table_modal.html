@@ -5,5 +5,10 @@
     </h4>
 {% endblock %}
 {% block modal_body %}
+<div class="table-modal-content">
     {{ table_content|safe }}
+</div>
+<script language="javascript">
+    $('document').ready(function(){references_init($('.table-modal-content'))});
+</script>
 {% endblock %}

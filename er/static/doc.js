@@ -37,9 +37,13 @@ function verify_json_response(data) {
     }
 }
 
-function references_init() {
-    $('.rlc-reference').click(function(event) {
-        $ref_element = $(event.currentTarget);
+function references_init($element) {
+    var $root = $element;
+    if ($root === undefined) {
+        $root = $('body');
+    }
+    $root.find('.rlc-reference').click(function(event) {
+        var $ref_element = $(event.currentTarget);
         /* initialize the tooltip if necessary */
         if ($ref_element.attr("data-toggle") === undefined) {
             $ref_element.attr("data-toggle", "tooltip");
@@ -56,9 +60,11 @@ function references_init() {
             content += "</div>";
 
             $ref_element.attr("data-title", content);
-            $ref_element.tooltip({
-                "html" : true
-            });
+            var options = {
+                "html" : true,
+                "container" : $root.get(0)
+            };
+            $ref_element.tooltip(options);
             $ref_element.tooltip('show');
         } else {
             // $ref_element.tooltip('toggle');
