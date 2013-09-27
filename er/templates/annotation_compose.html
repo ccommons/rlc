@@ -1,7 +1,10 @@
 {% extends "modal.html" %}
 {% block modal_title %}
-    {# TODO: if url=new outside, this should be new Open Question #}
+    {% if this_url_name == "annotation_compose" %}
+    <h4 class="modal-title">New Open Question</h4>
+    {% else %}
     <h4 class="modal-title">New Annotation</h4>
+    {% endif %}
 {% endblock %}
 {% block modal_body %}
 <form id="annotation-compose-form">

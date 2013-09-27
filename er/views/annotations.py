@@ -224,6 +224,7 @@ def compose_json(request, *args, **kwargs):
 
     context = Context({
 	"doc" : doc,
+        "this_url_name" : this_url_name,
         # "atype_name" : atype_to_name(kwargs["atype"]),
         "form" : form,
         "form_action" : form_action,
