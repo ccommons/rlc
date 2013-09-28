@@ -1,5 +1,5 @@
 {% load humanize %}
-        <li>
+        <li class="notifications-{% if not item.read %}un{% endif %}read">
             <div class="notification-subject">
                 <strong>
                     {{ item.subject_user.first_name }} {{ item.subject_user.last_name }} {{ item.subject }}
