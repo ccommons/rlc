@@ -780,26 +780,21 @@ ul.news-listing .news-tags .label:hover {
     width: 200px;
 }
 
-.notifications-unread,
-.notifications-read {
+.notification-content ul {
     margin-bottom: 0;
 }
 
-.notifications-unread li,
-.notifications-read li {
+.notifications-unread,
+.notifications-read {
     padding: 9px 14px;
 }
 
-.notifications-unread li {
+.notifications-unread {
     background-color: #fffddd;
 }
 
-.notifications-unread li + li {
+.notification-content ul li + li {
     border-top: 1px dashed #ccc;
-}
-
-.notifications-unread + .notifications-read {
-    border-top: 1px solid #ccc;
 }
 
 /**
