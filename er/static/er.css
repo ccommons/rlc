@@ -766,6 +766,12 @@ ul.news-listing .news-tags .label:hover {
 }
 
 /* notification classes */
+
+#notifications-flag {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
 .alerts .popover-content {
     padding: 0;
 }
