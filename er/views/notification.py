@@ -42,19 +42,9 @@ def get_notifications(request):
     all_items = parse_notifications(notifications)
     all_items = sorted(all_items, key=lambda n:n.timestamp, reverse=True)
 
-    # group items by unread/read
-    unread_items = []
-    read_items = []
-    for item in all_items:
-        if item.read:
-            read_items.append(item)
-        else:
-            unread_items.append(item)
-
     context = Context({
         "override_ckeditor" : True,
-        "unread" : unread_items,
-        "read" : read_items,
+        "items" : all_items,
     })
 
     # mark all notifications shown
