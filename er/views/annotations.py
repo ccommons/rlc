@@ -341,6 +341,8 @@ def reply_compose_json(request, *args, **kwargs):
     this_url_name = request.resolver_match.url_name
     req_cxt = RequestContext(request)
 
+    user = request.user
+
     doc = get_doc(**kwargs)
 
     # fetch original comment and its associated annotation
@@ -367,7 +369,7 @@ def reply_compose_json(request, *args, **kwargs):
 
     group_names = [g["name"] for g in request.user.groups.values()]
 
-    if atype == "proprev" and "Editor" in group_names:
+    if atype == "proprev" and "Editor" in group_names and user != original_comment.user:
         data["approval"] = "defer"
         form = EditorProposedRevisionReplyForm(initial=data)
         form_type = "editor_reply"
@@ -407,6 +409,7 @@ def reply_add_json(request, *args, **kwargs):
     """annotation create"""
 
     this_url_name = request.resolver_match.url_name
+    user = request.user
 
     # fetch original comment and its associated annotation
     # TODO: put this stuff into the comment/annotation class
@@ -422,7 +425,7 @@ def reply_add_json(request, *args, **kwargs):
 
     group_names = [g["name"] for g in request.user.groups.values()]
 
-    if atype == "proprev" and "Editor" in group_names:
+    if atype == "proprev" and "Editor" in group_names and user != original_comment.user:
         form = EditorProposedRevisionReplyForm(request.POST)
         form_type = "editor_reply"
     else:
