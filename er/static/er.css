@@ -69,12 +69,20 @@
 /* fix for element positioning on jump links (for now) */
 .paper-content-container h1:before,
 .paper-content-container h2:before,
-.paper-content-container h3:before,
-.paper-content-container a:before
+.paper-content-container h3:before
 {
     display: block;
     content: "";
-    height:100px;
+    height: 100px;
+    margin: -100px 0 0;
+}
+
+/* TODO: this doesn't quite work. This should be probably be active only
+ * for a p or h1 parent */
+.paper-content-container a:before {
+    display: inline-block;
+    content: "";
+    height: 100px;
     margin: -100px 0 0;
 }
 
