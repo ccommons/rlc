@@ -50,17 +50,37 @@
 }
 
 .document-container > h1,
-.paper-content-container h1,
-.paper-content-container h2,
-.paper-content-container h3 {
+.paper-content-container h1 {
     font-style: italic;
     text-transform: uppercase;
+    font-weight: bold;
+    line-height: 1em;
 }
 
-.paper-content-container h1,
+.document-container > h1 {
+    font-size: 30px;
+}
+
+.paper-content-container h1 {
+    font-size: 20px;
+    margin: 0 0 20px;
+    padding-top: 90px;
+}
+
 .paper-content-container h2,
 .paper-content-container h3 {
-    margin-bottom: 0px;
+    line-height: 1em;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.paper-content-container h2 {
+    font-size: 18px;
+    padding-top: 80px;
+}
+
+.paper-content-container h3 {
+    font-size: 14px;
 }
 
 .doc-subtitle {
