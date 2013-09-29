@@ -47,20 +47,21 @@ class notification(object):
         if not self.event:
             raise Exception("event not set")
 
+    # TODO: can we templatize some of this?
     @property
     def subject(self):
         annotation_subject = {
             'proprev' : 'proposed a revision.',
             'rev' : 'proposed a revision.',
             'note' : 'attached a note.',
-            'openq' : 'asked an open question.',
+            'openq' : 'posed an open question.',
         }
         subject = ''
         if self.event.etype == 'comment_annotation':
             c = self.event.event_handler.create_comment_obj(self.event)
             if not c:
                 return ''
-            subject = 'replied to a thread of your interest.'
+            subject = 'commented in a thread of interest.'
             try:
                 # an annotation
                 atype = c.model_object.annotation.atype
@@ -78,14 +79,14 @@ class notification(object):
                 root = c.root
                 if self.event.action == 'proprev_accepted':
                     if root.user == self.user:
-                        return 'Your proposed revision is accepted.'
+                        return 'Your proposed revision was accepted.'
                     else:
-                        return 'The propesed revision is accepted.'
+                        return 'A proposed revision was accepted.'
                 elif self.event.action == 'proprev_rejected':
                     if root.user == self.user:
-                        return 'Your proposed revision is rejected.'
+                        return 'Your proposed revision was rejected.'
                     else:
-                        return 'The propesed revision is rejected.'
+                        return 'A proposed revision was rejected.'
                 elif self.event.action == 'shared':
                     return 'shared a comment with you.'
                 else:
@@ -101,14 +102,14 @@ class notification(object):
             if self.event.action == 'shared':
                 return 'shared a comment with you.'
             else:
-                return 'replied to a thread of your interest.'
+                return 'commented in a thread of interest.'
         elif self.event.etype == 'er':
             if self.event.action == 'shared':
                 return 'shared an Evidence Review with you.'
             if self.event.action in ['revised', 'updated']:
-                return 'The Evidence Review is revised.'
+                return 'The Evidence Review has been changed.'
             elif self.event.action == 'published':
-                return "The Evidence Review is published."
+                return "The Evidence Review has been published."
         elif self.event.etype == 'user':
             return "joined the system."
         return subject
