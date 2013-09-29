@@ -935,3 +935,28 @@ ul.news-listing .news-tags .label:hover {
         width: 194px;
     }
 }
+
+@media (max-width: 979px) {
+    .navbar-fixed-top, .navbar-fixed-bottom {
+        position: fixed;
+    }
+
+    .section-header {
+        font-size: 1em;
+    }
+
+    .annotation-preview {
+        width: 65%;
+        right: -210px;
+    }
+
+    .annotation-content {
+        font-size: 0.8em;
+        top: -14px;
+    }
+
+    #toc-container {
+        /*max-height: 200px;*/
+        width: 140px;
+    }
+}
