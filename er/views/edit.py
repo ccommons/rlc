@@ -12,6 +12,8 @@ from er.models import PaperSection, PaperBlock
 
 from docutils import get_doc
 
+import datetime
+
 # from ckeditor.widgets import CKEditorWidget
 
 import doctags
@@ -254,6 +256,7 @@ def change(request, *args, **kwargs):
         document_changed = True
         doc.content = new_content
         doc.title = new_title
+        doc.revision_date = datetime.datetime.now()
 
     # change publication information if necessary
     is_published = form.cleaned_data["is_published"]
