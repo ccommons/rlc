@@ -63,24 +63,27 @@
 
 .paper-content-container h1 {
     font-size: 20px;
-    margin: 0 0 20px;
-    padding-top: 90px;
+    margin: 30px 0 20px;
+}
+
+/* fix for element positioning on jump links (for now) */
+.paper-content-container h1:before,
+.paper-content-container h2:before,
+.paper-content-container h3:before,
+.paper-content-container a:before
+{
+    display: block;
+    content: "";
+    height:100px;
+    margin: -100px 0 0;
 }
 
 .paper-content-container h2,
 .paper-content-container h3 {
     line-height: 1em;
+    font-size: 18px;
     font-weight: bold;
     margin: 10px 0;
-}
-
-.paper-content-container h2 {
-    font-size: 18px;
-    padding-top: 80px;
-}
-
-.paper-content-container h3 {
-    font-size: 14px;
 }
 
 .doc-subtitle {
