@@ -29,7 +29,7 @@
 <div id="content-main">
 <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
   <div class="form-row">
-    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %} <input id="id_username" maxlength="254" name="username" type="text" class="input-xlarge" placeholder="Email Address" />
+    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %} <input id="id_username" maxlength="254" name="username" type="text" class="input-xlarge" placeholder="Username" />
   </div>
   <div class="form-row">
     {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
