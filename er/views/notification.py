@@ -50,10 +50,11 @@ def get_notifications(request):
         "items" : all_items,
     })
 
-    # mark all notifications shown (regardless of if they're being
+    # mark all unshown notifications shown (regardless of if they're being
     # displayed or not)
     # XXX need try/catch?
-    notifications_all.update(shown=True)
+    notifications_unshown = notifications_all.all().exclude(shown=True)
+    notifications_unshown.update(shown=True)
 
     return context
 
