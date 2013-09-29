@@ -48,6 +48,9 @@ function Modal() {
             this.backtrack_after_close = false;
             this.close();
         },
+        'close_all': function () {
+            MODAL_STACK.clear();
+        },
         'rendered' : false,
         'render' : function() {
             if (this.rendered === false) {
@@ -61,6 +64,7 @@ function Modal() {
                 this.content_element.modal();
                 if (this.hasBackBtn) {
                     this.content_element.find('.modal-header').addClass('has-back-btn');
+                    this.content_element.find('.close.all').one('click', this.close_all.bind(this));
                 }
                 this.content_element.on('hidden', function(event) {
                     // TODO: figure out a better way around this workaround

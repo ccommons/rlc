@@ -3,7 +3,8 @@
     {% block modal_full_content %}
     <div class="modal-header clearfix {% block modal_header_classes %}{% endblock %}">
 
-        <button type="button" class="close" data-dismiss="modal"><span class="modal-close-icon"></span></button>
+        <button type="button" class="close back" data-dismiss="modal"><span class="modal-back-icon"></span></button>
+        <button type="button" class="close all" data-dismiss="modal"><span class="modal-close-icon"></span></button>
         {% block modal_header %}
             <h3 class="modal-title all-caps"><em>{% block modal_title %}{% endblock %}</em></h3>
             {% block modal_summary %}{% endblock %}

@@ -1355,11 +1355,21 @@ textarea.hidden {
 .close:hover .modal-close-icon {
 	background: url('img/btn-modals.png') no-repeat -26px -26px;
 }
-.has-back-btn .close .modal-close-icon {
+.close .modal-back-icon {
 	background: url('img/btn-modals.png') no-repeat 0 0;
 }
-.has-back-btn .close:hover .modal-close-icon {
+.close:hover .modal-back-icon {
 	background: url('img/btn-modals.png') no-repeat -26px 0;
+}
+
+.close.back {
+	display: none;
+	left: -36px;
+	right: initial;
+}
+
+.has-back-btn .close.back {
+	display: inline-block;
 }
 
 .modal-header .close:hover {
