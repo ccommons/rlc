@@ -7,7 +7,7 @@ python manage.py dumpdata er
 python manage.py dumpdata er.author er.paperauthorship --natural --indent 4
 
 # dump document info only (no annotations, no doc revisions)
-python manage.py dumpdata er.evidencereview er.paperblock er.papersection er.papertable er.author er.paperauthorship --natural --indent 4
+python manage.py dumpdata er.evidencereview er.paperblock er.papersection er.papertable er.author er.paperauthorship er.defaultdocument --natural --indent 4
 
 # dump user fixtures--
 python manage.py dumpdata auth.group --natural --indent 4
