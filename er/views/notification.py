@@ -39,11 +39,12 @@ def get_notifications(request):
     # load all notifications of the user
     notifications_all = Notification.objects.filter(user=request.user)
 
-    # now, pick only the 20 most recent and relevant
-    notifications = notifications_all.all().exclude(event__action='revised').order_by('-event__timestamp')[:20]
+    # now, pick only the 10 most recent and relevant
+    notifications = notifications_all.all().exclude(event__action='revised').order_by('-event__timestamp')[:10]
 
     all_items = parse_notifications(notifications)
     # all_items = sorted(all_items, key=lambda n:n.timestamp, reverse=True)
+
 
     context = Context({
         "override_ckeditor" : True,
