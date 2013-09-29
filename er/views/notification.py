@@ -37,19 +37,23 @@ def parse_notifications(raw):
 
 def get_notifications(request):
     # load all notifications of the user
-    notifications = Notification.objects.filter(user=request.user)
+    notifications_all = Notification.objects.filter(user=request.user)
+
+    # now, pick only the 20 most recent and relevant
+    notifications = notifications_all.all().exclude(event__action='revised').order_by('-event__timestamp')[:20]
 
     all_items = parse_notifications(notifications)
-    all_items = sorted(all_items, key=lambda n:n.timestamp, reverse=True)
+    # all_items = sorted(all_items, key=lambda n:n.timestamp, reverse=True)
 
     context = Context({
         "override_ckeditor" : True,
         "items" : all_items,
     })
 
-    # mark all notifications shown
+    # mark all notifications shown (regardless of if they're being
+    # displayed or not)
     # XXX need try/catch?
-    notifications.update(shown=True)
+    notifications_all.update(shown=True)
 
     return context
 
