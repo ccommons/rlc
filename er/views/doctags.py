@@ -23,10 +23,10 @@ def find_tables(doc):
         tables_found.append(table_info)
 
         # look for caption
-        caption = te.find_previous_sibling("h3", text=re.compile(r"(Table|TABLE).+\d+"))
-        if caption != []:
+        caption = te.find_previous_sibling("h3")
+        if caption != [] and caption != None:
             caption_text = caption.get_text()
-            if not caption_text in captions_found:
+            if re.search(r"(Table|TABLE).+\d+", caption_text) != None:
                 captions_found.append(caption_text)
             else:
                 caption_text = "Caption Not Found"
@@ -120,11 +120,23 @@ def clean_document(doc):
     for tag in doc.find_all(True, attrs={"class":class_re}, recursive=True):
         del tag["class"]
 
+    # hyperlink mess
+    hl_re = re.compile(r'file:///.*HYPERLINK')
+    for tag in doc.find_all(["a", "A"], attrs={"href":hl_re}, recursive=True):
+        href = re.sub(hl_re, u'', tag["href"])
+        tag["href"] = href
+
     # remove all styles
     style_re = re.compile(r'.*')
     for tag in doc.find_all(True, attrs={"style":style_re}, recursive=True):
         del tag["style"]
 
+    # remove empty paragraphs
+    for tag in doc.find_all(['p', 'P'], recursive=False):
+        text = tag.get_text()
+        if (len(text) < 5):
+            if re.search(r'^\s+$', text, flags=re.UNICODE) != None:
+                tag.decompose()
 
 def get_tag_info(doc, tag_types):
     """get section information in a document
