@@ -85,7 +85,9 @@ function Modal() {
             this.rendered = true;
         },
         'contentHeight': 0,
-        'assignHeight': function () {
+        'assignHeight': function (evt) {
+            evt && evt.preventDefault && evt.preventDefault();
+            evt && evt.stopPropagation && evt.stopPropagation();
             //Remove DOM listener to avoid cyclical execution.
             //this.content_element.off('DOMSubtreeModified', this.assignHeight.bind(this));
             // Calculate and assign height to modal.
@@ -110,7 +112,11 @@ function Modal() {
                 modalBody.css({'height': 'auto'});
                 this.content_element.css({'height': 'auto'});
             }
-            this.content_element.one('DOMSubtreeModified', this.assignHeight.bind(this));
+            if ($.browser.msie) {
+                this.content_element.find('.tab-content').one('DOMSubtreeModified', this.assignHeight.bind(this));
+            } else {
+                this.content_element.one('DOMSubtreeModified', this.assignHeight.bind(this));
+            }
         }
     });
 }
