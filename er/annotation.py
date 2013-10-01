@@ -43,7 +43,7 @@ class comment(object):
     @property
     def replies(self):
     	"""get all replies to a comment"""
-	reply_ids = [r.id for r in self.model_object.replies.order_by('timestamp')]
+	reply_ids = [r.id for r in self.model_object.replies.order_by('timestamp').select_related()]
 	replies = [self.__class__.fetch(id) for id in reply_ids]
 	return replies
 
@@ -156,7 +156,7 @@ class comment(object):
 	"""get all comments by a user
            use max=n to limit number of results"""
         # TODO: validate user object
-        comments = user.comment_set.order_by('-timestamp')
+        comments = user.comment_set.order_by('-timestamp').select_related()
 
         comments = comments.all()
 
