@@ -103,7 +103,7 @@ def profile_json(request, *args, **kwargs):
                 conv_item.ctype = a.atype
 
                 # I believe we just show the comment, not the context
-                conv_item.context = c.text[:100]
+                conv_item.context = c.text
 
                 # if a.doc_block:
                 #     conv_item.context = a.doc_block.preview_text
@@ -118,7 +118,7 @@ def profile_json(request, *args, **kwargs):
             else:
                 # a reply
                 conv_item.ctype = 'comment'
-                conv_item.context = c.text[:100]
+                conv_item.context = c.text
                 # does not count comments for replies
         except:
             pass
@@ -134,7 +134,7 @@ def profile_json(request, *args, **kwargs):
             # needed for rating
             conv_item.comment = c
             conv_item.ctype = 'comment'
-            conv_item.context = c.text[:100]
+            conv_item.context = c.text
             conv_item.timestamp = c.timestamp
             conv_items.append(conv_item)
         except:
