@@ -7,6 +7,7 @@ var __CKEDITOR_CONFIGS = {
     },
     annotation_compose : {
         removePlugins: 'elementspath',
+        image_previewText: ' ',
         toolbar: [
             [ 
                 'Bold', 'Italic', '-',
