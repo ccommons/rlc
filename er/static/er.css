@@ -544,6 +544,9 @@ a.ref-url:hover {
     text-transform: capitalize;
     line-height: 25px;
 }
+.profile-header .profile-mailto {
+    text-transform: none;
+}
 /*.member-profile,
 .profile-header {
     display:-moz-inline-stack;
