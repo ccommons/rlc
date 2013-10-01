@@ -160,7 +160,7 @@ class Annotation(DiscussionPoint):
     doc_block = models.ForeignKey(PaperBlock, blank=True, null=True, on_delete=models.SET_NULL, related_name="annotations")
 
     def __unicode__(self):
-    	return(u"Annotation id: {0} / ct: {1}".format(self.id, self.context))
+    	return(u"Annotation {0}: {1}; initial comment: {2}".format(self.id, self.atype, self.initial_comment.__unicode__()))
 
 
 # TODO: investigate if subclassing works with this
