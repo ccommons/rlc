@@ -3,6 +3,7 @@ from django.template import loader as template_loader
 from django.contrib.auth.decorators import login_required
 from er.login_decorators import login_required_json
 from django.views.decorators.http import require_POST
+from django.db.models import Count, Max
 
 from er.models import EvidenceReview, PaperBlock, PaperTable
 from er.models import Annotation, Comment
@@ -526,10 +527,23 @@ def preview_json(request, *args, **kwargs):
 
     preview_template = template_loader.get_template("annotation_preview.html")
 
+    preview_numbers = Annotation.objects.filter(er_doc=doc.id).values('doc_block__tag_id', 'atype').annotate(num=Count('id'))
+
+    block_info = {}
+
+    for preview_set in preview_numbers:
+        block_id = preview_set["doc_block__tag_id"]
+        if block_id == None:
+            continue
+
+        if block_id not in block_info:
+            block_info[block_id] = {}
+
+        block_info[block_id][preview_set["atype"]] = preview_set["num"]
+
     # TODO: replace all of this with one big aggregation
 
-    for block in doc.paperblock_set.all():
-        block_id = block.tag_id
+    for block_id in block_info:
         context = {
             "doc" : doc,
             "block_id" : block_id,
@@ -539,25 +553,16 @@ def preview_json(request, *args, **kwargs):
             atype: [] for atype, text in Annotation.ANNOTATION_TYPES
         }
 
-        for a in block.annotations.all():
-            preview_data[a.atype].append(a)
-        
-        # get latest annotations
+        for atype in block_info[block_id]:
+            context[atype + "_list"] = preview_data[atype]
+            context[atype + "_count"] = block_info[block_id][atype]
 
-        for t in preview_data:
-            context[t + "_list"] = preview_data[t]
-            context[t + "_count"] = len(preview_data[t])
-
-        # only look up the latest note date if there are any notes
-        # (this is a workaround for performance; this should be worked into
-        # the general aggregation stuff that needs to be done)
-        if context["note_count"] > 0:
-            from django.db.models import Max
-            latest_date = block.annotations.filter(atype='note').aggregate(Max('initial_comment__timestamp'))
-            context["note_date"] = latest_date["initial_comment__timestamp__max"]
-            # context["note_date"] = None
-        else:
-            context["note_date"] = None
+        # if context["note_count"] > 0:
+        #     from django.db.models import Max
+        #     latest_date = block.annotations.filter(atype='note').aggregate(Max('initial_comment__timestamp'))
+        #     context["note_date"] = latest_date["initial_comment__timestamp__max"]
+        # else:
+        #     context["note_date"] = None
 
         context["compose_url"] = reverse("annotation_compose_in_block", kwargs={
             "doc_id" : kwargs["doc_id"],
