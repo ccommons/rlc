@@ -43,7 +43,7 @@ def get_notifications(request):
     notifications = notifications_all.all().exclude(event__action='revised').order_by('-event__timestamp')[:10]
 
     all_items = parse_notifications(notifications)
-    # all_items = sorted(all_items, key=lambda n:n.timestamp, reverse=True)
+    all_items = sorted(all_items, key=lambda n:n.timestamp, reverse=True)
 
 
     context = Context({
