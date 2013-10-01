@@ -100,7 +100,7 @@
                     {% else %}
                         <a class="open-new-modal" href="javascript:annotation_init('{{ item.url }}');">
                     {% endif %}
-                    {{ item.context|striptags|truncatewords:20 }}
+                    {{ item.context|striptags|truncatewords:20|safe }}
                     </a></p>
                     <p class="profile-conv-line3">
                         {% include "rating_control.html" with comment=item.comment user=calling_user %}
