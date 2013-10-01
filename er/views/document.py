@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 
 from er.models import EvidenceReview, PublicationInfo
 from er.models import DefaultDocument
+from er.models import Annotation
 
 from django.core.urlresolvers import reverse
 
@@ -90,6 +91,9 @@ def fullpage(request, *args, **kwargs):
     oq_kwargs["atype"] = "openq"
     # openq_url = reverse('annotation', kwargs=oq_kwargs)
 
+    # gather all open questions
+    open_questions = Annotation.objects.select_related('doc_block','initial_comment','initial_comment__user').filter(er_doc=doc.id, atype='openq').order_by('doc_block__position', 'timestamp')
+
     # TODO: fix this
     from annotations import AnnotationComposeForm
     dummyform = AnnotationComposeForm()
@@ -104,6 +108,7 @@ def fullpage(request, *args, **kwargs):
 	"doctitle" : "Melanoma RLC: " + doc.title,
         "last_published_info" : lpi,
     	"main_document" : content,
+        "open_questions" : open_questions,
         "widget_media" : widget_media,
         "override_ckeditor" : override_ckeditor,
 	"group_names" : group_names,
