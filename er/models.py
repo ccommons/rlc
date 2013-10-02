@@ -238,10 +238,6 @@ class NewsItem(models.Model):
     # this is a unified author, journal, date field, as shown in the feed
     authorjournal = models.CharField(max_length=250, null=True)
 
-    # for use in templates
-    def tag_objects(self):
-        return(self.tags.all())
-
     def __unicode__(self):
     	return(u"News Item: {0}".format(self.title[:30]))
 
