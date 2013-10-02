@@ -47,7 +47,7 @@ def index_json(request, *args, **kwargs):
     offset = int(kwargs["offset"])
     this_url_name = request.resolver_match.url_name
 
-    news_objects = NewsItem.objects.order_by('-pubdate')
+    news_objects = NewsItem.objects.select_related('tags').order_by('-pubdate')
 
     user = request.user
     num_per_load = 20
