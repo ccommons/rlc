@@ -609,8 +609,8 @@ function CKEditorsInModal(element, config_name) {
         var textarea_id = textareas.attr('id');
         var ckconfig = {};
         /* set default */
-        if ('default' in __CKEDITOR_CONFIGS) {
-            ckconfig = __CKEDITOR_CONFIGS['default'];
+        if ('default_config' in __CKEDITOR_CONFIGS) {
+            ckconfig = __CKEDITOR_CONFIGS['default_config'];
         }
         if (config_name in __CKEDITOR_CONFIGS) {
             ckconfig = __CKEDITOR_CONFIGS[config_name];

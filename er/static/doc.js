@@ -1,5 +1,5 @@
 var __CKEDITOR_CONFIGS = {
-    default : {
+    default_config : {
     },
     doceditor : {
         allowedContent: true,
