@@ -51,7 +51,14 @@ annotation_preview_refresh = function() {
         });
 
         /* update summary */
-        $('#annotation-summary-container').replaceWith(data["summary_html"]);
+        if (data.hasOwnProperty("summary_html")) {
+            $('#annotation-summary-container').replaceWith(data["summary_html"]);
+        }
+
+        /* update open questions */
+        if (data.hasOwnProperty("open_questions_html")) {
+            $('#open-questions-container').html(data["open_questions_html"]);
+        }
     }
     $.get(preview_url, '', display, 'json');
 }

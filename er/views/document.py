@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from copy import deepcopy
 
 from docutils import get_doc
-from annotations import annotation_summary
+from annotations import annotation_summary, open_questions_for_main_doc
 
 import re
 
@@ -92,7 +92,11 @@ def fullpage(request, *args, **kwargs):
     # openq_url = reverse('annotation', kwargs=oq_kwargs)
 
     # gather all open questions
-    open_questions = Annotation.objects.select_related('doc_block','initial_comment','initial_comment__user').filter(er_doc=doc.id, atype='openq').order_by('doc_block__position', 'timestamp')
+    # open_questions = Annotation.objects.select_related('doc_block','initial_comment','initial_comment__user').filter(er_doc=doc.id, atype='openq').order_by('doc_block__position', 'timestamp')
+    # this actually isn't strictly necessary, because the preview refresh
+    # will also put these in, but it's probably helpful to keep the
+    # scrollbar from doing weird things after the page loads
+    open_questions = open_questions_for_main_doc(doc)
 
     # TODO: fix this
     from annotations import AnnotationComposeForm

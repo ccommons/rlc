@@ -66,19 +66,8 @@ $(document).ready(function() {
         Open Questions
         <button type="button" onclick="annotation_compose_init('{% url 'annotation_compose' doc_id=doc.id atype='openq' %}')" class="btn add-new-btn">Add new</button>
     </h1>
-    {% for open_question in open_questions %}
-        <p>{{ open_question.initial_comment.text|safe }}</p>
-        <p>
-        {% if open_question.doc_block == None %}
-        <a class="openq-open" onclick="annotation_init('{% url 'annotation_one_of_all' doc_id=doc.id annotation_id=open_question.id %}')">Details</a>
-        {% else %}
-        <a class="openq-open" onclick="annotation_init('{% url 'annotation_one_in_block' doc_id=doc.id block_id=open_question.doc_block.tag_id annotation_id=open_question.id %}')">Details</a>
-        {% endif %}
-        </p>
-        <br clear="all">
-    {% empty %}
-        <p>No open questions.</p>
-    {% endfor %}
+
+    <div id="open-questions-container">{% include "open_questions.html" %}</div>
 
     </div>
 {% endblock %}

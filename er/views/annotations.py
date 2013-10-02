@@ -35,10 +35,17 @@ def atype_to_name(atype):
 def annotation_summary(doc):
     counts = { "num_"+atype: 0 for atype, text in Annotation.ANNOTATION_TYPES }
 
+    # TODO: this can be an aggregation, but the performance of this is
+    # currently not an issue
+
     for a in annotation.doc_all(doc):
         counts["num_"+a.atype] += 1
 
     return(counts)
+
+def open_questions_for_main_doc(doc):
+    open_questions = Annotation.objects.select_related('doc_block','initial_comment','initial_comment__user').filter(er_doc=doc.id, atype='openq').order_by('doc_block__position', 'timestamp')
+    return(open_questions)
 
 @login_required_json
 def full_json(request, *args, **kwargs):
@@ -527,21 +534,20 @@ def preview_json(request, *args, **kwargs):
 
     preview_template = template_loader.get_template("annotation_preview.html")
 
-    preview_numbers = Annotation.objects.filter(er_doc=doc.id).values('doc_block__tag_id', 'atype').annotate(num=Count('id'))
+    preview_numbers = doc.paperblock_set.values('tag_id', 'annotations__atype').annotate(num=Count('annotations__id'))
 
     block_info = {}
 
     for preview_set in preview_numbers:
-        block_id = preview_set["doc_block__tag_id"]
-        if block_id == None:
-            continue
+        atype = preview_set["annotations__atype"]
+        block_id = preview_set["tag_id"]
 
         if block_id not in block_info:
             block_info[block_id] = {}
 
-        block_info[block_id][preview_set["atype"]] = preview_set["num"]
-
-    # TODO: replace all of this with one big aggregation
+        if atype != None:
+            block_info[block_id][atype] = preview_set["num"]
+        # else continue
 
     for block_id in block_info:
         context = {
@@ -580,11 +586,20 @@ def preview_json(request, *args, **kwargs):
     summary_context["doc"] = doc
     summary_html = render_to_string("annotation_summary.html", summary_context)
 
+    open_questions = open_questions_for_main_doc(doc)
+    openq_context = {
+        "doc" : doc,
+        "open_questions" : open_questions,
+    }
+    openq_html = render_to_string("open_questions.html", openq_context)
+
     return_data = {
         "status" : "ok",
         "previews" : previews,
         "summary_html" : summary_html,
+        "open_questions_html" : openq_html,
     }
+
     json = simplejson.dumps(return_data)
     return(HttpResponse(json, mimetype='application/json'))
 
