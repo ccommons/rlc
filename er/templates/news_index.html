@@ -12,7 +12,7 @@
             <p class="two-line-preview">{{ news_item.preview|safe }}</p>
         </div>
         <div class="news-tags">
-            {% for tag in news_item.tag_objects %}
+            {% for tag in news_item.tags.all %}
                 <span class="label text-blue4 bg-blue3 tag-filter " tag-value="{{ tag.tag_value }}" url="{{ tag_change_url }}">
                     {{ tag.tag_value }}
                 </span>
