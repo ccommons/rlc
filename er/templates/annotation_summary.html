@@ -1,8 +1,8 @@
 <div id="annotation-summary-container" class="document-summary relative">
     <ul class="unstyled">
     {% if num_openq > 0 %}
-    {# <li class="document-summary-item text-blue2" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='openq' %}')"> #}
-    <li class="document-summary-item text-blue2" onclick="location.href='#';location.href='#open-questions';">
+    <li class="document-summary-item text-blue2" onclick="annotation_init('{% url 'annotation_all' doc_id=doc.id atype='openq' %}')">
+    {# <li class="document-summary-item text-blue2" onclick="location.href='#';location.href='#open-questions';"> #}
         <h4 class="document-summary-counter"><em>{{ num_openq }}</em></h4>
         <strong>Open Question{{ num_openq|pluralize }}</strong>
     </li>
