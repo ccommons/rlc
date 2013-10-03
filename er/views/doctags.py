@@ -157,7 +157,7 @@ def get_tag_info(doc, tag_types):
     return(tag_info)
 
 def section_info(doc):
-    return(get_tag_info(doc, ["h1", "h2"]))
+    return(get_tag_info(doc, ["h1"]))
 
 def block_info(doc):
     return(get_tag_info(doc, ["div", "p", "table"]))
@@ -218,7 +218,7 @@ def add_ids(doc):
     doc = add_id_attrs(doc, "p", "erb-")
     doc = add_id_attrs(doc, "table", "erb-")
     doc = add_id_attrs(doc, "h1", "erh-")
-    doc = add_id_attrs(doc, "h2", "erh-")
+    # doc = add_id_attrs(doc, "h2", "erh-")
     return(doc)
 
 # now, need to extract positions of headers in document
