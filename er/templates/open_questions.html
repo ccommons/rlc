@@ -7,7 +7,7 @@
     <a class="openq-open" onclick="annotation_init('{% url 'annotation_one_in_block' doc_id=doc.id block_id=open_question.doc_block.tag_id annotation_id=open_question.id %}')">Details</a>
     {% endif %}
     </p>
-    <br clear="all">
+    <div class="horizontal-separator"></div>
 {% empty %}
     <p>No open questions.</p>
 {% endfor %}
