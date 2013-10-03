@@ -103,6 +103,13 @@
     margin: 10px 0;
 }
 
+.paper-content-container h4 {
+    line-height: 1em;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
 .doc-subtitle {
     padding: 8px;
     font-weight: normal;
