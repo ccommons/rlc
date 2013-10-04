@@ -575,6 +575,13 @@ a.ref-url:hover {
     width: 265px;
 }*/
 
+.printable-container {
+    max-width: 1000px;
+    margin-left: 30px;
+    margin-right: 30px;
+    padding-bottom: 30px;
+}
+
 .document-summary,
 .member-summary,
 .profile-summary {

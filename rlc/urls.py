@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     # main view
     #
     url(DOC_PREFIX + r'$', 'er.views.document.fullpage', name='document_fullview'),
+    url(DOC_PREFIX + r'/printable$', 'er.views.document.printable', name='document_printable'),
 
     # annotations
 

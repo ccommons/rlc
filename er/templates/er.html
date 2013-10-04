@@ -45,9 +45,9 @@ $(document).ready(function() {
     </div>
     <div>
         Last Revision: {{ doc.revision_date|date:"F j, Y" }}
-        {# | <a href="#">Download</a> #}
+        | <a target="_blank" href="{% url 'document_printable' doc_id=doc.id %}">Printable</a>
         {% if "Editor" in group_names %}
-            | <a href="{% url 'doc_editor' doc_id=doc.id %}">edit</a>
+            | <a href="{% url 'doc_editor' doc_id=doc.id %}">Edit</a>
         {% endif %}
     </div> 
     {% if last_published_info != None and last_published_info.is_published == True %}

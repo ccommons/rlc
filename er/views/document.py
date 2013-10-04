@@ -124,3 +124,41 @@ def fullpage(request, *args, **kwargs):
 
     return(render_to_response("er.html", context, context_instance=req_cxt))
 
+@login_required
+def printable(request, *args, **kwargs):
+    """main page view"""
+    from er.notification import notification
+    notification.mark_read(request)
+    req_cxt = RequestContext(request)
+
+    doc = get_doc(**kwargs)
+
+    if doc != None:
+    	content = doc.content
+    else:
+    	content = "no document"
+
+    sections = doc.papersection_set.order_by('position')
+
+    authors = doc.authors.order_by('paperauthorship__position')
+
+    # gather all open questions
+    # open_questions = Annotation.objects.select_related('doc_block','initial_comment','initial_comment__user').filter(er_doc=doc.id, atype='openq').order_by('doc_block__position', 'timestamp')
+    # this actually isn't strictly necessary, because the preview refresh
+    # will also put these in, but it's probably helpful to keep the
+    # scrollbar from doing weird things after the page loads
+    # open_questions = open_questions_for_main_doc(doc)
+
+    context = {
+	"doc" : doc,
+        "authors" : authors,
+	"doctitle" : "Melanoma RLC: " + doc.title,
+        # "last_published_info" : lpi,
+    	"main_document" : content,
+        # "open_questions" : open_questions,
+	# "sections" : sections,
+	# "tables" : tables,
+    }
+
+    return(render_to_response("printable.html", context, context_instance=req_cxt))
+
