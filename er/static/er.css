@@ -833,6 +833,10 @@ ul.news-listing .news-tags .label:hover {
     width: 200px;
 }
 
+.notification-content a {
+    cursor: default;
+}
+
 .notification-content ul {
     margin-bottom: 0;
 }
