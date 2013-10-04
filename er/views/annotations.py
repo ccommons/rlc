@@ -586,18 +586,18 @@ def preview_json(request, *args, **kwargs):
     summary_context["doc"] = doc
     summary_html = render_to_string("annotation_summary.html", summary_context)
 
-    open_questions = open_questions_for_main_doc(doc)
-    openq_context = {
-        "doc" : doc,
-        "open_questions" : open_questions,
-    }
-    openq_html = render_to_string("open_questions.html", openq_context)
+    # open_questions = open_questions_for_main_doc(doc)
+    # openq_context = {
+    #     "doc" : doc,
+    #     "open_questions" : open_questions,
+    # }
+    # openq_html = render_to_string("open_questions.html", openq_context)
 
     return_data = {
         "status" : "ok",
         "previews" : previews,
         "summary_html" : summary_html,
-        "open_questions_html" : openq_html,
+        # "open_questions_html" : openq_html,
     }
 
     json = simplejson.dumps(return_data)

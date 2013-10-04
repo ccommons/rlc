@@ -96,7 +96,7 @@ def fullpage(request, *args, **kwargs):
     # this actually isn't strictly necessary, because the preview refresh
     # will also put these in, but it's probably helpful to keep the
     # scrollbar from doing weird things after the page loads
-    open_questions = open_questions_for_main_doc(doc)
+    # open_questions = open_questions_for_main_doc(doc)
 
     # TODO: fix this
     from annotations import AnnotationComposeForm
@@ -112,7 +112,7 @@ def fullpage(request, *args, **kwargs):
 	"doctitle" : "Melanoma RLC: " + doc.title,
         "last_published_info" : lpi,
     	"main_document" : content,
-        "open_questions" : open_questions,
+        # "open_questions" : open_questions,
         "widget_media" : widget_media,
         "override_ckeditor" : override_ckeditor,
 	"group_names" : group_names,

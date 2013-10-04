@@ -62,12 +62,14 @@ $(document).ready(function() {
     <div class="paper-content-container">
     {{ main_document | safe }}
 
+    {% comment %}
     <h1 id="open-questions">
         Open Questions
         <button type="button" onclick="annotation_compose_init('{% url 'annotation_compose' doc_id=doc.id atype='openq' %}')" class="btn add-new-btn">Add new</button>
     </h1>
 
     <div id="open-questions-container">{% include "open_questions.html" %}</div>
+    {% endcomment %}
 
     </div>
 {% endblock %}
