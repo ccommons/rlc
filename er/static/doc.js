@@ -3,7 +3,8 @@ var __CKEDITOR_CONFIGS = {
     },
     doceditor : {
         allowedContent: true,
-        height: '500px'
+        height: '500px',
+        format_tags: 'p;h1;h2;h3;h4;pre'
     },
     annotation_compose : {
         removePlugins: 'elementspath',
