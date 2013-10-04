@@ -301,7 +301,7 @@ def members_json(request, *args, **kwargs):
     else:
         form = membersSortForm(initial=initial_values)
 
-    users = User.objects.exclude(username="news").order_by('first_name', 'last_name')
+    users = User.objects.exclude(username="news").order_by('last_name', 'first_name')
 
     members = []
     for user in users:
