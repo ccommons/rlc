@@ -13,6 +13,13 @@ body.login {
     height: 100%;
 }
 
+.logo {
+    display: inline-block;
+    background: url("img/logoRLC.png") !important;
+    width: 231px !important;
+    height: 55px !important;
+}
+
 .login-container {
     background: url("img/AMRF-laptop.png") no-repeat;
     background-position: right 0px top 0px;
