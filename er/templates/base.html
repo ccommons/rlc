@@ -46,6 +46,30 @@
 {% endblock %}
 {% block final_javascript %}{# the following actually needs to go into er.html #}
 <script type="text/javascript">
+        /* browser detection (and warnings) */
+        if (BrowserDetect !== undefined) {
+            BrowserDetect.init();
+            var supported = true;
+            var mybrowser = BrowserDetect.browser;
+            if (BrowserDetect.browser === "Explorer") {
+                if (BrowserDetect.version < 9) {
+                    supported = false;
+                    mybrowser = "Internet Explorer";
+                }
+            } else if (BrowserDetect.browser === "Firefox") {
+                if (BrowserDetect.version < 4) {
+                    supported = false;
+                }
+            }
+            if (supported === false) {
+                var message = "<p><b>Warning</b>: You're currently using <b>";
+                message += mybrowser + ' ' + BrowserDetect.version;
+                message += "</b>, an unsupported browser. ";
+                message += "Site features may not correctly function.</p>";
+                var recommend = "<p>We recommend <b>Chrome</b>, <b>Internet Explorer 9+</b>, <b>Firefox 4+</b>, or <b>Safari</b> for best results.</p>"
+                $('.navbar-fixed-top').prepend('<div class="browser-warn">' + message + recommend + '</div>');
+            }
+        }
 	var pane = $('#toc-container'),
 		api;
 	
@@ -82,30 +106,6 @@
 	});
 	$(window).trigger('resize');
 
-        /* browser detection (and warnings) */
-        if (BrowserDetect !== undefined) {
-            BrowserDetect.init();
-            var supported = true;
-            var mybrowser = BrowserDetect.browser;
-            if (BrowserDetect.browser === "MSIE") {
-                if (BrowserDetect.version < 9) {
-                    supported = false;
-                    mybrowser = "Internet Explorer";
-                }
-            } else if (BrowserDetect.browser === "Firefox") {
-                if (BrowserDetect.version < 4) {
-                    supported = false;
-                }
-            }
-            if (supported === false) {
-                var message = "<p><b>Warning</b>: You're currently using <b>";
-                message += mybrowser + ' ' + BrowserDetect.version;
-                message += "</b>, an unsupported browser. ";
-                message += "Site features may not correctly function.</p>";
-                var recommend = "<p>We recommend <b>Chrome</b>, <b>Internet Explorer 9+</b>, <b>Firefox 4+</b>, or <b>Safari</b> for best results.</p>"
-                $('.navbar-fixed-top').prepend('<div class="browser-warn">' + message + recommend + '</div>');
-            }
-        }
 </script>
 {% endblock %}
 </body>
