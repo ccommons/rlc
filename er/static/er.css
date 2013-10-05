@@ -4,6 +4,12 @@
     width: 231px !important;
     height: 55px !important;
 }
+
+.browser-warn {
+    padding: 10px 10px 5px 10px;
+    background-color: #ffffdd;
+}
+
 .icon-paragraph {
     display: inline-block;
     width: 22px;
