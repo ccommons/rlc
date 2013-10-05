@@ -96,18 +96,22 @@
 }
 
 .paper-content-container h2,
+.paper-content-container h3,
+.paper-content-container h4, {
+    margin: 20px 0 10px;
+}
+
+.paper-content-container h2,
 .paper-content-container h3 {
     line-height: 1em;
     font-size: 18px;
     font-weight: bold;
-    margin: 10px 0;
 }
 
 .paper-content-container h4 {
     line-height: 1em;
     font-size: 14px;
     font-weight: bold;
-    margin: 10px 0;
 }
 
 .doc-subtitle {
