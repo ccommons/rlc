@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+import rlc.settings
+from django.core.management import setup_environ
+setup_environ(rlc.settings)
+
+import rlc.siteconfig
+import subprocess, uuid, datetime
+
+if 'BACKUP_DIR' not in dir(rlc.siteconfig):
+    raise IOError("backup directory not defined in site configuration")
+
+backup_dir = rlc.siteconfig.BACKUP_DIR
+
+db_config = rlc.settings.DATABASES["default"]
+user = db_config["USER"]
+db_name = db_config["NAME"]
+
+now = datetime.datetime.now()
+
+output_file = "rlc-backup-{0}-{1:02d}-{2:02d}-{3}.sql".format(now.year, now.month, now.day, uuid.uuid4())
+
+if backup_dir != "":
+    output_file = backup_dir + "/" + output_file
+
+command = ["mysqldump", "-u", user, "-r", output_file, db_name]
+
+subprocess.call(command)
+subprocess.call(["gzip", output_file])
+
